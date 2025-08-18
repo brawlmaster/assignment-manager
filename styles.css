@@ -1,8 +1,8 @@
 /* Layout spacing */
-.app-main{ display:grid; align-items:start; justify-items:center; padding:40px 32px }
+.app-main{ display:grid; align-items:start; justify-items:center; padding:8px 32px 24px }
 
 /* App shell two-column layout */
-.app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 8px 24px 24px }
+.app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 8px 24px 24px; align-items:start; max-width:1180px; margin:0 auto }
 @media (max-width: 900px){ .app-layout{ grid-template-columns: 1fr } }
 
 /* Theme tokens */
@@ -129,6 +129,7 @@ input[type="checkbox"]{ width:18px; height:18px }
 .insight-sub{ color:var(--muted); font-size:12px }
 .timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
 .timer-actions{ display:flex; gap:8px }
+@media (max-width: 900px){ .insights-grid{ max-width:100% } }
 
 /* Light theme removed */
 
