@@ -426,7 +426,7 @@ async function getLocation() {
 
 async function getCityName(lat, lon) {
   try {
-    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=YOUR_API_KEY`);
+    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid='5eb85cb8eefd6422546ea879f46e141c`);
     const data = await response.json();
     return data[0]?.name || 'Unknown Location';
   } catch (error) {
@@ -475,7 +475,7 @@ async function loadWeather() {
     weatherLocation.textContent = location;
     
     // Use OpenWeatherMap API (free tier)
-    const apiKey = 'YOUR_API_KEY'; // Replace with your API key
+    const apiKey = '5eb85cb8eefd6422546ea879f46e141c'; // Replace with your API key
     const coordsData = coords ? JSON.parse(coords) : null;
     
     let weatherUrl;
