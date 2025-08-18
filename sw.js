@@ -6,15 +6,15 @@
 
 const CACHE_NAME = 'focus-tasks-cache-v1';
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.webmanifest',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-512-maskable.png',
-  '/icons/icon.svg'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './manifest.webmanifest',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png',
+  './icons/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -40,7 +40,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Serve tiny placeholder PNGs for icons if not present on disk
-  if (url.pathname === '/icons/icon-192.png' || url.pathname === '/icons/icon-512.png' || url.pathname === '/icons/icon-512-maskable.png') {
+  if (url.pathname.endsWith('/icons/icon-192.png') || url.pathname.endsWith('/icons/icon-512.png') || url.pathname.endsWith('/icons/icon-512-maskable.png')) {
     const base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='; // 1x1 transparent PNG
     const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
     event.respondWith(new Response(bytes, { headers: { 'Content-Type': 'image/png', 'Cache-Control': 'public, max-age=31536000, immutable' } }));
@@ -59,7 +59,7 @@ self.addEventListener('fetch', (event) => {
       return resp;
     } catch (e) {
       if (request.mode === 'navigate') {
-        return cache.match('/index.html');
+        return cache.match('./index.html');
       }
       throw e;
     }

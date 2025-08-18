@@ -2,18 +2,18 @@
   "name": "Focus Tasks",
   "short_name": "FocusTasks",
   "description": "Offline to‑do PWA with reminders and progress",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#070b14",
   "theme_color": "#0a0f1a",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
   ],
   "shortcuts": [
-    { "name": "Add task", "short_name": "Add", "url": "/#add", "icons": [{"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png"}] }
+    { "name": "Add task", "short_name": "Add", "url": "./#add", "icons": [{"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"}] }
   ]
 }
 

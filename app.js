@@ -78,7 +78,8 @@ const notesInput = document.getElementById('taskNotes');
 async function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   try {
-    const r = await navigator.serviceWorker.register('/sw.js');
+    const swUrl = new URL('sw.js', location.href).toString();
+    const r = await navigator.serviceWorker.register(swUrl);
     if (r.active) {
       r.active.postMessage({ type: 'PING' });
     }
