@@ -42,6 +42,8 @@ body{
   backdrop-filter: blur(10px) saturate(120%);
   position:sticky; top:0; z-index:10;
 }
+.header-brand{ display:flex; align-items:center; gap:8px }
+.header-icon{ color:var(--primary); flex-shrink:0 }
 .app-header h1{margin:0; font-size:20px; font-weight:700; letter-spacing:.3px}
 
 .center-card{
@@ -109,6 +111,12 @@ body{
 /* Appear animations */
 @keyframes fadeSlideIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
 .task-item.animate-in{ animation: fadeSlideIn .38s ease both; }
+.task-item.completed{ animation: taskCompleted .6s ease both; }
+@keyframes taskCompleted { 
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
 
 dialog[open]{ animation: fadeSlideIn .2s ease }
 

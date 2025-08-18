@@ -39,6 +39,7 @@ function toInputDateTime(ms){ const d=new Date(ms); const p=n=>String(n).padStar
 let tasks = [];
 let filterMode = 'all';
 let searchQuery = '';
+let sortMode = 'due';
 
 // Elements
 const taskListEl = document.getElementById('taskList');
@@ -66,7 +67,9 @@ const timerStartBtn = document.getElementById('timerStart');
 const timerResetBtn = document.getElementById('timerReset');
 const cancelTaskButton = document.getElementById('cancelTaskButton');
 const filterSelect = document.getElementById('filterSelect');
+const sortSelect = document.getElementById('sortSelect');
 const searchInput = document.getElementById('searchInput');
+const quickAddButton = document.getElementById('quickAddButton');
 const exportButton = document.getElementById('exportButton');
 const importButton = document.getElementById('importButton');
 const importFile = document.getElementById('importFile');
@@ -108,13 +111,29 @@ function render(){
     if (filterMode==='dueSoon' && (t.completed || (t.due - nowMs() > THREE_DAYS_MS))) return false;
     return true;
   });
-  const sorted=[...filtered].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance);
+  
+  let sorted = [...filtered];
+  if (sortMode === 'due') {
+    sorted.sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance);
+  } else if (sortMode === 'importance') {
+    sorted.sort((a,b)=> a.completed-b.completed || b.importance-a.importance || a.due-b.due);
+  } else if (sortMode === 'created') {
+    sorted.sort((a,b)=> a.completed-b.completed || b.createdAt-a.createdAt || b.importance-a.importance);
+  }
   taskListEl.innerHTML='';
   let completedCount=0; const dueSoon=[];
   for (const t of sorted){
     if (t.completed) completedCount++; if (!t.completed && t.due-nowMs()<=THREE_DAYS_MS) dueSoon.push(t);
     const li=document.createElement('li'); li.className='task-item animate-in';
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ t.completed=cb.checked; await saveTask(t); render(); });
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ 
+      t.completed=cb.checked; 
+      await saveTask(t); 
+      if (t.completed) {
+        li.classList.add('completed');
+        setTimeout(() => li.classList.remove('completed'), 600);
+      }
+      render(); 
+    });
     const content=document.createElement('div');
     const titleRow=document.createElement('div'); titleRow.className='title-row';
     const dot=document.createElement('span'); dot.className='dot';
@@ -159,6 +178,45 @@ async function deleteTasks(ids){ await dbTxn(['tasks'],'readwrite',(s)=> ids.for
 function openDialog(defaults=null){ form.reset(); document.getElementById('dialogTitle').textContent = defaults?'Edit Task':'New Task'; const d=defaults ?? { title:'', due: nowMs()+ONE_DAY_MS, importance:5, notes:'', recurrence:'none', tags:[] }; titleInput.value=d.title; dueInput.value=toInputDateTime(d.due); importanceInput.value=d.importance; if (importanceValueEl) importanceValueEl.textContent=String(d.importance); recurrenceInput.value=d.recurrence; notesInput.value=d.notes||''; if (tagsInput) tagsInput.value=(d.tags||[]).join(', '); dialog.showModal(); }
 
 addTaskButton.addEventListener('click', ()=> openDialog());
+
+// Quick add functionality
+quickAddButton?.addEventListener('click', ()=> {
+  const title = prompt('Quick add task:');
+  if (title && title.trim()) {
+    const task = {
+      id: uid(),
+      title: title.trim(),
+      due: nowMs() + ONE_DAY_MS,
+      importance: 5,
+      notes: '',
+      recurrence: 'none',
+      tags: [],
+      completed: false,
+      createdAt: nowMs()
+    };
+    saveTask(task).then(() => {
+      tasks.push(task);
+      tasks.sort((a,b) => a.due-b.due);
+      render();
+      showToast(`Added "${task.title}"`);
+    });
+  }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'n') {
+      e.preventDefault();
+      quickAddButton?.click();
+    }
+  }
+});
+
+// Filter and sort event listeners
+filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
+sortSelect?.addEventListener('change', (e) => { sortMode = e.target.value; render(); });
+searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); render(); });
 form.addEventListener('submit', async (e)=>{ if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; } e.preventDefault(); const title=titleInput.value.trim(); const due=new Date(dueInput.value).getTime(); const importance=Number(importanceInput.value); const recurrence=recurrenceInput.value; const notes=notesInput.value.trim(); const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean); if(!title||!Number.isFinite(due)) return; const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() }; await saveTask(task); tasks.push(task); tasks.sort((a,b)=>a.due-b.due); render(); dialog.close(); });
 cancelTaskButton?.addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
 dialog?.addEventListener('cancel', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
