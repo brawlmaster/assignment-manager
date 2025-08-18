@@ -162,7 +162,7 @@ function render() {
     if (!t.completed && t.due - nowMs() <= THREE_DAYS_MS) dueSoon.push(t);
 
     const li = document.createElement('li');
-    li.className = 'task-item';
+    li.className = 'task-item animate-in';
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -404,6 +404,7 @@ function showToast(message, onUndo) {
   if (!toastEl) return;
   toastMessageEl.textContent = message;
   toastEl.hidden = false;
+  toastEl.classList.add('show');
   let undone = false;
   const timerId = setTimeout(() => {
     if (!undone) hideToast();
@@ -419,7 +420,7 @@ function showToast(message, onUndo) {
     onUndo?.();
   };
   toastUndoEl.onclick = onClickUndo;
-  function hideToast(){ toastEl.hidden = true; clearTimeout(timerId); toastUndoEl.onclick = null; }
+  function hideToast(){ toastEl.classList.remove('show'); clearTimeout(timerId); toastUndoEl.onclick = null; setTimeout(()=>{ toastEl.hidden = true; }, 200); }
 }
 
 // App badge count

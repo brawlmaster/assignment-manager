@@ -55,8 +55,8 @@ body{
 }
 .task-item .title{ font-weight:600 }
 .task-item .meta{ color:var(--muted); font-size:12px }
-.task-item .badges{ display:flex; gap:6px }
-.badge{ padding:2px 8px; border-radius:999px; font-size:11px; border:1px solid var(--border); color:var(--muted) }
+.task-item .badges{ display:flex; gap:8px; align-items:center }
+.badge{ display:inline-flex; align-items:center; justify-content:center; padding:4px 10px; border-radius:999px; font-size:11px; line-height:1; border:1px solid var(--border); color:var(--muted) }
 .badge.alert{ background:rgba(239,68,68,.15); color:#fecaca; border-color:#7f1d1d }
 .badge.ok{ background:rgba(34,197,94,.15); color:#bbf7d0; border-color:#14532d }
 
@@ -65,6 +65,7 @@ body{
 .btn{ 
   appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:600; color:var(--text);
   background:#111827; border:1px solid var(--border);
+  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
 }
 .btn:hover{ filter:brightness(1.05) }
 .btn:active{ transform:translateY(1px) }
@@ -72,13 +73,23 @@ body{
 .btn-danger{ background:linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.1)), var(--danger); border-color:#7f1d1d }
 .btn-ghost{ background:transparent; border-color:var(--border) }
 
-.icon-btn{ background:transparent; border:1px solid var(--border); padding:8px; border-radius:10px; cursor:pointer; color:var(--muted) }
-.icon-btn:hover{ color:#fff; border-color:#334155; background:#0f172a }
+.icon-btn{ background:transparent; border:1px solid var(--border); padding:8px; border-radius:10px; cursor:pointer; color:var(--muted); transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease }
+.icon-btn:hover{ color:#fff; border-color:#334155; background:#0f172a; transform: translateY(-1px) scale(1.03) }
 .icon-danger{ color:#fecaca; border-color:#7f1d1d; background:rgba(239,68,68,.08) }
 .icon-danger:hover{ background:rgba(239,68,68,.15); color:#fff }
 
-.toast{ position:fixed; left:50%; bottom:20px; transform:translateX(-50%); z-index:1000 }
+.toast{ position:fixed; left:50%; bottom:20px; transform:translate(-50%, 14px); opacity:0; transition: transform .25s ease, opacity .25s ease; z-index:1000; pointer-events:none }
+.toast.show{ transform:translate(-50%, 0); opacity:1; pointer-events:auto }
 .toast-content{ display:flex; gap:10px; align-items:center; background:#0b1120; border:1px solid var(--border); padding:10px 12px; border-radius:12px; box-shadow:var(--shadow) }
+
+/* Appear animations */
+@keyframes fadeSlideIn {
+  from { opacity:0; transform: translateY(6px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.task-item.animate-in{ animation: fadeSlideIn .38s ease both; }
+
+dialog[open]{ animation: fadeSlideIn .2s ease }
 
 dialog{ border:none; border-radius:16px; padding:0; background:var(--card); color:var(--text); width:min(520px, 92vw); box-shadow:var(--shadow) }
 dialog::backdrop{ background:rgba(0,0,0,.6) }
