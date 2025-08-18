@@ -81,6 +81,12 @@ const searchInput = document.getElementById('searchInput');
 const exportButton = document.getElementById('exportButton');
 const importButton = document.getElementById('importButton');
 const importFile = document.getElementById('importFile');
+const exportDialog = document.getElementById('exportDialog');
+const exportForm = document.getElementById('exportForm');
+const exportList = document.getElementById('exportList');
+const exportSelectAll = document.getElementById('exportSelectAll');
+const exportSelectNone = document.getElementById('exportSelectNone');
+const exportConfirm = document.getElementById('exportConfirm');
 
 // Service worker registration
 async function registerSW() {
@@ -303,11 +309,46 @@ searchInput?.addEventListener('input', () => { searchQuery = searchInput.value.t
 
 // Export / Import
 exportButton?.addEventListener('click', async () => {
-  const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
+  // Populate export dialog list
+  exportList.innerHTML = '';
+  const sorted = [...tasks].sort((a,b)=> a.completed - b.completed || a.due - b.due || b.importance - a.importance);
+  for (const t of sorted) {
+    const li = document.createElement('li');
+    li.className = 'task-item';
+    const check = document.createElement('input'); check.type = 'checkbox'; check.checked = true; check.dataset.taskId = t.id;
+    const text = document.createElement('div');
+    text.className = 'title';
+    text.textContent = `${t.title} — ${new Date(t.due).toLocaleString()} (imp ${t.importance})`;
+    li.appendChild(check);
+    li.appendChild(text);
+    li.appendChild(document.createElement('div'));
+    exportList.appendChild(li);
+  }
+  exportDialog.showModal();
+});
+
+exportSelectAll?.addEventListener('click', (e) => {
+  e.preventDefault();
+  exportList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+});
+exportSelectNone?.addEventListener('click', (e) => {
+  e.preventDefault();
+  exportList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+});
+
+exportForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const selectedIds = Array.from(exportList.querySelectorAll('input[type="checkbox"]'))
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.taskId);
+  const selectedTasks = tasks.filter(t => selectedIds.includes(t.id));
+  const payload = { type: 'focus-tasks-backup', version: 1, exportedAt: Date.now(), tasks: selectedTasks };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `focus-tasks-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.href = url; a.download = `focus-tasks-${new Date().toISOString().slice(0,10)}.task`;
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  exportDialog.close();
 });
 importButton?.addEventListener('click', () => importFile?.click());
 importFile?.addEventListener('change', async () => {
@@ -315,8 +356,9 @@ importFile?.addEventListener('change', async () => {
   const text = await file.text();
   try {
     const imported = JSON.parse(text);
-    if (!Array.isArray(imported)) throw new Error('Invalid file');
-    await dbTxn(['tasks'], 'readwrite', (store) => { imported.forEach(t => store.put(t)); });
+    const list = Array.isArray(imported) ? imported : imported?.tasks;
+    if (!Array.isArray(list)) throw new Error('Invalid file');
+    await dbTxn(['tasks'], 'readwrite', (store) => { list.forEach(t => store.put(t)); });
     await loadTasks(); render(); await refreshReminders();
   } catch (e) { alert('Import failed: ' + e.message); }
 });
