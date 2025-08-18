@@ -98,9 +98,15 @@ const settingsCancel = document.getElementById('settingsCancel');
 const cardToday = document.getElementById('cardToday');
 const cardStreak = document.getElementById('cardStreak');
 const cardTimer = document.getElementById('cardTimer');
+const cardWeather = document.getElementById('cardWeather');
+const cardQuote = document.getElementById('cardQuote');
+const cardStats = document.getElementById('cardStats');
 const toggleToday = document.getElementById('toggleToday');
 const toggleStreak = document.getElementById('toggleStreak');
 const toggleTimer = document.getElementById('toggleTimer');
+const toggleWeather = document.getElementById('toggleWeather');
+const toggleQuote = document.getElementById('toggleQuote');
+const toggleStats = document.getElementById('toggleStats');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -334,19 +340,31 @@ function loadSettings(){
     const showToday = localStorage.getItem('showToday');
     const showStreak = localStorage.getItem('showStreak');
     const showTimer = localStorage.getItem('showTimer');
+    const showWeather = localStorage.getItem('showWeather');
+    const showQuote = localStorage.getItem('showQuote');
+    const showStats = localStorage.getItem('showStats');
     const todayOn = showToday === null ? true : showToday !== 'false';
     const streakOn = showStreak === null ? true : showStreak !== 'false';
     const timerOn = showTimer === null ? true : showTimer !== 'false';
+    const weatherOn = showWeather === null ? false : showWeather !== 'false';
+    const quoteOn = showQuote === null ? false : showQuote !== 'false';
+    const statsOn = showStats === null ? false : showStats !== 'false';
     if (toggleToday) toggleToday.checked = todayOn;
     if (toggleStreak) toggleStreak.checked = streakOn;
     if (toggleTimer) toggleTimer.checked = timerOn;
-    applyWidgetVisibility(todayOn, streakOn, timerOn);
+    if (toggleWeather) toggleWeather.checked = weatherOn;
+    if (toggleQuote) toggleQuote.checked = quoteOn;
+    if (toggleStats) toggleStats.checked = statsOn;
+    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
   }catch{}
 }
-function applyWidgetVisibility(todayOn, streakOn, timerOn){
+function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn){
   if (cardToday) cardToday.hidden = !todayOn;
   if (cardStreak) cardStreak.hidden = !streakOn;
   if (cardTimer) cardTimer.hidden = !timerOn;
+  if (cardWeather) cardWeather.hidden = !weatherOn;
+  if (cardQuote) cardQuote.hidden = !quoteOn;
+  if (cardStats) cardStats.hidden = !statsOn;
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
@@ -363,11 +381,119 @@ settingsForm?.addEventListener('submit', (e)=>{
   const todayOn = toggleToday ? !!toggleToday.checked : true;
   const streakOn = toggleStreak ? !!toggleStreak.checked : true;
   const timerOn = toggleTimer ? !!toggleTimer.checked : true;
+  const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
+  const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
+  const statsOn = toggleStats ? !!toggleStats.checked : false;
   localStorage.setItem('showToday', String(todayOn));
   localStorage.setItem('showStreak', String(streakOn));
   localStorage.setItem('showTimer', String(timerOn));
-  applyWidgetVisibility(todayOn, streakOn, timerOn);
+  localStorage.setItem('showWeather', String(weatherOn));
+  localStorage.setItem('showQuote', String(quoteOn));
+  localStorage.setItem('showStats', String(statsOn));
+  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
   settingsDialog?.close('ok');
 });
 loadSettings();
+
+// Widget functionality
+const weatherRefresh = document.getElementById('weatherRefresh');
+const quoteRefresh = document.getElementById('quoteRefresh');
+
+// Weather widget
+async function loadWeather() {
+  const weatherTemp = document.getElementById('weatherTemp');
+  const weatherDesc = document.getElementById('weatherDesc');
+  const weatherIcon = document.getElementById('weatherIcon');
+  const weatherLocation = document.getElementById('weatherLocation');
+  
+  try {
+    // Get location from localStorage or use default
+    const location = localStorage.getItem('weatherLocation') || 'London';
+    weatherLocation.textContent = location;
+    
+    // Simulate weather data (in real app, you'd use a weather API)
+    const weatherData = {
+      temp: Math.floor(Math.random() * 25) + 5,
+      desc: ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy'][Math.floor(Math.random() * 4)],
+      icon: ['☀️', '☁️', '🌧️', '⛅'][Math.floor(Math.random() * 4)]
+    };
+    
+    weatherTemp.textContent = `${weatherData.temp}°C`;
+    weatherDesc.textContent = weatherData.desc;
+    weatherIcon.textContent = weatherData.icon;
+  } catch (error) {
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Unable to load';
+    weatherIcon.textContent = '❓';
+  }
+}
+
+// Quote widget
+const quotes = [
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { text: "Quality is not an act, it is a habit.", author: "Aristotle" }
+];
+
+function loadQuote() {
+  const quoteContent = document.getElementById('quoteContent');
+  const quoteAuthor = document.getElementById('quoteAuthor');
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  quoteContent.textContent = `"${randomQuote.text}"`;
+  quoteAuthor.textContent = `— ${randomQuote.author}`;
+}
+
+// Stats widget
+function updateStats() {
+  const avgCompletion = document.getElementById('avgCompletion');
+  const bestDay = document.getElementById('bestDay');
+  const totalTasks = document.getElementById('totalTasks');
+  const completionRate = document.getElementById('completionRate');
+  
+  const completedTasks = tasks.filter(t => t.completed).length;
+  const totalTaskCount = tasks.length;
+  const completionRateValue = totalTaskCount > 0 ? Math.round((completedTasks / totalTaskCount) * 100) : 0;
+  
+  // Calculate average tasks per day (last 7 days)
+  const lastWeek = tasks.filter(t => t.createdAt > nowMs() - (7 * ONE_DAY_MS));
+  const avgPerDay = lastWeek.length > 0 ? Math.round(lastWeek.length / 7) : 0;
+  
+  // Find best day (most tasks completed in a day)
+  const completedByDay = {};
+  tasks.filter(t => t.completed).forEach(task => {
+    const day = new Date(task.due).toDateString();
+    completedByDay[day] = (completedByDay[day] || 0) + 1;
+  });
+  const bestDayValue = Object.keys(completedByDay).length > 0 
+    ? Math.max(...Object.values(completedByDay))
+    : 0;
+  
+  avgCompletion.textContent = avgPerDay;
+  bestDay.textContent = bestDayValue;
+  totalTasks.textContent = totalTaskCount;
+  completionRate.textContent = `${completionRateValue}%`;
+}
+
+// Event listeners for widgets
+weatherRefresh?.addEventListener('click', loadWeather);
+quoteRefresh?.addEventListener('click', loadQuote);
+
+// Initialize widgets when they become visible
+function initializeWidgets() {
+  if (!cardWeather?.hidden) loadWeather();
+  if (!cardQuote?.hidden) loadQuote();
+  if (!cardStats?.hidden) updateStats();
+}
+
+// Update stats when tasks change
+const originalRender = render;
+render = function() {
+  originalRender();
+  updateStats();
+};
 

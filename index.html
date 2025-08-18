@@ -78,6 +78,47 @@
             <button class="btn btn-ghost" id="timerReset">Reset</button>
           </div>
         </div>
+        <div class="insight-card" id="cardWeather" style="display:none">
+          <h3>Weather</h3>
+          <div class="weather-display">
+            <div class="weather-icon" id="weatherIcon">🌤️</div>
+            <div class="weather-info">
+              <div class="weather-temp" id="weatherTemp">--°C</div>
+              <div class="weather-desc" id="weatherDesc">Loading...</div>
+            </div>
+          </div>
+          <div class="weather-location" id="weatherLocation">Location not set</div>
+          <button class="btn btn-ghost" id="weatherRefresh" style="margin-top:8px;width:100%">Refresh</button>
+        </div>
+        <div class="insight-card" id="cardQuote" style="display:none">
+          <h3>Quote of the Day</h3>
+          <div class="quote-content" id="quoteContent">
+            "The only way to do great work is to love what you do."
+          </div>
+          <div class="quote-author" id="quoteAuthor">— Steve Jobs</div>
+          <button class="btn btn-ghost" id="quoteRefresh" style="margin-top:8px;width:100%">New Quote</button>
+        </div>
+        <div class="insight-card" id="cardStats" style="display:none">
+          <h3>Productivity Stats</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="avgCompletion">0</div>
+              <div class="stat-label">Avg tasks/day</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="bestDay">--</div>
+              <div class="stat-label">Best day</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="totalTasks">0</div>
+              <div class="stat-label">Total created</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="completionRate">0%</div>
+              <div class="stat-label">Completion rate</div>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main class="app-main">
@@ -243,6 +284,18 @@
         <label>
           <span>Show Focus Timer tile</span>
           <input id="toggleTimer" type="checkbox" checked />
+        </label>
+        <label>
+          <span>Show Weather tile</span>
+          <input id="toggleWeather" type="checkbox" />
+        </label>
+        <label>
+          <span>Show Quote of the Day tile</span>
+          <input id="toggleQuote" type="checkbox" />
+        </label>
+        <label>
+          <span>Show Productivity Stats tile</span>
+          <input id="toggleStats" type="checkbox" />
         </label>
         <menu class="dialog-actions">
           <button type="button" id="settingsCancel" class="btn btn-ghost">Cancel</button>

@@ -160,6 +160,24 @@ input[type="checkbox"]{ width:18px; height:18px }
 .insight-sub{ color:var(--muted); font-size:12px }
 .timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
 .timer-actions{ display:flex; gap:8px }
+
+/* Weather widget */
+.weather-display{ display:flex; align-items:center; gap:12px; margin:8px 0 }
+.weather-icon{ font-size:32px; line-height:1 }
+.weather-info{ flex:1 }
+.weather-temp{ font-size:24px; font-weight:700 }
+.weather-desc{ color:var(--muted); font-size:12px; margin-top:2px }
+.weather-location{ color:var(--muted); font-size:11px; margin-top:4px }
+
+/* Quote widget */
+.quote-content{ font-style:italic; margin:8px 0; line-height:1.4; color:var(--text) }
+.quote-author{ color:var(--muted); font-size:12px; text-align:right; margin-top:4px }
+
+/* Stats widget */
+.stats-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin:8px 0 }
+.stat-item{ text-align:center; padding:8px; background:rgba(11,17,32,0.3); border-radius:8px; border:1px solid var(--glass-border) }
+.stat-value{ font-size:20px; font-weight:700; color:var(--primary) }
+.stat-label{ color:var(--muted); font-size:10px; margin-top:2px }
 @media (max-width: 900px){ 
   .insights-grid{ 
     max-width:100%;
