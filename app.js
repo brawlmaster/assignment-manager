@@ -344,6 +344,10 @@ exportSelectNone?.addEventListener('click', (e) => {
 });
 
 exportForm?.addEventListener('submit', (e) => {
+  if (e.submitter && e.submitter.id !== 'exportConfirm') {
+    // Not the confirm button; let dialog close naturally
+    return;
+  }
   e.preventDefault();
   const selectedIds = Array.from(exportList.querySelectorAll('input[type="checkbox"]'))
     .filter(cb => cb.checked)
