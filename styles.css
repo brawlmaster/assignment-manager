@@ -69,6 +69,10 @@ body{
 .title-row{ display:flex; align-items:center; gap:8px }
 .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 0 2px rgba(0,0,0,.25) inset; }
 
+/* Tag chips */
+.chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:6px }
+.chip{ padding:2px 8px; border-radius:999px; font-size:11px; background:rgba(59,130,246,.15); color:#c7d2fe; border:1px solid rgba(59,130,246,.35) }
+
 .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:8px }
 
 .btn{ 
@@ -118,4 +122,13 @@ input[type="checkbox"]{ width:18px; height:18px }
 @media (prefers-color-scheme: dark){
   meta[name="theme-color"]{ content: var(--bg); }
 }
+
+/* Insights */
+.insights-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; padding: 0 24px 24px }
+.insight-card{ background: var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(10px) saturate(140%); border-radius:16px; padding:16px; box-shadow: var(--shadow) }
+.insight-card h3{ margin:0 0 6px 0 }
+.insight-metric{ font-size:24px; font-weight:700 }
+.insight-sub{ color:var(--muted); font-size:12px }
+.timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
+.timer-actions{ display:flex; gap:8px }
 
