@@ -87,6 +87,13 @@ const settingsForm = document.getElementById('settingsForm');
 const themeSelect = document.getElementById('themeSelect');
 const accentSelect = document.getElementById('accentSelect');
 const settingsCancel = document.getElementById('settingsCancel');
+// Widget cards and toggles
+const cardToday = document.getElementById('cardToday');
+const cardStreak = document.getElementById('cardStreak');
+const cardTimer = document.getElementById('cardTimer');
+const toggleToday = document.getElementById('toggleToday');
+const toggleStreak = document.getElementById('toggleStreak');
+const toggleTimer = document.getElementById('toggleTimer');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -190,31 +197,57 @@ function showToast(message, onUndo){ toastMessageEl.textContent=message; toastEl
 // Settings
 function applyTheme(theme){
   document.body.classList.remove('light');
-  if (theme === 'light') document.body.classList.add('light');
+  // Light mode removed; coerce to dark only
 }
 function applyAccent(hex){
   document.documentElement.style.setProperty('--primary', hex);
 }
 function loadSettings(){
   try{
-    const theme = localStorage.getItem('theme') || 'dark';
+    let theme = localStorage.getItem('theme') || 'dark';
+    if (theme === 'light') theme = 'dark';
     const accent = localStorage.getItem('accent') || '#3b82f6';
     if (themeSelect) themeSelect.value = theme;
     if (accentSelect) accentSelect.value = accent;
     applyTheme(theme);
     applyAccent(accent);
+    // Widgets
+    const showToday = localStorage.getItem('showToday');
+    const showStreak = localStorage.getItem('showStreak');
+    const showTimer = localStorage.getItem('showTimer');
+    const todayOn = showToday === null ? true : showToday !== 'false';
+    const streakOn = showStreak === null ? true : showStreak !== 'false';
+    const timerOn = showTimer === null ? true : showTimer !== 'false';
+    if (toggleToday) toggleToday.checked = todayOn;
+    if (toggleStreak) toggleStreak.checked = streakOn;
+    if (toggleTimer) toggleTimer.checked = timerOn;
+    applyWidgetVisibility(todayOn, streakOn, timerOn);
   }catch{}
+}
+function applyWidgetVisibility(todayOn, streakOn, timerOn){
+  if (cardToday) cardToday.hidden = !todayOn;
+  if (cardStreak) cardStreak.hidden = !streakOn;
+  if (cardTimer) cardTimer.hidden = !timerOn;
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
 settingsForm?.addEventListener('submit', (e)=>{
   e.preventDefault();
-  const theme = themeSelect?.value || 'dark';
+  let theme = themeSelect?.value || 'dark';
+  if (theme === 'light') theme = 'dark';
   const accent = accentSelect?.value || '#3b82f6';
   localStorage.setItem('theme', theme);
   localStorage.setItem('accent', accent);
   applyTheme(theme);
   applyAccent(accent);
+  // Persist widget visibility
+  const todayOn = toggleToday ? !!toggleToday.checked : true;
+  const streakOn = toggleStreak ? !!toggleStreak.checked : true;
+  const timerOn = toggleTimer ? !!toggleTimer.checked : true;
+  localStorage.setItem('showToday', String(todayOn));
+  localStorage.setItem('showStreak', String(streakOn));
+  localStorage.setItem('showTimer', String(timerOn));
+  applyWidgetVisibility(todayOn, streakOn, timerOn);
   settingsDialog?.close('ok');
 });
 loadSettings();

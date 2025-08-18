@@ -23,66 +23,68 @@
       <div class="header-right"><button id="settingsButton" class="icon-btn" title="Settings" aria-label="Open settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0A1.65 1.65 0 0 0 9 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0A1.65 1.65 0 0 0 20.91 9H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path></svg></button></div>
     </header>
 
-    <main class="app-main">
-      <section class="center-card" aria-label="Tasks">
-        <div class="controls-row">
-          <input id="searchInput" class="input" type="search" placeholder="Search tasks..." />
-          <select id="filterSelect" class="input">
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="dueSoon">Due soon (≤ 3 days)</option>
-            <option value="completed">Completed</option>
-          </select>
-          <div class="spacer"></div>
-          <button id="exportButton" class="btn btn-ghost" title="Export tasks">Export</button>
-          <button id="importButton" class="btn btn-ghost" title="Import tasks">Import</button>
-          <input id="importFile" type="file" accept=".task,.json,application/json" hidden />
+    <div class="app-layout">
+      <aside class="insights-grid" aria-label="Widgets">
+        <div class="insight-card" id="cardToday">
+          <h3>Today</h3>
+          <div class="insight-metric"><span id="todayCount">0</span> due today</div>
+          <div class="insight-sub"><span id="overdueCount">0</span> overdue</div>
         </div>
-        <div class="progress-row">
-          <div class="progress-label">Completed</div>
-          <div class="progress-bar">
-            <div id="progressFill" class="progress-fill"></div>
+        <div class="insight-card" id="cardStreak">
+          <h3>Streak</h3>
+          <div class="insight-metric"><span id="streakDays">0</span> days</div>
+          <div class="insight-sub">Keep going!</div>
+        </div>
+        <div class="insight-card" id="cardTimer">
+          <h3>Focus Timer</h3>
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <label class="hint" style="display:flex;align-items:center;gap:8px;margin:6px 0 8px 0">
+            <span>Minutes</span>
+            <input id="timerMinutes" type="number" min="1" max="120" value="25" class="input" style="width:80px" />
+          </label>
+          <div class="timer-actions">
+            <button class="btn btn-primary" id="timerStart">Start</button>
+            <button class="btn btn-ghost" id="timerReset">Reset</button>
           </div>
-          <div id="progressPct" class="progress-pct">0%</div>
         </div>
+      </aside>
 
-        <div class="upcoming" id="upcomingSection" hidden>
-          <h2>Due soon (≤ 3 days)</h2>
-          <ul id="upcomingList" class="task-list compact"></ul>
-        </div>
+      <main class="app-main">
+        <section class="center-card" aria-label="Tasks">
+          <div class="controls-row">
+            <input id="searchInput" class="input" type="search" placeholder="Search tasks..." />
+            <select id="filterSelect" class="input">
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="dueSoon">Due soon (≤ 3 days)</option>
+              <option value="completed">Completed</option>
+            </select>
+            <div class="spacer"></div>
+            <button id="exportButton" class="btn btn-ghost" title="Export tasks">Export</button>
+            <button id="importButton" class="btn btn-ghost" title="Import tasks">Import</button>
+            <input id="importFile" type="file" accept=".task,.json,application/json" hidden />
+          </div>
+          <div class="progress-row">
+            <div class="progress-label">Completed</div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="progressPct" class="progress-pct">0%</div>
+          </div>
 
-        <ul id="taskList" class="task-list" aria-live="polite"></ul>
+          <div class="upcoming" id="upcomingSection" hidden>
+            <h2>Due soon (≤ 3 days)</h2>
+            <ul id="upcomingList" class="task-list compact"></ul>
+          </div>
 
-        <div class="actions">
-          <button id="addTaskButton" class="btn btn-primary">Add new task</button>
-        </div>
-      </section>
-    </main>
+          <ul id="taskList" class="task-list" aria-live="polite"></ul>
 
-    <section class="insights-grid">
-      <div class="insight-card">
-        <h3>Today</h3>
-        <div class="insight-metric"><span id="todayCount">0</span> due today</div>
-        <div class="insight-sub"><span id="overdueCount">0</span> overdue</div>
-      </div>
-      <div class="insight-card">
-        <h3>Streak</h3>
-        <div class="insight-metric"><span id="streakDays">0</span> days</div>
-        <div class="insight-sub">Keep going!</div>
-      </div>
-      <div class="insight-card">
-        <h3>Focus Timer</h3>
-        <div class="timer-display" id="timerDisplay">25:00</div>
-        <label class="hint" style="display:flex;align-items:center;gap:8px;margin:6px 0 8px 0">
-          <span>Minutes</span>
-          <input id="timerMinutes" type="number" min="1" max="120" value="25" class="input" style="width:80px" />
-        </label>
-        <div class="timer-actions">
-          <button class="btn btn-primary" id="timerStart">Start</button>
-          <button class="btn btn-ghost" id="timerReset">Reset</button>
-        </div>
-      </div>
-    </section>
+          <div class="actions">
+            <button id="addTaskButton" class="btn btn-primary">Add new task</button>
+          </div>
+        </section>
+      </main>
+    </div>
 
     <dialog id="taskDialog">
       <form id="taskForm">
@@ -148,7 +150,6 @@
           <select id="themeSelect">
             <option value="system">System</option>
             <option value="dark" selected>Dark</option>
-            <option value="light">Light</option>
           </select>
         </label>
         <label>
@@ -160,6 +161,18 @@
             <option value="#ef4444">Red</option>
             <option value="#f59e0b">Amber</option>
           </select>
+        </label>
+        <label>
+          <span>Show Today tile</span>
+          <input id="toggleToday" type="checkbox" checked />
+        </label>
+        <label>
+          <span>Show Streak tile</span>
+          <input id="toggleStreak" type="checkbox" checked />
+        </label>
+        <label>
+          <span>Show Focus Timer tile</span>
+          <input id="toggleTimer" type="checkbox" checked />
         </label>
         <menu class="dialog-actions">
           <button type="button" id="settingsCancel" class="btn btn-ghost">Cancel</button>
