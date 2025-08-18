@@ -1,5 +1,5 @@
 /* Layout spacing */
-.app-main{ display:grid; place-items:center; padding:40px 32px }
+.app-main{ display:grid; align-items:start; justify-items:center; padding:40px 32px }
 
 /* App shell two-column layout */
 .app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 8px 24px 24px }
