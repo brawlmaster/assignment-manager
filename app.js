@@ -402,6 +402,38 @@ const weatherRefresh = document.getElementById('weatherRefresh');
 const quoteRefresh = document.getElementById('quoteRefresh');
 
 // Weather widget
+async function getLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation not supported'));
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        });
+      },
+      (error) => {
+        reject(error);
+      },
+      { timeout: 10000, enableHighAccuracy: false }
+    );
+  });
+}
+
+async function getCityName(lat, lon) {
+  try {
+    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=YOUR_API_KEY`);
+    const data = await response.json();
+    return data[0]?.name || 'Unknown Location';
+  } catch (error) {
+    return 'Unknown Location';
+  }
+}
+
 async function loadWeather() {
   const weatherTemp = document.getElementById('weatherTemp');
   const weatherDesc = document.getElementById('weatherDesc');
@@ -409,24 +441,83 @@ async function loadWeather() {
   const weatherLocation = document.getElementById('weatherLocation');
   
   try {
-    // Get location from localStorage or use default
-    const location = localStorage.getItem('weatherLocation') || 'London';
+    weatherLocation.textContent = 'Getting location...';
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Loading...';
+    weatherIcon.textContent = '⏳';
+    
+    // Check if we have stored location
+    let location = localStorage.getItem('weatherLocation');
+    let coords = localStorage.getItem('weatherCoords');
+    
+    if (!location || !coords) {
+      // Get user's location
+      try {
+        const position = await getLocation();
+        coords = JSON.stringify(position);
+        location = await getCityName(position.lat, position.lon);
+        
+        localStorage.setItem('weatherLocation', location);
+        localStorage.setItem('weatherCoords', coords);
+      } catch (error) {
+        // Fallback to manual location input
+        const manualLocation = prompt('Please enter your city name for weather:');
+        if (manualLocation && manualLocation.trim()) {
+          location = manualLocation.trim();
+          localStorage.setItem('weatherLocation', location);
+        } else {
+          location = 'London'; // Default fallback
+          localStorage.setItem('weatherLocation', location);
+        }
+      }
+    }
+    
     weatherLocation.textContent = location;
     
-    // Simulate weather data (in real app, you'd use a weather API)
-    const weatherData = {
-      temp: Math.floor(Math.random() * 25) + 5,
-      desc: ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy'][Math.floor(Math.random() * 4)],
-      icon: ['☀️', '☁️', '🌧️', '⛅'][Math.floor(Math.random() * 4)]
-    };
+    // Use OpenWeatherMap API (free tier)
+    const apiKey = 'YOUR_API_KEY'; // Replace with your API key
+    const coordsData = coords ? JSON.parse(coords) : null;
     
-    weatherTemp.textContent = `${weatherData.temp}°C`;
-    weatherDesc.textContent = weatherData.desc;
-    weatherIcon.textContent = weatherData.icon;
+    let weatherUrl;
+    if (coordsData) {
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coordsData.lat}&lon=${coordsData.lon}&units=metric&appid=${apiKey}`;
+    } else {
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=metric&appid=${apiKey}`;
+    }
+    
+    const response = await fetch(weatherUrl);
+    const data = await response.json();
+    
+    if (data.cod === 200) {
+      const temp = Math.round(data.main.temp);
+      const description = data.weather[0].description;
+      const iconCode = data.weather[0].icon;
+      
+      // Map weather icons
+      const iconMap = {
+        '01d': '☀️', '01n': '🌙',
+        '02d': '⛅', '02n': '☁️',
+        '03d': '☁️', '03n': '☁️',
+        '04d': '☁️', '04n': '☁️',
+        '09d': '🌧️', '09n': '🌧️',
+        '10d': '🌦️', '10n': '🌧️',
+        '11d': '⛈️', '11n': '⛈️',
+        '13d': '❄️', '13n': '❄️',
+        '50d': '🌫️', '50n': '🌫️'
+      };
+      
+      weatherTemp.textContent = `${temp}°C`;
+      weatherDesc.textContent = description.charAt(0).toUpperCase() + description.slice(1);
+      weatherIcon.textContent = iconMap[iconCode] || '🌤️';
+    } else {
+      throw new Error('Weather data not available');
+    }
   } catch (error) {
+    console.error('Weather error:', error);
     weatherTemp.textContent = '--°C';
     weatherDesc.textContent = 'Unable to load';
     weatherIcon.textContent = '❓';
+    weatherLocation.textContent = 'Location error';
   }
 }
 
@@ -439,7 +530,66 @@ const quotes = [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
   { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
   { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-  { text: "Quality is not an act, it is a habit.", author: "Aristotle" }
+  { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+  { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" },
+  { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+  { text: "What you get by achieving your goals is not as important as what you become by achieving your goals.", author: "Zig Ziglar" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "The mind is everything. What you think you become.", author: "Buddha" },
+  { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson" },
+  { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+  { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown" },
+  { text: "Dream big and dare to fail.", author: "Norman Vaughan" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "Don't let yesterday take up too much of today.", author: "Will Rogers" },
+  { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+  { text: "Make your life a masterpiece; imagine no limitations on what you can be, have or do.", author: "Brian Tracy" },
+  { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela" },
+  { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll" },
+  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+  { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+  { text: "The best revenge is massive success.", author: "Frank Sinatra" },
+  { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson" },
+  { text: "Success is not the key to happiness. Happiness is the key to success.", author: "Albert Schweitzer" },
+  { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { text: "Good, better, best. Never let it rest. 'Til your good is better and your better is best.", author: "St. Jerome" },
+  { text: "With the new day comes new strength and new thoughts.", author: "Eleanor Roosevelt" },
+  { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+  { text: "The only person you should try to be better than is the person you were yesterday.", author: "Unknown" },
+  { text: "Don't count the days, make the days count.", author: "Muhammad Ali" },
+  { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+  { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "What you do today can improve all your tomorrows.", author: "Ralph Marston" },
+  { text: "The only limit to the height of your achievements is the reach of your dreams and your willingness to work for them.", author: "Michelle Obama" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+  { text: "Don't wait. The time will never be just right.", author: "Napoleon Hill" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work.", author: "Steve Jobs" },
+  { text: "The difference between try and triumph is just a little umph!", author: "Marvin Phillips" },
+  { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon" },
+  { text: "The road to success and the road to failure are almost exactly the same.", author: "Colin R. Davis" },
+  { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" },
+  { text: "The only thing standing between you and your goal is the bullshit story you keep telling yourself as to why you can't achieve it.", author: "Jordan Belfort" },
+  { text: "The best revenge is massive success.", author: "Frank Sinatra" },
+  { text: "I did it my way.", author: "Frank Sinatra" },
+  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt" },
+  { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt" },
+  { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson" }
 ];
 
 function loadQuote() {
@@ -483,6 +633,14 @@ function updateStats() {
 
 // Event listeners for widgets
 weatherRefresh?.addEventListener('click', loadWeather);
+document.getElementById('weatherLocationBtn')?.addEventListener('click', async () => {
+  const newLocation = prompt('Enter your city name:');
+  if (newLocation && newLocation.trim()) {
+    localStorage.removeItem('weatherCoords'); // Clear coordinates to force new lookup
+    localStorage.setItem('weatherLocation', newLocation.trim());
+    await loadWeather();
+  }
+});
 quoteRefresh?.addEventListener('click', loadQuote);
 
 // Initialize widgets when they become visible

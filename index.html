@@ -88,7 +88,10 @@
             </div>
           </div>
           <div class="weather-location" id="weatherLocation">Location not set</div>
-          <button class="btn btn-ghost" id="weatherRefresh" style="margin-top:8px;width:100%">Refresh</button>
+          <div class="weather-actions" style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-ghost" id="weatherRefresh" style="flex:1">Refresh</button>
+            <button class="btn btn-ghost" id="weatherLocationBtn" style="flex:1">Change</button>
+          </div>
         </div>
         <div class="insight-card" id="cardQuote">
           <h3>Quote of the Day</h3>
