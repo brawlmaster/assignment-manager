@@ -85,6 +85,9 @@ const toastMessageEl = document.getElementById('toastMessage');
 const toastUndoEl = document.getElementById('toastUndo');
 // Settings elements
 const settingsButton = document.getElementById('settingsButton');
+const shortcutsButton = document.getElementById('shortcutsButton');
+const shortcutsDialog = document.getElementById('shortcutsDialog');
+const shortcutsClose = document.getElementById('shortcutsClose');
 const settingsDialog = document.getElementById('settingsDialog');
 const settingsForm = document.getElementById('settingsForm');
 const themeSelect = document.getElementById('themeSelect');
@@ -203,13 +206,26 @@ quickAddButton?.addEventListener('click', ()=> {
   }
 });
 
+// Keyboard shortcuts dialog
+shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
+shortcutsClose?.addEventListener('click', () => shortcutsDialog?.close());
+
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 'n') {
       e.preventDefault();
       quickAddButton?.click();
+    } else if (e.key === 's') {
+      e.preventDefault();
+      settingsButton?.click();
+    } else if (e.key === 'f') {
+      e.preventDefault();
+      searchInput?.focus();
     }
+  } else if (e.key === '?') {
+    e.preventDefault();
+    shortcutsButton?.click();
   }
 });
 

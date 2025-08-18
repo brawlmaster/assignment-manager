@@ -92,6 +92,7 @@ body{
   appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:600; color:var(--text);
   background: rgba(17,24,39,0.6); border:1px solid var(--glass-border);
   transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
 .btn:hover{ filter:brightness(1.05) }
 .btn:active{ transform:translateY(1px) }
@@ -134,6 +135,21 @@ input, textarea, select{
 input[type="checkbox"]{ width:18px; height:18px }
 
 .hint{ color:var(--muted); font-size:12px }
+
+/* Keyboard shortcuts dialog */
+.shortcuts-list{ display:flex; flex-direction:column; gap:12px; margin:12px 0 }
+.shortcut-item{ display:flex; align-items:center; gap:12px; padding:8px 0 }
+.shortcut-item kbd{ 
+  background: rgba(11,17,32,0.6); 
+  border:1px solid var(--glass-border); 
+  border-radius:6px; 
+  padding:4px 8px; 
+  font-size:12px; 
+  font-family:monospace; 
+  min-width:80px; 
+  text-align:center;
+  color:var(--primary);
+}
 
 /* Insights (now vertical sidebar) */
 .insights-grid{ display:flex; flex-direction:column; gap:16px; padding: 0; width: 100%; max-width: 300px; margin: 0 }
