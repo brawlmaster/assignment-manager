@@ -60,6 +60,10 @@ body{
 .badge.alert{ background:rgba(239,68,68,.15); color:#fecaca; border-color:#7f1d1d }
 .badge.ok{ background:rgba(34,197,94,.15); color:#bbf7d0; border-color:#14532d }
 
+/* Importance dot and title row */
+.title-row{ display:flex; align-items:center; gap:8px }
+.dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 0 2px rgba(0,0,0,.25) inset; }
+
 .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:8px }
 
 .btn{ 
