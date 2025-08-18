@@ -356,15 +356,16 @@ function loadSettings(){
     if (toggleQuote) toggleQuote.checked = quoteOn;
     if (toggleStats) toggleStats.checked = statsOn;
     applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+    initializeWidgets();
   }catch{}
 }
 function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn){
-  if (cardToday) cardToday.hidden = !todayOn;
-  if (cardStreak) cardStreak.hidden = !streakOn;
-  if (cardTimer) cardTimer.hidden = !timerOn;
-  if (cardWeather) cardWeather.hidden = !weatherOn;
-  if (cardQuote) cardQuote.hidden = !quoteOn;
-  if (cardStats) cardStats.hidden = !statsOn;
+  if (cardToday) cardToday.style.display = todayOn ? 'block' : 'none';
+  if (cardStreak) cardStreak.style.display = streakOn ? 'block' : 'none';
+  if (cardTimer) cardTimer.style.display = timerOn ? 'block' : 'none';
+  if (cardWeather) cardWeather.style.display = weatherOn ? 'block' : 'none';
+  if (cardQuote) cardQuote.style.display = quoteOn ? 'block' : 'none';
+  if (cardStats) cardStats.style.display = statsOn ? 'block' : 'none';
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
@@ -391,6 +392,7 @@ settingsForm?.addEventListener('submit', (e)=>{
   localStorage.setItem('showQuote', String(quoteOn));
   localStorage.setItem('showStats', String(statsOn));
   applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+  initializeWidgets();
   settingsDialog?.close('ok');
 });
 loadSettings();
@@ -485,9 +487,9 @@ quoteRefresh?.addEventListener('click', loadQuote);
 
 // Initialize widgets when they become visible
 function initializeWidgets() {
-  if (!cardWeather?.hidden) loadWeather();
-  if (!cardQuote?.hidden) loadQuote();
-  if (!cardStats?.hidden) updateStats();
+  if (cardWeather?.style.display !== 'none') loadWeather();
+  if (cardQuote?.style.display !== 'none') loadQuote();
+  if (cardStats?.style.display !== 'none') updateStats();
 }
 
 // Update stats when tasks change
