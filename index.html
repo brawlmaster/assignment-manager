@@ -73,6 +73,10 @@
       <div class="insight-card">
         <h3>Focus Timer</h3>
         <div class="timer-display" id="timerDisplay">25:00</div>
+        <label class="hint" style="display:flex;align-items:center;gap:8px;margin:6px 0 8px 0">
+          <span>Minutes</span>
+          <input id="timerMinutes" type="number" min="1" max="120" value="25" class="input" style="width:80px" />
+        </label>
         <div class="timer-actions">
           <button class="btn btn-primary" id="timerStart">Start</button>
           <button class="btn btn-ghost" id="timerReset">Reset</button>

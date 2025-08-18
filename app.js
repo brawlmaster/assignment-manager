@@ -61,6 +61,7 @@ const todayCountEl = document.getElementById('todayCount');
 const overdueCountEl = document.getElementById('overdueCount');
 const streakDaysEl = document.getElementById('streakDays');
 const timerDisplayEl = document.getElementById('timerDisplay');
+const timerMinutesInput = document.getElementById('timerMinutes');
 const timerStartBtn = document.getElementById('timerStart');
 const timerResetBtn = document.getElementById('timerReset');
 const cancelTaskButton = document.getElementById('cancelTaskButton');
@@ -171,8 +172,8 @@ async function updateStreakUI(){ try{ const days = await getSetting('streakDays'
 // Focus timer (simple Pomodoro: 25 min)
 let timerMs = 25*60*1000; let timerId=null; let running=false;
 function renderTimer(){ if (timerDisplayEl){ const m=Math.floor(timerMs/60000); const s=Math.floor((timerMs%60000)/1000); timerDisplayEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; } }
-timerStartBtn?.addEventListener('click', ()=>{ if (running) return; running=true; timerId=setInterval(()=>{ timerMs-=1000; if (timerMs<=0){ timerMs=0; clearInterval(timerId); running=false; } renderTimer(); }, 1000); });
-timerResetBtn?.addEventListener('click', ()=>{ if (timerId) clearInterval(timerId); running=false; timerMs=25*60*1000; renderTimer(); });
+timerStartBtn?.addEventListener('click', ()=>{ if (running) return; const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); timerMs = mins*60*1000; renderTimer(); running=true; timerId=setInterval(()=>{ timerMs-=1000; if (timerMs<=0){ timerMs=0; clearInterval(timerId); running=false; } renderTimer(); }, 1000); });
+timerResetBtn?.addEventListener('click', ()=>{ if (timerId) clearInterval(timerId); running=false; const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); timerMs=mins*60*1000; renderTimer(); });
 
 exportButton?.addEventListener('click', async ()=>{ exportList.innerHTML=''; const sorted=[...tasks].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance); for(const t of sorted){ const li=document.createElement('li'); li.className='task-item'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=true; cb.dataset.taskId=t.id; const lab=document.createElement('div'); lab.className='title'; lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()} (imp ${t.importance})`; li.appendChild(cb); li.appendChild(lab); li.appendChild(document.createElement('div')); exportList.appendChild(li);} exportDialog.showModal(); });
 exportSelectAll?.addEventListener('click', (e)=>{ e.preventDefault(); exportList.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=true); });
