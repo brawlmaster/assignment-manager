@@ -63,6 +63,7 @@ const taskListEl = document.getElementById('taskList');
 const upcomingSectionEl = document.getElementById('upcomingSection');
 const upcomingListEl = document.getElementById('upcomingList');
 const progressFillEl = document.getElementById('progressFill');
+const importanceValueEl = document.getElementById('importanceValue');
 const progressPctEl = document.getElementById('progressPct');
 const addTaskButton = document.getElementById('addTaskButton');
 const deleteModeButton = document.getElementById('deleteModeButton');
@@ -184,7 +185,7 @@ function render() {
 
   // Progress
   const pct = tasks.length === 0 ? 0 : Math.round((completedCount / tasks.length) * 100);
-  progressFillEl.style.width = pct + '%';
+  progressFillEl.style.transform = `scaleX(${pct/100})`;
   progressPctEl.textContent = pct + '%';
 
   // Due soon section
@@ -240,6 +241,7 @@ function openDialog(defaults = null) {
   titleInput.value = d.title;
   dueInput.value = toInputDateTime(d.due);
   importanceInput.value = d.importance;
+  if (importanceValueEl) importanceValueEl.textContent = String(d.importance);
   notesInput.value = d.notes ?? '';
   dialog.showModal();
 }
@@ -274,6 +276,11 @@ form.addEventListener('submit', async (e) => {
   tasks.sort((a,b)=>a.due-b.due);
   render();
   dialog.close();
+});
+
+// Live update importance display
+importanceInput.addEventListener('input', () => {
+  if (importanceValueEl) importanceValueEl.textContent = importanceInput.value;
 });
 
 // Boot

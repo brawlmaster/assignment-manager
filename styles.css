@@ -39,8 +39,8 @@ body{
 
 .progress-row{ display:grid; grid-template-columns: 80px 1fr 60px; gap:12px; align-items:center; margin-bottom:12px }
 .progress-label{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.8px }
-.progress-bar{ width:100%; height:10px; background:#0b1120; border-radius:999px; overflow:hidden; border:1px solid var(--border) }
-.progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--success), #32d399); transition:width .3s ease }
+.progress-bar{ width:100%; height:10px; background:#0b1120; border-radius:999px; overflow:hidden; border:1px solid var(--border); position:relative }
+.progress-fill{ position:absolute; left:0; top:0; height:100%; width:100%; transform:scaleX(0); transform-origin:left; background:linear-gradient(90deg, var(--success), #32d399); transition:transform .3s ease }
 .progress-pct{ text-align:right; font-variant-numeric:tabular-nums; color:var(--muted) }
 
 .task-list{ list-style:none; margin:12px 0; padding:0; display:flex; flex-direction:column; gap:10px }
