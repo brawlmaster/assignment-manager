@@ -102,7 +102,7 @@ self.addEventListener('notificationclick', (event) => {
   })());
 });
 
-let pendingReminders = new Map(); // id -> timeoutId
+let pendingReminders = new Map(); // key -> timeoutId, key can include task id and timestamp
 
 function clearAllReminders() {
   for (const timeoutId of pendingReminders.values()) {
@@ -111,14 +111,50 @@ function clearAllReminders() {
   pendingReminders.clear();
 }
 
-function scheduleReminder(task) {
-  // T-3 days means notify immediately if due within 3 days and in future.
-  const delay = Math.max(0, task.due - 3 * 24 * 60 * 60 * 1000 - Date.now());
+function scheduleAt(timeMs, key, callback) {
+  const delay = timeMs - Date.now();
+  if (delay <= 0) return;
+  if (pendingReminders.has(key)) return; // already scheduled this exact time
   const timeoutId = setTimeout(() => {
-    showReminder(task);
-    pendingReminders.delete(task.id);
+    try { callback(); } finally { pendingReminders.delete(key); }
   }, delay);
-  pendingReminders.set(task.id, timeoutId);
+  pendingReminders.set(key, timeoutId);
+}
+
+function scheduleTMinus3Days(task) {
+  const threeDays = 3 * 24 * 60 * 60 * 1000;
+  const t = task.due - threeDays;
+  if (t > Date.now()) {
+    scheduleAt(t, `t3-${task.id}-${t}`, () => showReminder(task));
+  }
+}
+
+function nextNoonOrMidnightAfter(ms) {
+  const d = new Date(ms);
+  d.setSeconds(0, 0);
+  const h = d.getHours();
+  if (h < 12) {
+    d.setHours(12, 0, 0, 0);
+  } else {
+    d.setHours(24, 0, 0, 0); // midnight of next day
+  }
+  return d.getTime();
+}
+
+function scheduleNoonMidnightReminders(task) {
+  const threeDaysFromNow = Date.now() + 3 * 24 * 60 * 60 * 1000;
+  const windowEnd = Math.min(task.due, threeDaysFromNow);
+  let t = nextNoonOrMidnightAfter(Date.now());
+  while (t <= windowEnd) {
+    const key = `nm-${task.id}-${t}`;
+    scheduleAt(t, key, () => showReminder(task));
+    t += 12 * 60 * 60 * 1000; // step 12 hours
+  }
+}
+
+function scheduleTaskNotifications(task) {
+  scheduleTMinus3Days(task);
+  scheduleNoonMidnightReminders(task);
 }
 
 self.addEventListener('message', (event) => {
@@ -126,7 +162,15 @@ self.addEventListener('message', (event) => {
   if (data.type === 'PING') return;
   if (data.type === 'SET_REMINDERS') {
     clearAllReminders();
-    for (const t of data.tasks || []) scheduleReminder(t);
+    for (const t of data.tasks || []) scheduleTaskNotifications(t);
+  }
+  if (data.type === 'TASKS_SNAPSHOT') {
+    // Re-schedule based on latest tasks snapshot
+    clearAllReminders();
+    const now = Date.now();
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
+    const tasks = (data.tasks || []).filter(t => !t.completed && t.due - now <= threeDays && t.due > now);
+    for (const t of tasks) scheduleTaskNotifications(t);
   }
 });
 
