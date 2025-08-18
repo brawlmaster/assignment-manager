@@ -105,9 +105,24 @@ body{
 .btn{ 
   appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:600; color:var(--text);
   background: rgba(17,24,39,0.6); border:1px solid var(--glass-border);
-  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
+  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease, background .3s ease;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
   min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+.btn:hover::before {
+  left: 100%;
 }
 .btn:hover{ filter:brightness(1.05) }
 .btn:active{ transform:translateY(1px) }
@@ -126,8 +141,28 @@ body{
 
 /* Appear animations */
 @keyframes fadeSlideIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+@keyframes slideInFromLeft { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes slideInFromRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); } 50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+
 .task-item.animate-in{ animation: fadeSlideIn .38s ease both; }
 .task-item.completed{ animation: taskCompleted .6s ease both; }
+.insight-card { 
+  animation: slideInFromLeft 0.5s ease both; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.insight-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,.5), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+.app-header { animation: slideInFromRight 0.5s ease both; }
+.btn:hover { animation: pulse 0.3s ease; }
+.btn-primary { animation: glow 2s ease-in-out infinite; }
+.center-card { animation: float 6s ease-in-out infinite; }
+
 @keyframes taskCompleted { 
   0% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.02); opacity: 0.8; }
@@ -213,64 +248,127 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .whale {
   position: absolute;
-  font-size: 60px;
-  opacity: 0.4;
-  filter: blur(0px);
+  font-size: 80px;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
   z-index: 1;
+  transform-origin: center;
+  animation: whaleFloat 3s ease-in-out infinite;
 }
 
 .whale-1 {
-  animation: swim 25s linear infinite;
+  animation: swim 20s linear infinite, whaleFloat 3s ease-in-out infinite;
   animation-delay: 0s;
+  font-size: 90px;
 }
 
 .whale-2 {
-  animation: swim 30s linear infinite;
-  animation-delay: 10s;
-  font-size: 45px;
-  opacity: 0.35;
+  animation: swim 25s linear infinite, whaleFloat 4s ease-in-out infinite;
+  animation-delay: 8s;
+  font-size: 70px;
+  opacity: 0.7;
 }
 
 .whale-3 {
-  animation: swim 35s linear infinite;
-  animation-delay: 5s;
-  font-size: 35px;
-  opacity: 0.3;
+  animation: swim 30s linear infinite, whaleFloat 5s ease-in-out infinite;
+  animation-delay: 4s;
+  font-size: 60px;
+  opacity: 0.6;
 }
 
 @keyframes swim {
   0% {
-    transform: translateX(-100px) translateY(20vh) rotateY(0deg);
+    transform: translateX(-150px) translateY(15vh) rotateY(0deg) scale(1);
   }
   10% {
-    transform: translateX(10vw) translateY(25vh) rotateY(0deg);
+    transform: translateX(10vw) translateY(20vh) rotateY(0deg) scale(1.1);
   }
   20% {
-    transform: translateX(20vw) translateY(15vh) rotateY(0deg);
+    transform: translateX(20vw) translateY(10vh) rotateY(0deg) scale(0.9);
   }
   30% {
-    transform: translateX(30vw) translateY(30vh) rotateY(0deg);
+    transform: translateX(30vw) translateY(25vh) rotateY(0deg) scale(1.05);
   }
   40% {
-    transform: translateX(40vw) translateY(20vh) rotateY(0deg);
+    transform: translateX(40vw) translateY(15vh) rotateY(0deg) scale(0.95);
   }
   50% {
-    transform: translateX(50vw) translateY(35vh) rotateY(0deg);
+    transform: translateX(50vw) translateY(30vh) rotateY(0deg) scale(1.15);
   }
   60% {
-    transform: translateX(60vw) translateY(25vh) rotateY(0deg);
+    transform: translateX(60vw) translateY(20vh) rotateY(0deg) scale(0.9);
   }
   70% {
-    transform: translateX(70vw) translateY(15vh) rotateY(0deg);
+    transform: translateX(70vw) translateY(10vh) rotateY(0deg) scale(1.05);
   }
   80% {
-    transform: translateX(80vw) translateY(30vh) rotateY(0deg);
+    transform: translateX(80vw) translateY(25vh) rotateY(0deg) scale(0.95);
   }
   90% {
-    transform: translateX(90vw) translateY(20vh) rotateY(0deg);
+    transform: translateX(90vw) translateY(15vh) rotateY(0deg) scale(1.1);
   }
   100% {
-    transform: translateX(100vw) translateY(25vh) rotateY(0deg);
+    transform: translateX(110vw) translateY(20vh) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes whaleFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+}
+
+/* Particle effects */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  animation: particleFloat 15s linear infinite;
+}
+
+.particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 20s; }
+.particle:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 18s; }
+.particle:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 22s; }
+.particle:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 16s; }
+.particle:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 24s; }
+.particle:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 19s; }
+.particle:nth-child(7) { left: 70%; animation-delay: 12s; animation-duration: 21s; }
+.particle:nth-child(8) { left: 80%; animation-delay: 14s; animation-duration: 17s; }
+.particle:nth-child(9) { left: 90%; animation-delay: 16s; animation-duration: 23s; }
+.particle:nth-child(10) { left: 95%; animation-delay: 18s; animation-duration: 20s; }
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(10vh) scale(1);
+  }
+  100% {
+    transform: translateY(-10vh) scale(0);
+    opacity: 0;
   }
 }
 
