@@ -28,11 +28,18 @@ async function dbTxn(storeNames, mode, op) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(storeNames, mode);
     const stores = storeNames.map((n) => tx.objectStore(n));
-    tx.oncomplete = () => resolve(result);
+    let opResult;
+    tx.oncomplete = async () => {
+      try {
+        const finalValue = opResult instanceof Promise ? await opResult : opResult;
+        resolve(finalValue);
+      } catch (e) {
+        reject(e);
+      }
+    };
     tx.onerror = () => reject(tx.error);
-    let result;
     try {
-      result = op(...stores, tx);
+      opResult = op(...stores, tx);
     } catch (e) {
       reject(e);
     }
@@ -358,9 +365,27 @@ importFile?.addEventListener('change', async () => {
     const imported = JSON.parse(text);
     const list = Array.isArray(imported) ? imported : imported?.tasks;
     if (!Array.isArray(list)) throw new Error('Invalid file');
-    await dbTxn(['tasks'], 'readwrite', (store) => { list.forEach(t => store.put(t)); });
+    const normalized = list.map((t) => {
+      const id = typeof t.id === 'string' && t.id ? t.id : (Math.random().toString(36).slice(2) + Date.now().toString(36));
+      const dueNum = typeof t.due === 'number' ? t.due : new Date(t.due).getTime();
+      const importanceNum = Math.min(10, Math.max(1, Number(t.importance ?? 5)));
+      return {
+        id,
+        title: String(t.title || 'Untitled task'),
+        due: Number.isFinite(dueNum) ? dueNum : Date.now() + 24*60*60*1000,
+        importance: Number.isFinite(importanceNum) ? importanceNum : 5,
+        notes: String(t.notes || ''),
+        completed: Boolean(t.completed),
+        createdAt: typeof t.createdAt === 'number' ? t.createdAt : Date.now()
+      };
+    });
+    await dbTxn(['tasks'], 'readwrite', (store) => { normalized.forEach(t => store.put(t)); });
     await loadTasks(); render(); await refreshReminders();
   } catch (e) { alert('Import failed: ' + e.message); }
+  finally {
+    // Allow re-importing the same file name after completion
+    importFile.value = '';
+  }
 });
 
 // Boot
