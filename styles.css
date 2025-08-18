@@ -31,7 +31,7 @@ html,body{height:100%}
 body{
   margin:0;
   font-family:'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  background: linear-gradient(135deg, #0a0f1a 0%, #1a2332 50%, #0a0f1a 100%);
+  background: linear-gradient(135deg, #0a0f1a 0%, #1e2a3a 50%, #0a0f1a 100%);
   color:var(--text);
   min-height: 100vh;
   position: relative;
@@ -205,8 +205,8 @@ input[type="checkbox"]{ width:18px; height:18px }
 .whale {
   position: absolute;
   font-size: 60px;
-  opacity: 0.08;
-  filter: blur(1px);
+  opacity: 0.15;
+  filter: blur(0.5px);
 }
 
 .whale-1 {
@@ -218,7 +218,14 @@ input[type="checkbox"]{ width:18px; height:18px }
   animation: swim 30s linear infinite;
   animation-delay: 10s;
   font-size: 45px;
-  opacity: 0.06;
+  opacity: 0.12;
+}
+
+.whale-3 {
+  animation: swim 35s linear infinite;
+  animation-delay: 5s;
+  font-size: 35px;
+  opacity: 0.1;
 }
 
 @keyframes swim {
