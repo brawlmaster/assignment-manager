@@ -16,9 +16,7 @@
       <div class="header-left">
         <h1>Focus Tasks</h1>
       </div>
-      <div class="header-right">
-        <button id="deleteModeButton" class="btn btn-danger" aria-pressed="false" title="Toggle delete mode">Select to remove</button>
-      </div>
+      <div class="header-right"></div>
     </header>
 
     <main class="app-main">
@@ -53,7 +51,6 @@
 
         <div class="actions">
           <button id="addTaskButton" class="btn btn-primary">Add new task</button>
-          <button id="deleteSelectedButton" class="btn btn-danger" hidden>Delete selected</button>
         </div>
       </section>
     </main>
@@ -72,6 +69,15 @@
         <label>
           <span>Importance (1–10): <strong id="importanceValue">5</strong></span>
           <input id="taskImportance" name="importance" type="range" min="1" max="10" value="5" />
+        </label>
+        <label>
+          <span>Recurrence</span>
+          <select id="taskRecurrence" name="recurrence">
+            <option value="none" selected>None</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
         </label>
         <label>
           <span>Notes</span>
@@ -95,11 +101,18 @@
         </div>
         <ul id="exportList" class="task-list" style="max-height:50vh; overflow:auto; margin-top:8px"></ul>
         <menu class="dialog-actions">
-          <button value="cancel" class="btn btn-ghost">Cancel</button>
-          <button id="exportConfirm" value="default" class="btn btn-primary">Export</button>
+          <button id="exportCancel" type="button" class="btn btn-ghost">Cancel</button>
+          <button id="exportConfirm" type="submit" class="btn btn-primary">Export</button>
         </menu>
       </form>
     </dialog>
+
+    <div id="toast" class="toast" hidden>
+      <div class="toast-content">
+        <span id="toastMessage">Task deleted</span>
+        <button id="toastUndo" class="btn btn-ghost">Undo</button>
+      </div>
+    </div>
 
     <noscript>
       This app requires JavaScript to work offline and send reminders.

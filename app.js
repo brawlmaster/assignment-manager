@@ -62,10 +62,11 @@ function toInputDateTime(ms) {
 
 // State
 let tasks = [];
-let deleteMode = false;
-let selectedForDeletion = new Set();
+let deleteMode = false; // deprecated
+let selectedForDeletion = new Set(); // deprecated
 let filterMode = 'all';
 let searchQuery = '';
+const pendingDeletions = new Map(); // id -> timeoutId
 
 // Elements
 const taskListEl = document.getElementById('taskList');
@@ -75,14 +76,13 @@ const progressFillEl = document.getElementById('progressFill');
 const importanceValueEl = document.getElementById('importanceValue');
 const progressPctEl = document.getElementById('progressPct');
 const addTaskButton = document.getElementById('addTaskButton');
-const deleteModeButton = document.getElementById('deleteModeButton');
-const deleteSelectedButton = document.getElementById('deleteSelectedButton');
 const dialog = document.getElementById('taskDialog');
 const form = document.getElementById('taskForm');
 const titleInput = document.getElementById('taskTitle');
 const dueInput = document.getElementById('taskDue');
 const importanceInput = document.getElementById('taskImportance');
 const notesInput = document.getElementById('taskNotes');
+const recurrenceInput = document.getElementById('taskRecurrence');
 const filterSelect = document.getElementById('filterSelect');
 const searchInput = document.getElementById('searchInput');
 const exportButton = document.getElementById('exportButton');
@@ -94,6 +94,10 @@ const exportList = document.getElementById('exportList');
 const exportSelectAll = document.getElementById('exportSelectAll');
 const exportSelectNone = document.getElementById('exportSelectNone');
 const exportConfirm = document.getElementById('exportConfirm');
+const exportCancel = document.getElementById('exportCancel');
+const toastEl = document.getElementById('toast');
+const toastMessageEl = document.getElementById('toastMessage');
+const toastUndoEl = document.getElementById('toastUndo');
 
 // Service worker registration
 async function registerSW() {
@@ -194,15 +198,12 @@ function render() {
     badge.textContent = soon ? 'Due ≤ 3 days' : 'Scheduled';
     right.appendChild(badge);
 
-    if (deleteMode) {
-      const sel = document.createElement('input');
-      sel.type = 'checkbox';
-      sel.checked = selectedForDeletion.has(t.id);
-      sel.addEventListener('change', () => {
-        if (sel.checked) selectedForDeletion.add(t.id); else selectedForDeletion.delete(t.id);
-      });
-      right.appendChild(sel);
-    }
+    const delBtn = document.createElement('button');
+    delBtn.className = 'icon-btn icon-danger';
+    delBtn.title = 'Delete task';
+    delBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>';
+    delBtn.addEventListener('click', () => softDeleteTask(t));
+    right.appendChild(delBtn);
 
     li.appendChild(checkbox);
     li.appendChild(content);
@@ -233,6 +234,7 @@ function render() {
   } else {
     upcomingSectionEl.hidden = true;
   }
+  updateAppBadge();
 }
 
 async function loadTasks() {
@@ -264,40 +266,28 @@ async function deleteTasks(ids) {
 function openDialog(defaults = null) {
   form.reset();
   document.getElementById('dialogTitle').textContent = defaults ? 'Edit Task' : 'New Task';
-  const d = defaults ?? { title: '', due: nowMs() + ONE_DAY_MS, importance: 5, notes: '' };
+  const d = defaults ?? { title: '', due: nowMs() + ONE_DAY_MS, importance: 5, notes: '', recurrence: 'none' };
   titleInput.value = d.title;
   dueInput.value = toInputDateTime(d.due);
   importanceInput.value = d.importance;
   if (importanceValueEl) importanceValueEl.textContent = String(d.importance);
+  if (recurrenceInput) recurrenceInput.value = d.recurrence || 'none';
   notesInput.value = d.notes ?? '';
   dialog.showModal();
 }
 
 addTaskButton.addEventListener('click', () => openDialog());
-deleteModeButton.addEventListener('click', () => {
-  deleteMode = !deleteMode;
-  deleteModeButton.setAttribute('aria-pressed', String(deleteMode));
-  deleteSelectedButton.hidden = !deleteMode;
-  if (!deleteMode) selectedForDeletion.clear();
-  render();
-});
-deleteSelectedButton.addEventListener('click', async () => {
-  if (selectedForDeletion.size === 0) return;
-  await deleteTasks([...selectedForDeletion]);
-  selectedForDeletion.clear();
-  deleteMode = false;
-  deleteSelectedButton.hidden = true;
-  deleteModeButton.setAttribute('aria-pressed', 'false');
-});
+
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const title = titleInput.value.trim();
   const due = new Date(dueInput.value).getTime();
   const importance = Number(importanceInput.value);
+  const recurrence = recurrenceInput?.value || 'none';
   const notes = notesInput.value.trim();
   if (!title || !Number.isFinite(due)) return;
-  const task = { id: uid(), title, due, importance, notes, completed: false, createdAt: nowMs() };
+  const task = { id: uid(), title, due, importance, notes, recurrence, completed: false, createdAt: nowMs() };
   await saveTask(task);
   tasks.push(task);
   tasks.sort((a,b)=>a.due-b.due);
@@ -333,6 +323,7 @@ exportButton?.addEventListener('click', async () => {
   }
   exportDialog.showModal();
 });
+exportCancel?.addEventListener('click', () => exportDialog.close());
 
 exportSelectAll?.addEventListener('click', (e) => {
   e.preventDefault();
@@ -343,11 +334,7 @@ exportSelectNone?.addEventListener('click', (e) => {
   exportList.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 });
 
-exportForm?.addEventListener('submit', (e) => {
-  if (e.submitter && e.submitter.id !== 'exportConfirm') {
-    // Not the confirm button; let dialog close naturally
-    return;
-  }
+exportConfirm?.addEventListener('click', (e) => {
   e.preventDefault();
   const selectedIds = Array.from(exportList.querySelectorAll('input[type="checkbox"]'))
     .filter(cb => cb.checked)
@@ -367,7 +354,10 @@ importFile?.addEventListener('change', async () => {
   const text = await file.text();
   try {
     const imported = JSON.parse(text);
-    const list = Array.isArray(imported) ? imported : imported?.tasks;
+    let list = Array.isArray(imported) ? imported : imported?.tasks;
+    if (!list && imported?.type === 'focus-tasks-backup' && Array.isArray(imported?.tasks)) {
+      list = imported.tasks;
+    }
     if (!Array.isArray(list)) throw new Error('Invalid file');
     const normalized = list.map((t) => {
       const id = typeof t.id === 'string' && t.id ? t.id : (Math.random().toString(36).slice(2) + Date.now().toString(36));
@@ -391,6 +381,56 @@ importFile?.addEventListener('change', async () => {
     importFile.value = '';
   }
 });
+
+// Soft delete with undo toast
+function softDeleteTask(task) {
+  // Remove from current view
+  tasks = tasks.filter(x => x.id !== task.id);
+  render();
+  showToast(`Deleted "${task.title}"`, async () => {
+    // Undo: restore
+    tasks.push(task);
+    await saveTask(task);
+    render();
+  });
+  // After timeout, delete from DB unless undone
+  const timeoutId = setTimeout(async () => {
+    await deleteTasks([task.id]);
+  }, 5000);
+  pendingDeletions.set(task.id, timeoutId);
+}
+
+function showToast(message, onUndo) {
+  if (!toastEl) return;
+  toastMessageEl.textContent = message;
+  toastEl.hidden = false;
+  let undone = false;
+  const timerId = setTimeout(() => {
+    if (!undone) hideToast();
+  }, 5200);
+  const onClickUndo = () => {
+    undone = true;
+    // Cancel only the most recent pending delete (best-effort)
+    // If multiple deletes happen, we try to cancel the last added one
+    const entries = Array.from(pendingDeletions.entries());
+    const last = entries[entries.length - 1];
+    if (last) { clearTimeout(last[1]); pendingDeletions.delete(last[0]); }
+    hideToast();
+    onUndo?.();
+  };
+  toastUndoEl.onclick = onClickUndo;
+  function hideToast(){ toastEl.hidden = true; clearTimeout(timerId); toastUndoEl.onclick = null; }
+}
+
+// App badge count
+async function updateAppBadge() {
+  try {
+    const pending = tasks.filter(t => !t.completed).length;
+    if ('setAppBadge' in navigator) {
+      await navigator.setAppBadge(pending);
+    }
+  } catch {}
+}
 
 // Boot
 (async function init(){
