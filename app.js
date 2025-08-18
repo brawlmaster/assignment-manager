@@ -79,6 +79,13 @@ const exportCancel = document.getElementById('exportCancel');
 const toastEl = document.getElementById('toast');
 const toastMessageEl = document.getElementById('toastMessage');
 const toastUndoEl = document.getElementById('toastUndo');
+// Settings elements
+const settingsButton = document.getElementById('settingsButton');
+const settingsDialog = document.getElementById('settingsDialog');
+const settingsForm = document.getElementById('settingsForm');
+const themeSelect = document.getElementById('themeSelect');
+const accentSelect = document.getElementById('accentSelect');
+const settingsCancel = document.getElementById('settingsCancel');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -178,4 +185,36 @@ async function softDeleteTask(task){ const snapshot={...task}; await dbTxn(['tas
 function showToast(message, onUndo){ toastMessageEl.textContent=message; toastEl.hidden=false; toastEl.classList.add('show'); let finished=false; const tid=setTimeout(()=>{ if(!finished) hide(); }, 5200); toastUndoEl.onclick=()=>{ finished=true; hide(); onUndo?.(); }; function hide(){ toastEl.classList.remove('show'); clearTimeout(tid); toastUndoEl.onclick=null; setTimeout(()=>{ toastEl.hidden=true; },200); } }
 
 (async function init(){ const min=new Date(nowMs()+30*60*1000); if (dueInput) dueInput.min=toInputDateTime(min.getTime()); await registerSW(); await ensureNotificationPermission(); await loadTasks(); render(); await refreshReminders(); })();
+
+// Settings
+function applyTheme(theme){
+  document.body.classList.remove('light');
+  if (theme === 'light') document.body.classList.add('light');
+}
+function applyAccent(hex){
+  document.documentElement.style.setProperty('--primary', hex);
+}
+function loadSettings(){
+  try{
+    const theme = localStorage.getItem('theme') || 'dark';
+    const accent = localStorage.getItem('accent') || '#3b82f6';
+    if (themeSelect) themeSelect.value = theme;
+    if (accentSelect) accentSelect.value = accent;
+    applyTheme(theme);
+    applyAccent(accent);
+  }catch{}
+}
+settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
+settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
+settingsForm?.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const theme = themeSelect?.value || 'dark';
+  const accent = accentSelect?.value || '#3b82f6';
+  localStorage.setItem('theme', theme);
+  localStorage.setItem('accent', accent);
+  applyTheme(theme);
+  applyAccent(accent);
+  settingsDialog?.close('ok');
+});
+loadSettings();
 

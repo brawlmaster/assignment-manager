@@ -1,1 +1,10 @@
 .app-main{ display:grid; place-items:center; padding:40px 32px }
+.app-header{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px }
+.icon-btn{ background:rgba(17,24,39,0.4); border:1px solid rgba(255,255,255,0.08); padding:8px; border-radius:10px; cursor:pointer; color:#9bb0d3 }
+.insights-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; padding: 8px 32px 32px }
+.insight-card{ background: rgba(13,19,34,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:16px }
+.insight-metric{ font-size:24px; font-weight:700 }
+.insight-sub{ color:#9bb0d3; font-size:12px }
+.timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
+.timer-actions{ display:flex; gap:8px }
+.app-main{ display:grid; place-items:center; padding:40px 32px }
