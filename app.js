@@ -57,6 +57,8 @@ function toInputDateTime(ms) {
 let tasks = [];
 let deleteMode = false;
 let selectedForDeletion = new Set();
+let filterMode = 'all';
+let searchQuery = '';
 
 // Elements
 const taskListEl = document.getElementById('taskList');
@@ -74,6 +76,11 @@ const titleInput = document.getElementById('taskTitle');
 const dueInput = document.getElementById('taskDue');
 const importanceInput = document.getElementById('taskImportance');
 const notesInput = document.getElementById('taskNotes');
+const filterSelect = document.getElementById('filterSelect');
+const searchInput = document.getElementById('searchInput');
+const exportButton = document.getElementById('exportButton');
+const importButton = document.getElementById('importButton');
+const importFile = document.getElementById('importFile');
 
 // Service worker registration
 async function registerSW() {
@@ -121,7 +128,14 @@ async function refreshReminders() {
 
 function render() {
   // Sort by due asc then importance desc
-  const sorted = [...tasks].sort((a, b) => a.completed - b.completed || a.due - b.due || b.importance - a.importance);
+  let filtered = tasks.filter(t => {
+    if (searchQuery && !(t.title.toLowerCase().includes(searchQuery) || (t.notes||'').toLowerCase().includes(searchQuery))) return false;
+    if (filterMode === 'active' && t.completed) return false;
+    if (filterMode === 'completed' && !t.completed) return false;
+    if (filterMode === 'dueSoon' && (t.completed || (t.due - nowMs() > THREE_DAYS_MS))) return false;
+    return true;
+  });
+  const sorted = [...filtered].sort((a, b) => a.completed - b.completed || a.due - b.due || b.importance - a.importance);
   taskListEl.innerHTML = '';
   let completedCount = 0;
   const dueSoon = [];
@@ -281,6 +295,30 @@ form.addEventListener('submit', async (e) => {
 // Live update importance display
 importanceInput.addEventListener('input', () => {
   if (importanceValueEl) importanceValueEl.textContent = importanceInput.value;
+});
+
+// Filters & search
+filterSelect?.addEventListener('change', () => { filterMode = filterSelect.value; render(); });
+searchInput?.addEventListener('input', () => { searchQuery = searchInput.value.trim().toLowerCase(); render(); });
+
+// Export / Import
+exportButton?.addEventListener('click', async () => {
+  const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `focus-tasks-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+importButton?.addEventListener('click', () => importFile?.click());
+importFile?.addEventListener('change', async () => {
+  const file = importFile.files?.[0]; if (!file) return;
+  const text = await file.text();
+  try {
+    const imported = JSON.parse(text);
+    if (!Array.isArray(imported)) throw new Error('Invalid file');
+    await dbTxn(['tasks'], 'readwrite', (store) => { imported.forEach(t => store.put(t)); });
+    await loadTasks(); render(); await refreshReminders();
+  } catch (e) { alert('Import failed: ' + e.message); }
 });
 
 // Boot

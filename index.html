@@ -23,6 +23,19 @@
 
     <main class="app-main">
       <section class="center-card" aria-label="Tasks">
+        <div class="controls-row">
+          <input id="searchInput" class="input" type="search" placeholder="Search tasks..." />
+          <select id="filterSelect" class="input">
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="dueSoon">Due soon (≤ 3 days)</option>
+            <option value="completed">Completed</option>
+          </select>
+          <div class="spacer"></div>
+          <button id="exportButton" class="btn btn-ghost" title="Export tasks">Export</button>
+          <button id="importButton" class="btn btn-ghost" title="Import tasks">Import</button>
+          <input id="importFile" type="file" accept="application/json" hidden />
+        </div>
         <div class="progress-row">
           <div class="progress-label">Completed</div>
           <div class="progress-bar">
