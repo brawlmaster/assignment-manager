@@ -3,7 +3,13 @@
 
 /* App shell two-column layout */
 .app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 0 20px 24px; align-items:start; max-width:1180px; margin:0 auto }
-@media (max-width: 900px){ .app-layout{ grid-template-columns: 1fr } }
+@media (max-width: 900px){ 
+  .app-layout{ 
+    grid-template-columns: 1fr; 
+    padding: 16px 20px 24px;
+  } 
+}
+
 
 /* Theme tokens */
 :root{
@@ -129,7 +135,12 @@ input[type="checkbox"]{ width:18px; height:18px }
 .insight-sub{ color:var(--muted); font-size:12px }
 .timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
 .timer-actions{ display:flex; gap:8px }
-@media (max-width: 900px){ .insights-grid{ max-width:100% } }
+@media (max-width: 900px){ 
+  .insights-grid{ 
+    max-width:100%;
+    margin-bottom: 16px;
+  } 
+}
 
 /* Light theme removed */
 
