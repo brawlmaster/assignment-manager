@@ -92,11 +92,12 @@ body{
   appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:600; color:var(--text);
   background: rgba(17,24,39,0.6); border:1px solid var(--glass-border);
   transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+  min-height: 40px;
 }
 .btn:hover{ filter:brightness(1.05) }
 .btn:active{ transform:translateY(1px) }
-.btn-primary{ background:linear-gradient(180deg, rgba(74,163,255,.2), rgba(59,130,246,.1)), var(--primary); border-color:#1e40af }
+.btn-primary{ background:linear-gradient(180deg, rgba(74,163,255,.2), rgba(59,130,246,.1)), var(--primary); border-color:#1e40af; white-space: nowrap; }
 .btn-danger{ background:linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.1)), var(--danger); border-color:#7f1d1d }
 .btn-ghost{ background:transparent; border-color:var(--border) }
 

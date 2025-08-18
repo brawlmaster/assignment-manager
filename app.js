@@ -70,6 +70,7 @@ const filterSelect = document.getElementById('filterSelect');
 const sortSelect = document.getElementById('sortSelect');
 const searchInput = document.getElementById('searchInput');
 const quickAddButton = document.getElementById('quickAddButton');
+console.log('Quick add button found:', !!quickAddButton);
 const exportButton = document.getElementById('exportButton');
 const importButton = document.getElementById('importButton');
 const importFile = document.getElementById('importFile');
@@ -183,7 +184,7 @@ function openDialog(defaults=null){ form.reset(); document.getElementById('dialo
 addTaskButton.addEventListener('click', ()=> openDialog());
 
 // Quick add functionality
-quickAddButton?.addEventListener('click', ()=> {
+function quickAddTask() {
   const title = prompt('Quick add task:');
   if (title && title.trim()) {
     const task = {
@@ -204,7 +205,13 @@ quickAddButton?.addEventListener('click', ()=> {
       showToast(`Added "${task.title}"`);
     });
   }
-});
+}
+
+if (quickAddButton) {
+  quickAddButton.addEventListener('click', quickAddTask);
+} else {
+  console.error('Quick add button not found!');
+}
 
 // Keyboard shortcuts dialog
 shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
@@ -215,7 +222,7 @@ document.addEventListener('keydown', (e) => {
   if (e.ctrlKey || e.metaKey) {
     if (e.key === 'n') {
       e.preventDefault();
-      quickAddButton?.click();
+      quickAddTask();
     } else if (e.key === 's') {
       e.preventDefault();
       settingsButton?.click();
