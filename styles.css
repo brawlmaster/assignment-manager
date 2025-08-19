@@ -259,6 +259,7 @@ input[type="checkbox"]{ width:18px; height:18px }
   width: 200px;
   height: 60px;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .music-player.minimized .vinyl-player,
@@ -272,6 +273,7 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .music-player.minimized .minimize-btn svg {
   transform: rotate(180deg);
+  transition: transform 0.3s ease;
 }
 
 .player-header {
@@ -292,29 +294,6 @@ input[type="checkbox"]{ width:18px; height:18px }
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.minimize-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  padding: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.minimize-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-.minimize-btn:active {
-  transform: scale(0.95);
 }
 
 .player-toggle {
@@ -448,20 +427,21 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 .control-btn {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   padding: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
-  color: #3b82f6;
+  color: #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .control-btn:hover {
-  background: rgba(59, 130, 246, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
   transform: scale(1.05);
 }
 
@@ -474,6 +454,7 @@ input[type="checkbox"]{ width:18px; height:18px }
   border-color: rgba(59, 130, 246, 0.3);
   padding: 8px;
   border-radius: 8px;
+  color: #3b82f6;
 }
 
 .play-pause-btn:hover {

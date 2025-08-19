@@ -666,7 +666,6 @@ class MusicPlayer {
     this.musicPlayer = document.querySelector('.music-player');
     this.vinylRecord = document.getElementById('vinylRecord');
     this.vinylArm = document.querySelector('.vinyl-arm');
-    this.playerToggle = document.getElementById('playerToggle');
     this.playPauseBtn = document.getElementById('playPauseBtn');
     this.skipForward = document.getElementById('skipForward');
     this.skipBackward = document.getElementById('skipBackward');
@@ -683,7 +682,6 @@ class MusicPlayer {
     this.audio.volume = this.volumeSlider.value / 100;
     
     // Event listeners
-    this.playerToggle.addEventListener('click', () => this.togglePlay());
     this.playPauseBtn.addEventListener('click', () => this.togglePlay());
     this.skipForward.addEventListener('click', () => this.skipForwardTime());
     this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
