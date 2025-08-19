@@ -49,12 +49,19 @@ class MobileTaskManager {
         });
 
         // Header buttons
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            this.showModal('settingsModal');
-        });
-
         document.getElementById('helpBtn').addEventListener('click', () => {
             this.showModal('helpModal');
+        });
+        document.getElementById('manualBtn').addEventListener('click', () => {
+            const modal = document.getElementById('manualModal');
+            if (modal) modal.classList.add('active');
+        });
+
+        // View toggle: switch to desktop and remember preference
+        const viewToggle = document.getElementById('viewToggleBtn');
+        viewToggle?.addEventListener('click', () => {
+            try { localStorage.setItem('preferDesktop', 'true'); } catch {}
+            window.location.href = 'index.html';
         });
 
         // Touch optimizations
@@ -257,10 +264,16 @@ class MobileTaskManager {
         const taskDiv = document.createElement('div');
         taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
         
+        const hue = Math.round(120 - ((Math.min(10, Math.max(1, task.importance)) - 1) / 9) * 120);
         taskDiv.innerHTML = `
             <div class="task-content">
                 <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-                <div class="task-text">${this.escapeHtml(task.text)}</div>
+                <div class="task-text">
+                    <div class="title-row">
+                        <span class="dot" style="background-color:hsl(${hue} 85% 50%)"></span>
+                        <span>${this.escapeHtml(task.text)}</span>
+                    </div>
+                </div>
             </div>
             <div class="task-actions">
                 <button class="btn btn-secondary delete-btn">Delete</button>
@@ -336,14 +349,11 @@ class MobileTaskManager {
     }
 
     setupModals() {
-        // Close buttons for existing modals
-        document.getElementById('closeSettings').addEventListener('click', () => {
-            this.hideModal('settingsModal');
-        });
-
         document.getElementById('closeHelp').addEventListener('click', () => {
             this.hideModal('helpModal');
         });
+        const closeManual = document.getElementById('closeManual');
+        closeManual?.addEventListener('click', () => this.hideModal('manualModal'));
 
         // Close on backdrop click
         document.querySelectorAll('.modal').forEach(modal => {
@@ -353,16 +363,6 @@ class MobileTaskManager {
                 }
             });
         });
-
-        // Settings checkboxes
-        const settingCheckboxes = document.querySelectorAll('.setting-item input[type="checkbox"]');
-        settingCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                this.saveSettings();
-            });
-        });
-
-        this.loadSettings();
 
         // Bind add task modal controls
         this.bindAddTaskModalEvents();
@@ -378,23 +378,7 @@ class MobileTaskManager {
         modal.classList.remove('active');
     }
 
-    saveSettings() {
-        const settings = {};
-        document.querySelectorAll('.setting-item input[type="checkbox"]').forEach(checkbox => {
-            settings[checkbox.id] = checkbox.checked;
-        });
-        localStorage.setItem('mobileSettings', JSON.stringify(settings));
-    }
-
-    loadSettings() {
-        const settings = JSON.parse(localStorage.getItem('mobileSettings') || '{}');
-        Object.keys(settings).forEach(key => {
-            const checkbox = document.getElementById(key);
-            if (checkbox) {
-                checkbox.checked = settings[key];
-            }
-        });
-    }
+    // Settings removed on mobile
 
     saveTasks() {
         localStorage.setItem('mobileTasks', JSON.stringify(this.tasks));
