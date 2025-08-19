@@ -665,6 +665,9 @@ class MusicPlayer {
     this.vinylRecord = document.getElementById('vinylRecord');
     this.vinylArm = document.querySelector('.vinyl-arm');
     this.playerToggle = document.getElementById('playerToggle');
+    this.playPauseBtn = document.getElementById('playPauseBtn');
+    this.skipForward = document.getElementById('skipForward');
+    this.skipBackward = document.getElementById('skipBackward');
     this.volumeSlider = document.getElementById('volumeSlider');
     this.playIcon = document.querySelector('.play-icon');
     this.pauseIcon = document.querySelector('.pause-icon');
@@ -678,6 +681,9 @@ class MusicPlayer {
     
     // Event listeners
     this.playerToggle.addEventListener('click', () => this.togglePlay());
+    this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+    this.skipForward.addEventListener('click', () => this.skipForwardTime());
+    this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
     this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
     
     // Audio event listeners
@@ -706,6 +712,16 @@ class MusicPlayer {
 
   pause() {
     this.audio.pause();
+  }
+
+  skipForwardTime() {
+    this.audio.currentTime = Math.min(this.audio.currentTime + 10, this.audio.duration);
+    this.showToast('Skipped forward 10s');
+  }
+
+  skipBackwardTime() {
+    this.audio.currentTime = Math.max(this.audio.currentTime - 10, 0);
+    this.showToast('Skipped backward 10s');
   }
 
   setVolume(value) {

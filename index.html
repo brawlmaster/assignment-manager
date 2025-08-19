@@ -46,6 +46,29 @@
           <span id="trackTitle">Lofi Study Beats</span>
           <span id="trackArtist">Chill Vibes</span>
         </div>
+        <div class="control-buttons">
+          <button id="skipBackward" class="control-btn" title="Skip Backward">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="19,20 9,12 19,4"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5"></line>
+            </svg>
+          </button>
+          <button id="playPauseBtn" class="control-btn play-pause-btn" title="Play/Pause">
+            <svg class="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5,3 19,12 5,21"></polygon>
+            </svg>
+            <svg class="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <button id="skipForward" class="control-btn" title="Skip Forward">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5,4 15,12 5,20"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
         <div class="volume-control">
           <input type="range" id="volumeSlider" min="0" max="100" value="50" class="volume-slider">
         </div>
