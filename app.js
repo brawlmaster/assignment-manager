@@ -253,9 +253,28 @@ viewToggleButton?.addEventListener('click', () => {
 });
 
 // Manual dialog
-manualButton?.addEventListener('click', () => manualDialog?.showModal());
-manualClose?.addEventListener('click', () => manualDialog?.close());
-manualDialog?.addEventListener('cancel', (e) => { e.preventDefault(); manualDialog?.close(); });
+manualButton?.addEventListener('click', () => {
+  if (!manualDialog) return;
+  try {
+    if (typeof manualDialog.showModal === 'function') {
+      manualDialog.showModal();
+    } else {
+      manualDialog.setAttribute('open', '');
+    }
+  } catch (_) {
+    manualDialog.setAttribute('open', '');
+  }
+});
+manualClose?.addEventListener('click', () => {
+  if (!manualDialog) return;
+  try {
+    if (typeof manualDialog.close === 'function') manualDialog.close();
+    manualDialog.removeAttribute('open');
+  } catch (_) {
+    manualDialog.removeAttribute('open');
+  }
+});
+manualDialog?.addEventListener('cancel', (e) => { e.preventDefault(); try { manualDialog?.close(); } catch {} manualDialog?.removeAttribute?.('open'); });
 
 // Filter and sort event listeners
 filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });

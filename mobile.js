@@ -53,7 +53,8 @@ class MobileTaskManager {
             this.showModal('helpModal');
         });
         document.getElementById('manualBtn').addEventListener('click', () => {
-            this.showModal('manualModal');
+            const modal = document.getElementById('manualModal');
+            if (modal) modal.classList.add('active');
         });
 
         // View toggle: switch to desktop and remember preference
