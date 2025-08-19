@@ -671,8 +671,8 @@ class MusicPlayer {
     this.skipBackward = document.getElementById('skipBackward');
     this.volumeSlider = document.getElementById('volumeSlider');
     this.minimizeBtn = document.getElementById('minimizeBtn');
-    this.playIcon = document.querySelector('.play-icon');
-    this.pauseIcon = document.querySelector('.pause-icon');
+    this.controlPlayIcon = document.querySelector('.control-play-icon');
+    this.controlPauseIcon = document.querySelector('.control-pause-icon');
     
     this.init();
   }
@@ -694,6 +694,8 @@ class MusicPlayer {
     this.audio.addEventListener('ended', () => this.onEnded());
     
     console.log('Music player initialized');
+    console.log('Play button found:', !!this.playPauseBtn);
+    console.log('Skip buttons found:', !!this.skipForward, !!this.skipBackward);
   }
 
   togglePlay() {
@@ -734,16 +736,16 @@ class MusicPlayer {
     this.isPlaying = true;
     this.vinylRecord.classList.add('playing');
     this.vinylArm.classList.add('playing');
-    this.playIcon.style.display = 'none';
-    this.pauseIcon.style.display = 'block';
+    this.controlPlayIcon.style.display = 'none';
+    this.controlPauseIcon.style.display = 'block';
   }
 
   onPause() {
     this.isPlaying = false;
     this.vinylRecord.classList.remove('playing');
     this.vinylArm.classList.remove('playing');
-    this.playIcon.style.display = 'block';
-    this.pauseIcon.style.display = 'none';
+    this.controlPlayIcon.style.display = 'block';
+    this.controlPauseIcon.style.display = 'none';
   }
 
   onEnded() {
