@@ -214,9 +214,21 @@
               <option value="created">Sort by Created</option>
             </select>
             <div class="spacer"></div>
-            <button id="exportButton" class="btn btn-ghost" title="Export tasks">Export</button>
-            <button id="importButton" class="btn btn-ghost" title="Import tasks">Import</button>
-            <input id="importFile" type="file" accept=".task,.json,application/json" hidden />
+            <div class="actions-toolbar">
+              <button id="groupsButton" class="btn btn-ghost" title="Manage groups">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="16" width="18" height="4" rx="1"/></svg>
+                Edit Groups
+              </button>
+              <button id="exportButton" class="btn btn-ghost" title="Export tasks">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M20 21H4"/></svg>
+                Export
+              </button>
+              <button id="importButton" class="btn btn-ghost" title="Import tasks">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M12 21V9"/><path d="M16 13l-4-4-4 4"/><path d="M20 21H4"/></svg>
+                Import
+              </button>
+              <input id="importFile" type="file" accept=".task,.json,application/json" hidden />
+            </div>
           </div>
           <div class="progress-row">
             <div class="progress-label">Completed</div>
