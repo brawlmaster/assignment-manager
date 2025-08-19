@@ -972,8 +972,8 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 .music-player.minimized {
-  width: 200px;
-  height: 60px;
+  width: 220px;
+  height: 48px;
   overflow: hidden;
   transition: all 0.3s ease;
 }
@@ -985,16 +985,25 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .music-player.minimized .player-header {
   margin-bottom: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   height: 100%;
-  text-align: center;
 }
 
 .music-player.minimized .player-header h3 {
   margin: 0;
-  text-align: center;
+  text-align: left;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-player.minimized .header-controls {
+  display: flex;
+  align-items: center;
 }
 
 .music-player.minimized .minimize-btn svg {
