@@ -250,6 +250,154 @@ input[type="checkbox"]{ width:18px; height:18px }
   transition: all 0.3s ease;
 }
 
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  .music-player {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-width: 320px;
+    margin: 0 auto;
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .music-player.minimized {
+    width: auto;
+    max-width: 200px;
+    height: 50px;
+    padding: 8px 12px;
+  }
+  
+  .player-header h3 {
+    font-size: 13px;
+  }
+  
+  .vinyl-player {
+    height: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .vinyl-record {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .record-center {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .record-grooves {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .control-buttons {
+    gap: 6px;
+    margin: 6px 0;
+  }
+  
+  .control-btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+  
+  .play-pause-btn {
+    min-width: 52px;
+    min-height: 52px;
+  }
+  
+  .track-info span {
+    font-size: 11px;
+  }
+  
+  .track-info span:first-child {
+    font-size: 12px;
+  }
+  
+  .volume-slider {
+    height: 6px;
+  }
+  
+  .volume-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .music-player {
+    bottom: 8px;
+    right: 8px;
+    left: 8px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .music-player.minimized {
+    max-width: 180px;
+    height: 45px;
+    padding: 6px 10px;
+  }
+  
+  .player-header h3 {
+    font-size: 12px;
+  }
+  
+  .vinyl-player {
+    height: 80px;
+    margin-bottom: 8px;
+  }
+  
+  .vinyl-record {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .record-center {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .record-grooves {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .control-buttons {
+    gap: 4px;
+    margin: 4px 0;
+  }
+  
+  .control-btn {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 10px;
+  }
+  
+  .play-pause-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .track-info span {
+    font-size: 10px;
+  }
+  
+  .track-info span:first-child {
+    font-size: 11px;
+  }
+}
+
 .music-player:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
@@ -472,6 +620,31 @@ input[type="checkbox"]{ width:18px; height:18px }
   box-shadow: 
     0 8px 25px rgba(0, 0, 0, 0.15),
     0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Disable hover effects on mobile for better touch experience */
+@media (hover: none) and (pointer: coarse) {
+  .control-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .control-btn:hover::before {
+    left: -100%;
+  }
+  
+  .play-pause-btn:hover {
+    transform: none;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+  }
+  
+  .skip-btn:hover {
+    transform: none;
+  }
+  
+  .music-player:hover {
+    transform: none;
+  }
 }
 
 .control-btn:active {
