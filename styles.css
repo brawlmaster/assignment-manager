@@ -1201,3 +1201,21 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 /* Light theme removed */
 
+.task-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.task-input::placeholder {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
