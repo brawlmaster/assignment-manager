@@ -269,7 +269,7 @@ importanceInput?.addEventListener('input', syncImportanceLabel);
 importanceInput?.addEventListener('change', syncImportanceLabel);
 
 importButton?.addEventListener('click', ()=> importFile?.click());
-importFile?.addEventListener('change', async ()=>{ const file=importFile.files?.[0]; if(!file) return; const text=await file.text(); try{ const imported=JSON.parse(text); let list=Array.isArray(imported)?imported:imported?.tasks; if(!list and imported?.type==='focus-tasks-backup') list=imported.tasks; if(!Array.isArray(list)) throw new Error('Invalid file'); const normalized=list.map(t=>({ id: typeof t.id==='string'&&t.id?t.id:uid(), title:String(t.title||'Untitled task'), due: Number.isFinite(+t.due)? +t.due : new Date(t.due).getTime() || (nowMs()+ONE_DAY_MS), importance: Math.min(10, Math.max(1, Number(t.importance??5))), notes:String(t.notes||''), url: String(t.url||''), tags: Array.isArray(t.tags)? t.tags.map(String) : [], completed:Boolean(t.completed), createdAt: Number.isFinite(+t.createdAt)? +t.createdAt : nowMs(), recurrence: t.recurrence||'none' })); await dbTxn(['tasks'],'readwrite',(s)=>{ normalized.forEach(t=> s.put(t)); }); await loadTasks(); render(); await refreshReminders(); } catch(e){ alert('Import failed: '+ e.message); } finally { importFile.value=''; } });
+importFile?.addEventListener('change', async ()=>{ const file=importFile.files?.[0]; if(!file) return; const text=await file.text(); try{ const imported=JSON.parse(text); let list=Array.isArray(imported)?imported:imported?.tasks; if(!list && imported?.type==='focus-tasks-backup') list=imported.tasks; if(!Array.isArray(list)) throw new Error('Invalid file'); const normalized=list.map(t=>({ id: typeof t.id==='string'&&t.id?t.id:uid(), title:String(t.title||'Untitled task'), due: Number.isFinite(+t.due)? +t.due : new Date(t.due).getTime() || (nowMs()+ONE_DAY_MS), importance: Math.min(10, Math.max(1, Number(t.importance??5))), notes:String(t.notes||''), url: String(t.url||''), tags: Array.isArray(t.tags)? t.tags.map(String) : [], completed:Boolean(t.completed), createdAt: Number.isFinite(+t.createdAt)? +t.createdAt : nowMs(), recurrence: t.recurrence||'none' })); await dbTxn(['tasks'],'readwrite',(s)=>{ normalized.forEach(t=> s.put(t)); }); await loadTasks(); render(); await refreshReminders(); } catch(e){ alert('Import failed: '+ e.message); } finally { importFile.value=''; } });
 
 // Streak settings
 async function getSetting(key){ return dbTxn(['tasks'],'readonly',()=>{}).then(()=> dbTxn(['settings'],'readonly',(s)=> new Promise((resolve)=>{ const r=s.get(key); r.onsuccess=()=> resolve(r.result?.value); r.onerror=()=> resolve(undefined); }))).catch(()=>undefined); }
@@ -591,8 +591,6 @@ function updateStats() {
 }
 
 // Widget event listeners
-const weatherRefresh = document.getElementById('weatherRefresh');
-const quoteRefresh = document.getElementById('quoteRefresh');
 weatherRefresh?.addEventListener('click', loadWeather);
 document.getElementById('weatherLocationBtn')?.addEventListener('click', async () => {
 	const newLocation = prompt('Enter your city name:');
