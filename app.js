@@ -713,7 +713,9 @@ class MusicPlayer {
 
   init() {
     // Set initial volume
-    this.audio.volume = this.volumeSlider.value / 100;
+    try {
+      this.audio.volume = Math.min(1, Math.max(0, (this.volumeSlider?.value || 50) / 100));
+    } catch {}
     
     // Event listeners with error handling
     if (this.playPauseBtn) {
@@ -759,7 +761,7 @@ class MusicPlayer {
     this.audio.play().catch(error => {
       console.log('Audio play failed:', error);
       // Show user-friendly message
-      this.showToast('Click to enable audio playback');
+      this.showToast('Click the Play button to enable audio');
     });
   }
 
