@@ -1,0 +1,1475 @@
+/* Layout spacing */
+.app-main{ display:grid; align-items:start; justify-items:center; padding:0 }
+
+/* App shell two-column layout */
+.app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 0 20px 24px; align-items:start; max-width:1180px; margin:0 auto; position: relative; z-index: 10 }
+@media (min-width: 1200px){
+  .app-layout{ grid-template-columns: 320px 1fr; max-width: 1300px; }
+}
+@media (max-width: 900px){ 
+  .app-layout{ 
+    grid-template-columns: 1fr; 
+    padding: 32px 20px 24px;
+  } 
+}
+
+
+/* Theme tokens */
+:root{
+  --bg:#070b14;
+  --card:#0d1322;
+  --text:#e6ecff;
+  --muted:#9bb0d3;
+  --primary:#3b82f6;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --border:#1d263d;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --glass-bg: rgba(13, 19, 34, 0.55);
+  --glass-border: rgba(255,255,255,0.08);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+html{
+  background: linear-gradient(135deg, #0a0f1a 0%, #1e2a3a 50%, #0a0f1a 100%);
+  min-height: 100vh;
+  background-attachment: fixed;
+  background-size: cover;
+}
+body{
+  margin:0;
+  font-family:'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: linear-gradient(135deg, #0a0f1a 0%, #1e2a3a 50%, #0a0f1a 100%);
+  color:var(--text);
+  min-height: 100vh;
+  height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.app-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border-bottom:1px solid var(--glass-border);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  backdrop-filter: blur(10px) saturate(120%);
+  position:sticky; top:0; z-index:10;
+  position: relative;
+  z-index: 10;
+}
+.header-brand{ display:flex; align-items:center; gap:8px }
+.header-icon{ color:var(--primary); flex-shrink:0 }
+.app-header h1{margin:0; font-size:20px; font-weight:700; letter-spacing:.3px}
+
+.center-card{
+  width:min(820px, 92vw);
+  background: var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-radius:16px; padding:20px 18px; box-shadow:var(--shadow);
+}
+
+.controls-row{ display:flex; gap:10px; align-items:center; margin-bottom:12px }
+.controls-row .input{ min-width: 170px; }
+.controls-row .btn{ white-space: nowrap; }
+.spacer{ flex:1 }
+.input{ background:#0b1120; border:1px solid var(--border); color:var(--text); border-radius:10px; padding:10px; font-size:14px }
+
+.progress-row{ display:grid; grid-template-columns: 80px 1fr 60px; gap:12px; align-items:center; margin-bottom:12px }
+.progress-label{ color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.8px }
+.progress-bar{ width:100%; height:10px; background:#0b1120; border-radius:999px; overflow:hidden; border:1px solid var(--border); position:relative }
+.progress-fill{ position:absolute; left:0; top:0; height:100%; width:100%; transform:scaleX(0); transform-origin:left; background:linear-gradient(90deg, var(--success), #32d399); transition:transform .3s ease }
+.progress-pct{ text-align:right; font-variant-numeric:tabular-nums; color:var(--muted) }
+
+.task-list{ list-style:none; margin:12px 0; padding:0; display:flex; flex-direction:column; gap:10px }
+.group-header{ list-style:none; margin:10px 0 2px 0; padding:6px 10px; color:var(--muted); border-left:3px solid var(--primary); background: rgba(11,17,32,0.4); border-radius:8px }
+
+/* deploy: bump v5 */
+.task-list.compact{ gap:6px }
+.task-item{
+  display:grid; grid-template-columns: 28px 1fr auto; gap:12px; align-items:center;
+  background: rgba(10,18,34,0.55); border:1px solid var(--glass-border); border-radius:12px; padding:12px;
+  backdrop-filter: blur(8px) saturate(140%);
+}
+.task-item .title{ font-weight:600 }
+.task-item .meta{ color:var(--muted); font-size:12px }
+.task-item .badges{ display:flex; gap:8px; align-items:center }
+.badge{ display:inline-flex; align-items:center; justify-content:center; padding:4px 10px; border-radius:999px; font-size:11px; line-height:1; border:1px solid var(--border); color:var(--muted) }
+.badge.alert{ background:rgba(239,68,68,.15); color:#fecaca; border-color:#7f1d1d }
+.badge.ok{ background:rgba(34,197,94,.15); color:#bbf7d0; border-color:#14532d }
+
+/* Importance dot and title row */
+.title-row{ display:flex; align-items:center; gap:8px }
+.dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 0 2px rgba(0,0,0,.25) inset; }
+
+/* Tag chips */
+.chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:6px }
+.chip{ padding:2px 8px; border-radius:999px; font-size:11px; background:rgba(59,130,246,.12); color:#bcd0ff; border:1px solid rgba(59,130,246,.28) }
+
+.actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:8px }
+
+.btn{ 
+  appearance:none; border:none; cursor:pointer; padding:10px 14px; border-radius:10px; font-weight:600; color:var(--text);
+  background: rgba(17,24,39,0.6); border:1px solid var(--glass-border);
+  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease, background .3s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s;
+}
+.btn:hover::before {
+  left: 100%;
+}
+.btn:hover{ filter:brightness(1.05) }
+.btn:active{ transform:translateY(1px) }
+.btn-primary{ background:linear-gradient(180deg, rgba(74,163,255,.2), rgba(59,130,246,.1)), var(--primary); border-color:#1e40af; white-space: nowrap; }
+.btn-danger{ background:linear-gradient(180deg, rgba(239,68,68,.25), rgba(239,68,68,.1)), var(--danger); border-color:#7f1d1d }
+.btn-ghost{ background:transparent; border-color:var(--border) }
+
+.icon-btn{ background:rgba(17,24,39,0.35); border:1px solid var(--glass-border); padding:8px; border-radius:10px; cursor:pointer; color:var(--muted); transition: transform .2s ease, background .2s ease, border-color .2s ease, color .2s ease; backdrop-filter: blur(6px) }
+.icon-btn:hover{ color:#fff; border-color:#334155; background:#0f172a; transform: translateY(-1px) scale(1.03) }
+.icon-danger{ color:#fecaca; border-color:#7f1d1d; background:rgba(239,68,68,.08) }
+.icon-danger:hover{ background:rgba(239,68,68,.15); color:#fff }
+
+.toast{ position:fixed; left:50%; bottom:20px; transform:translate(-50%, 14px); opacity:0; transition: transform .25s ease, opacity .25s ease; z-index:1000; pointer-events:none }
+.toast.show{ transform:translate(-50%, 0); opacity:1; pointer-events:auto }
+.toast-content{ display:flex; gap:10px; align-items:center; background: rgba(11,17,32,0.6); border:1px solid var(--glass-border); padding:10px 12px; border-radius:12px; box-shadow:var(--shadow); backdrop-filter: blur(10px) }
+
+/* Appear animations */
+@keyframes fadeSlideIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+@keyframes slideInFromLeft { from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes slideInFromRight { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.3); } 50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); } }
+@keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+
+.task-item.animate-in{ animation: fadeSlideIn .38s ease both; }
+.task-item.completed{ animation: taskCompleted .6s ease both; }
+.insight-card { 
+  animation: slideInFromLeft 0.5s ease both; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.insight-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(0,0,0,.5), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+.app-header { animation: slideInFromRight 0.5s ease both; }
+.btn:hover { animation: pulse 0.3s ease; }
+.btn-primary { animation: glow 2s ease-in-out infinite; }
+.center-card { animation: float 6s ease-in-out infinite; }
+
+@keyframes taskCompleted { 
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+
+dialog[open]{ animation: fadeSlideIn .2s ease }
+
+dialog{ border:none; border-radius:16px; padding:0; background: rgba(13,19,34,0.6); color:var(--text); width:min(520px, 92vw); box-shadow:var(--shadow); backdrop-filter: blur(12px) }
+dialog::backdrop{ background:rgba(0,0,0,.6) }
+dialog form{ display:flex; flex-direction:column; padding:16px; gap:12px }
+dialog h2{ margin:0 0 6px 0 }
+dialog label{ display:flex; flex-direction:column; gap:6px; font-size:14px }
+input, textarea, select{
+  background: rgba(11,17,32,0.6); border:1px solid var(--glass-border); color:var(--text); border-radius:10px; padding:10px; font-size:14px; backdrop-filter: blur(6px);
+}
+.dialog-actions{ display:flex; gap:10px; justify-content:flex-end; padding-top:6px }
+
+.checkbox{ width:18px; height:18px; border-radius:6px; border:1px solid var(--border); display:grid; place-items:center; background:#0b1120 }
+input[type="checkbox"]{ width:18px; height:18px }
+
+.hint{ color:var(--muted); font-size:12px }
+
+/* Keyboard shortcuts dialog */
+.shortcuts-list{ display:flex; flex-direction:column; gap:12px; margin:12px 0 }
+.shortcut-item{ display:flex; align-items:center; gap:12px; padding:8px 0 }
+.shortcut-item kbd{ 
+  background: rgba(11,17,32,0.6); 
+  border:1px solid var(--glass-border); 
+  border-radius:6px; 
+  padding:4px 8px; 
+  font-size:12px; 
+  font-family:monospace; 
+  min-width:80px; 
+  text-align:center;
+  color:var(--primary);
+}
+
+/* Insights (now vertical sidebar) */
+.insights-grid{ display:flex; flex-direction:column; gap:16px; padding: 0; width: 100%; max-width: 300px; margin: 0 }
+.insight-card{ background: var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(10px) saturate(140%); border-radius:16px; padding:16px; box-shadow: var(--shadow) }
+.insight-card h3{ margin:0 0 6px 0 }
+.insight-metric{ font-size:24px; font-weight:700 }
+.insight-sub{ color:var(--muted); font-size:12px }
+.timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
+.timer-actions{ display:flex; gap:8px }
+
+/* Weather widget */
+.weather-display{ display:flex; align-items:center; gap:12px; margin:8px 0 }
+.weather-icon{ font-size:32px; line-height:1 }
+.weather-info{ flex:1 }
+.weather-temp{ font-size:24px; font-weight:700 }
+.weather-desc{ color:var(--muted); font-size:12px; margin-top:2px }
+.weather-location{ color:var(--muted); font-size:11px; margin-top:4px }
+
+/* Quote widget */
+.quote-content{ font-style:italic; margin:8px 0; line-height:1.4; color:var(--text) }
+.quote-author{ color:var(--muted); font-size:12px; text-align:right; margin-top:4px }
+
+/* Stats widget */
+.stats-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin:8px 0 }
+.stat-item{ text-align:center; padding:8px; background:rgba(11,17,32,0.3); border-radius:8px; border:1px solid var(--glass-border) }
+.stat-value{ font-size:20px; font-weight:700; color:var(--primary) }
+.stat-label{ color:var(--muted); font-size:10px; margin-top:2px }
+@media (max-width: 900px){ 
+  .insights-grid{ 
+    max-width:100%;
+    margin-bottom: 32px;
+  } 
+}
+
+/* Music Player */
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: rgba(26, 35, 50, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px;
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Mobile Optimization - Modern Mobile-First Approach */
+
+/* Mobile Layout (768px and below) */
+@media (max-width: 768px) {
+  /* Reset layout to single column */
+  .app-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 16px !important;
+    max-width: 100% !important;
+  }
+
+  /* Header - Compact but readable */
+  .app-header {
+    flex-direction: row !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .header-brand {
+    justify-content: flex-start !important;
+  }
+
+  .app-header h1 {
+    font-size: 18px !important;
+    margin: 0 !important;
+  }
+
+  .icon-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    padding: 8px !important;
+  }
+
+  /* Widgets - Horizontal scrollable row */
+  .insights-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+    overflow-x: auto !important;
+    padding-bottom: 8px !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .insights-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .insight-card {
+    flex: 0 0 200px !important;
+    padding: 16px 12px !important;
+    font-size: 14px !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+  }
+
+  .insight-card h3 {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .insight-metric {
+    font-size: 24px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .insight-sub {
+    font-size: 12px !important;
+  }
+
+  /* Main content area */
+  .center-card {
+    width: 100% !important;
+    padding: 20px 16px !important;
+    border-radius: 16px !important;
+    margin: 0 !important;
+  }
+
+  .center-card h2 {
+    font-size: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  /* Task input - Stacked for mobile */
+  .task-input-group {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .task-input {
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+
+  .btn {
+    padding: 14px 20px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    min-height: 48px !important;
+    width: 100% !important;
+  }
+
+  .btn-primary {
+    width: 100% !important;
+  }
+
+  /* Task items - Compact but readable */
+  .task-item {
+    padding: 12px 10px !important;
+    border-radius: 12px !important;
+    margin-bottom: 8px !important;
+    grid-template-columns: 28px 1fr auto !important;
+    gap: 12px !important;
+  }
+
+  .task-content {
+    gap: 8px !important;
+  }
+
+  .task-text {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+  }
+
+  .task-meta {
+    font-size: 12px !important;
+    gap: 8px !important;
+  }
+
+  /* Task actions - Touch-friendly */
+  .task-actions {
+    gap: 8px !important;
+  }
+
+  .task-actions .btn {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    min-height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Filters - Stacked for mobile */
+  .filters-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .filter-group {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .input {
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+
+  /* Music player - Bottom fixed, compact */
+  .music-player {
+    position: fixed !important;
+    bottom: 16px !important;
+    right: 16px !important;
+    left: 16px !important;
+    width: auto !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    z-index: 1000 !important;
+  }
+
+  .music-player.minimized {
+    width: auto !important;
+    max-width: 200px !important;
+    height: 60px !important;
+    padding: 8px 16px !important;
+  }
+
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .player-header h3 {
+    font-size: 14px !important;
+  }
+
+  .vinyl-player {
+    height: 80px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .vinyl-record {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .track-info span {
+    font-size: 12px !important;
+  }
+
+  .track-info span:first-child {
+    font-size: 14px !important;
+  }
+
+  .control-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .volume-slider {
+    height: 6px !important;
+  }
+}
+
+/* Small mobile devices (480px and below) */
+@media (max-width: 480px) {
+  .app-layout {
+    padding: 12px !important;
+    gap: 12px !important;
+  }
+
+  .app-header {
+    padding: 8px 12px !important;
+    gap: 8px !important;
+  }
+
+  .app-header h1 {
+    font-size: 16px !important;
+  }
+
+  .icon-btn {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
+    padding: 6px !important;
+  }
+
+  .insights-grid {
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .insight-card {
+    flex: 0 0 160px !important;
+    padding: 12px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .insight-card h3 {
+    font-size: 12px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .insight-metric {
+    font-size: 20px !important;
+  }
+
+  .insight-sub {
+    font-size: 10px !important;
+  }
+
+  .center-card {
+    padding: 16px 12px !important;
+  }
+
+  .center-card h2 {
+    font-size: 18px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .task-input {
+    padding: 12px 14px !important;
+    font-size: 16px !important;
+    min-height: 44px !important;
+  }
+
+  .btn {
+    padding: 12px 16px !important;
+    font-size: 16px !important;
+    min-height: 44px !important;
+  }
+
+  .task-item {
+    padding: 10px 8px !important;
+  }
+
+  .task-text {
+    font-size: 15px !important;
+  }
+
+  .task-actions .btn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    min-height: 32px !important;
+    min-width: 32px !important;
+  }
+
+  .music-player {
+    bottom: 12px !important;
+    right: 12px !important;
+    left: 12px !important;
+    padding: 12px !important;
+  }
+
+  .music-player.minimized {
+    max-width: 160px !important;
+    height: 50px !important;
+    padding: 6px 12px !important;
+  }
+
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .player-header h3 {
+    font-size: 12px !important;
+  }
+
+  .vinyl-player {
+    height: 60px !important;
+  }
+
+  .vinyl-record {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .track-info span {
+    font-size: 10px !important;
+  }
+
+  .track-info span:first-child {
+    font-size: 12px !important;
+  }
+
+  .control-btn {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 40px !important;
+    min-height: 40px !important;
+  }
+}
+
+/* Extra small mobile devices (360px and below) */
+@media (max-width: 360px) {
+  .app-layout {
+    padding: 8px !important;
+    gap: 8px !important;
+  }
+
+  .app-header {
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+
+  .app-header h1 {
+    font-size: 14px !important;
+  }
+
+  .icon-btn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 10px !important;
+    padding: 4px !important;
+  }
+
+  .insights-grid {
+    gap: 6px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .insight-card {
+    flex: 0 0 140px !important;
+    padding: 10px 8px !important;
+    font-size: 11px !important;
+  }
+
+  .insight-card h3 {
+    font-size: 11px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .insight-metric {
+    font-size: 18px !important;
+  }
+
+  .insight-sub {
+    font-size: 9px !important;
+  }
+
+  .center-card {
+    padding: 12px 8px !important;
+  }
+
+  .center-card h2 {
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .task-input {
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+    min-height: 40px !important;
+  }
+
+  .btn {
+    padding: 10px 14px !important;
+    font-size: 16px !important;
+    min-height: 40px !important;
+  }
+
+  .task-item {
+    padding: 8px 6px !important;
+  }
+
+  .task-text {
+    font-size: 14px !important;
+  }
+
+  .task-actions .btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    min-height: 28px !important;
+    min-width: 28px !important;
+  }
+
+  .music-player {
+    bottom: 8px !important;
+    right: 8px !important;
+    left: 8px !important;
+    padding: 10px !important;
+  }
+
+  .music-player.minimized {
+    max-width: 140px !important;
+    height: 45px !important;
+    padding: 5px 10px !important;
+  }
+
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
+  .player-header h3 {
+    font-size: 11px !important;
+  }
+
+  .vinyl-player {
+    height: 50px !important;
+  }
+
+  .vinyl-record {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .track-info span {
+    font-size: 9px !important;
+  }
+
+  .track-info span:first-child {
+    font-size: 11px !important;
+  }
+
+  .control-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+}
+
+/* Touch-friendly improvements and disable hover effects on mobile */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects for better touch experience */
+  .control-btn:hover,
+  .play-pause-btn:hover,
+  .skip-btn:hover,
+  .music-player:hover,
+  .insight-card:hover,
+  .task-item:hover,
+  .btn:hover,
+  .icon-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Increase touch targets */
+  .control-btn,
+  .play-pause-btn,
+  .skip-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .btn {
+    min-height: 44px !important;
+  }
+
+  .icon-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .task-actions .btn {
+    min-height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Improve active states */
+  .control-btn:active,
+  .play-pause-btn:active,
+  .skip-btn:active,
+  .btn:active,
+  .icon-btn:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Better focus states */
+  .task-input:focus,
+  .input:focus {
+    outline: 2px solid var(--primary) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Prevent text selection on buttons */
+  .btn,
+  .icon-btn,
+  .control-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+  
+  .player-header h3 {
+    font-size: 12px;
+  }
+  
+  .vinyl-player {
+    height: 80px;
+    margin-bottom: 8px;
+  }
+  
+  .vinyl-record {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .record-center {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .record-grooves {
+    width: 42px;
+    height: 42px;
+  }
+  
+  .control-buttons {
+    gap: 4px;
+    margin: 4px 0;
+  }
+  
+  .control-btn {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 10px;
+  }
+  
+  .play-pause-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+  
+  .track-info span {
+    font-size: 10px;
+  }
+  
+  .track-info span:first-child {
+    font-size: 11px;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .app-layout {
+    padding: 6px 8px 16px;
+  }
+  
+  .app-main {
+    padding: 4px 8px 16px;
+  }
+  
+  .app-header {
+    padding: 8px 10px;
+  }
+  
+  .header-brand h1 {
+    font-size: 16px;
+  }
+  
+  .insights-grid {
+    gap: 6px;
+  }
+  
+  .insight-card {
+    min-width: 100px;
+    padding: 10px 8px;
+  }
+  
+  .insight-card h3 {
+    font-size: 12px;
+  }
+  
+  .insight-metric {
+    font-size: 14px;
+  }
+  
+  .center-card {
+    padding: 12px 10px;
+  }
+  
+  .center-card h2 {
+    font-size: 16px;
+  }
+  
+  .task-input {
+    padding: 10px 12px;
+  }
+  
+  .btn {
+    padding: 10px 14px;
+    min-height: 40px;
+  }
+  
+  .task-item {
+    padding: 10px 8px;
+  }
+  
+  .task-text {
+    font-size: 14px;
+  }
+  
+  .music-player {
+    bottom: 6px;
+    right: 6px;
+    left: 6px;
+    padding: 8px;
+  }
+  
+  .music-player.minimized {
+    max-width: 160px;
+    height: 40px;
+    padding: 4px 8px;
+  }
+}
+
+.music-player:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.music-player.minimized {
+  width: 220px;
+  height: 48px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.music-player.minimized .vinyl-player,
+.music-player.minimized .player-controls {
+  display: none;
+}
+
+.music-player.minimized .player-header {
+  margin-bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.music-player.minimized .player-header h3 {
+  margin: 0;
+  text-align: left;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-player.minimized .header-controls {
+  display: flex;
+  align-items: center;
+}
+
+.music-player.minimized .minimize-btn svg {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease;
+}
+
+.music-player.minimized .minimize-btn {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #3b82f6;
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.player-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.update-banner{
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: rgba(11,17,32,0.8);
+  border: 1px solid var(--glass-border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.player-toggle {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #3b82f6;
+}
+
+.update-banner{
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  background: rgba(11,17,32,0.8);
+  border: 1px solid var(--glass-border);
+  padding: 10px 12px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.player-toggle:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.vinyl-player {
+  position: relative;
+  height: 120px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vinyl-record {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  position: relative;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.vinyl-record.playing {
+  animation: recordSpin 2s linear infinite;
+}
+
+.record-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(45deg, #gold, #ffd700);
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+
+.record-grooves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    transparent 0px,
+    transparent 1px,
+    rgba(255, 255, 255, 0.1) 1px,
+    rgba(255, 255, 255, 0.1) 2px
+  );
+}
+
+.vinyl-arm {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.5s ease;
+}
+
+.vinyl-arm.playing {
+  transform: translateY(-50%) rotate(-15deg);
+}
+
+.arm-base {
+  width: 4px;
+  height: 40px;
+  background: linear-gradient(to bottom, #666, #333);
+  border-radius: 2px;
+  position: relative;
+}
+
+.arm-needle {
+  width: 2px;
+  height: 20px;
+  background: #999;
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-info span {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.track-info span:first-child {
+  font-weight: 600;
+  color: #fff;
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.control-btn {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  min-height: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.control-btn:hover::before {
+  left: 100%;
+}
+
+.control-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Touch-friendly improvements and disable hover effects on mobile */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects for better touch experience */
+  .control-btn:hover,
+  .play-pause-btn:hover,
+  .skip-btn:hover,
+  .music-player:hover,
+  .insight-card:hover,
+  .task-item:hover,
+  .btn:hover,
+  .icon-btn:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .control-btn:hover::before {
+    left: -100%;
+  }
+  
+  /* Increase touch targets */
+  .btn {
+    min-height: 44px;
+  }
+  
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .task-actions .btn {
+    min-height: 36px;
+    min-width: 36px;
+  }
+  
+  /* Improve touch feedback */
+  .btn:active,
+  .icon-btn:active,
+  .control-btn:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  
+  /* Better focus states for accessibility */
+  .btn:focus,
+  .icon-btn:focus,
+  .control-btn:focus,
+  .task-input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}
+
+.control-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.skip-btn {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(75, 85, 99, 0.05) 100%);
+  border-color: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+}
+
+.skip-btn:hover {
+  background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(75, 85, 99, 0.1) 100%);
+  border-color: rgba(107, 114, 128, 0.3);
+  color: #d1d5db;
+}
+
+.play-pause-btn {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #3b82f6;
+  min-width: 48px;
+  min-height: 48px;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+}
+
+.play-pause-btn:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.15) 100%);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #60a5fa;
+  box-shadow: 
+    0 0 0 1px rgba(59, 130, 246, 0.2),
+    0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  background: #3b82f6;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+@keyframes recordSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Particle effects */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  animation: particleFloat 15s linear infinite;
+}
+
+.particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 20s; }
+.particle:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 18s; }
+.particle:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 22s; }
+.particle:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 16s; }
+.particle:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 24s; }
+.particle:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 19s; }
+.particle:nth-child(7) { left: 70%; animation-delay: 12s; animation-duration: 21s; }
+.particle:nth-child(8) { left: 80%; animation-delay: 14s; animation-duration: 17s; }
+.particle:nth-child(9) { left: 90%; animation-delay: 16s; animation-duration: 23s; }
+.particle:nth-child(10) { left: 95%; animation-delay: 18s; animation-duration: 20s; }
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(90vh) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(10vh) scale(1);
+  }
+  100% {
+    transform: translateY(-10vh) scale(0);
+    opacity: 0;
+  }
+}
+
+
+
+/* Light theme removed */
+
+.task-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.task-input::placeholder {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
