@@ -657,3 +657,72 @@ render = function() {
   updateStats();
 };
 
+// Whale Animation with JavaScript
+function animateWhales() {
+  const whale1 = document.querySelector('.whale-1');
+  const whale2 = document.querySelector('.whale-2');
+  const whale3 = document.querySelector('.whale-3');
+  
+  if (!whale1 || !whale2 || !whale3) return;
+  
+  // Set initial positions
+  whale1.style.left = '-200px';
+  whale1.style.top = '20vh';
+  whale2.style.left = '-200px';
+  whale2.style.top = '50vh';
+  whale3.style.left = '-200px';
+  whale3.style.top = '80vh';
+  
+  // Animate whale 1
+  let whale1X = -200;
+  let whale1Y = 20;
+  const whale1Interval = setInterval(() => {
+    whale1X += 2;
+    whale1Y += Math.sin(whale1X * 0.01) * 0.5;
+    whale1.style.left = whale1X + 'px';
+    whale1.style.top = whale1Y + 'vh';
+    
+    if (whale1X > window.innerWidth + 200) {
+      whale1X = -200;
+      whale1Y = 20;
+    }
+  }, 50);
+  
+  // Animate whale 2 (delayed)
+  setTimeout(() => {
+    let whale2X = -200;
+    let whale2Y = 50;
+    const whale2Interval = setInterval(() => {
+      whale2X += 1.5;
+      whale2Y += Math.sin(whale2X * 0.008) * 0.3;
+      whale2.style.left = whale2X + 'px';
+      whale2.style.top = whale2Y + 'vh';
+      
+      if (whale2X > window.innerWidth + 200) {
+        whale2X = -200;
+        whale2Y = 50;
+      }
+    }, 50);
+  }, 5000);
+  
+  // Animate whale 3 (more delayed)
+  setTimeout(() => {
+    let whale3X = -200;
+    let whale3Y = 80;
+    const whale3Interval = setInterval(() => {
+      whale3X += 1.2;
+      whale3Y += Math.sin(whale3X * 0.012) * 0.4;
+      whale3.style.left = whale3X + 'px';
+      whale3.style.top = whale3Y + 'vh';
+      
+      if (whale3X > window.innerWidth + 200) {
+        whale3X = -200;
+        whale3Y = 80;
+      }
+    }, 50);
+  }, 10000);
+}
+
+// Start whale animation when page loads
+document.addEventListener('DOMContentLoaded', animateWhales);
+

@@ -254,18 +254,15 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 .whale-1 {
-  animation: swim1 15s linear infinite;
-  animation-delay: 0s;
+  /* JavaScript will handle animation */
 }
 
 .whale-2 {
-  animation: swim2 20s linear infinite;
-  animation-delay: 5s;
+  /* JavaScript will handle animation */
 }
 
 .whale-3 {
-  animation: swim3 25s linear infinite;
-  animation-delay: 10s;
+  /* JavaScript will handle animation */
 }
 
 /* Realistic Whale Body */
@@ -360,32 +357,7 @@ input[type="checkbox"]{ width:18px; height:18px }
   border-radius: 50%;
 }
 
-@keyframes swim1 {
-  0% {
-    transform: translateX(-100px) translateY(20vh);
-  }
-  100% {
-    transform: translateX(100vw) translateY(20vh);
-  }
-}
 
-@keyframes swim2 {
-  0% {
-    transform: translateX(-100px) translateY(50vh);
-  }
-  100% {
-    transform: translateX(100vw) translateY(50vh);
-  }
-}
-
-@keyframes swim3 {
-  0% {
-    transform: translateX(-100px) translateY(80vh);
-  }
-  100% {
-    transform: translateX(100vw) translateY(80vh);
-  }
-}
 
 
 
