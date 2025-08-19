@@ -88,6 +88,7 @@ const toastUndoEl = document.getElementById('toastUndo');
 const settingsButton = document.getElementById('settingsButton');
 const shortcutsButton = document.getElementById('shortcutsButton');
 const shortcutsDialog = document.getElementById('shortcutsDialog');
+const mobileSwitchButton = document.getElementById('mobileSwitchButton');
 const shortcutsClose = document.getElementById('shortcutsClose');
 const settingsDialog = document.getElementById('settingsDialog');
 const settingsForm = document.getElementById('settingsForm');
@@ -729,7 +730,8 @@ async function setupUpdateBanner() {
     const newWorker = reg.installing;
     if (!newWorker) return;
     newWorker.addEventListener('statechange', () => {
-      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+      const isUpdated = newWorker.state === 'installed' && navigator.serviceWorker.controller;
+      if (isUpdated) {
         if (updateBanner) updateBanner.hidden = false;
       }
     });
@@ -790,4 +792,8 @@ render = function(){ __origRender(); updateStats(); updateAppBadge(); };
 document.addEventListener('DOMContentLoaded', () => {
   addMobileOptimizations();
   setupUpdateBanner();
+  mobileSwitchButton?.addEventListener('click', () => {
+    try { localStorage.setItem('preferDesktop', 'false'); } catch {}
+    window.location.href = 'mobile.html';
+  });
 });
