@@ -681,12 +681,26 @@ class MusicPlayer {
     // Set initial volume
     this.audio.volume = this.volumeSlider.value / 100;
     
-    // Event listeners
-    this.playPauseBtn.addEventListener('click', () => this.togglePlay());
-    this.skipForward.addEventListener('click', () => this.skipForwardTime());
-    this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
-    this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
-    this.minimizeBtn.addEventListener('click', () => this.toggleMinimize());
+    // Event listeners with error handling
+    if (this.playPauseBtn) {
+      this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+    }
+    
+    if (this.skipForward) {
+      this.skipForward.addEventListener('click', () => this.skipForwardTime());
+    }
+    
+    if (this.skipBackward) {
+      this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
+    }
+    
+    if (this.volumeSlider) {
+      this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+    }
+    
+    if (this.minimizeBtn) {
+      this.minimizeBtn.addEventListener('click', () => this.toggleMinimize());
+    }
     
     // Audio event listeners
     this.audio.addEventListener('play', () => this.onPlay());
@@ -696,6 +710,7 @@ class MusicPlayer {
     console.log('Music player initialized');
     console.log('Play button found:', !!this.playPauseBtn);
     console.log('Skip buttons found:', !!this.skipForward, !!this.skipBackward);
+    console.log('Minimize button found:', !!this.minimizeBtn);
   }
 
   togglePlay() {
