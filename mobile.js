@@ -366,10 +366,12 @@ class MobileTaskManager {
         settingCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', () => {
                 this.saveSettings();
+                this.applySettings();
             });
         });
 
         this.loadSettings();
+        this.applySettings();
 
         // Bind add task modal controls
         this.bindAddTaskModalEvents();
@@ -401,6 +403,17 @@ class MobileTaskManager {
                 checkbox.checked = settings[key];
             }
         });
+    }
+
+    applySettings() {
+        // Apply visibility based on settings for available widgets/cards
+        const settings = JSON.parse(localStorage.getItem('mobileSettings') || '{}');
+        const showStreak = settings.hasOwnProperty('showStreak') ? !!settings.showStreak : true;
+
+        const streakCard = document.getElementById('cardStreak');
+        if (streakCard) {
+            streakCard.style.display = showStreak ? '' : 'none';
+        }
     }
 
     saveTasks() {
