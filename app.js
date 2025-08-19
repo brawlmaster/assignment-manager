@@ -806,8 +806,47 @@ class MusicPlayer {
   }
 }
 
+// Mobile-specific improvements
+function addMobileOptimizations() {
+  // Prevent zoom on double tap
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+
+  // Improve touch scrolling
+  document.addEventListener('touchstart', function() {}, {passive: true});
+  document.addEventListener('touchmove', function() {}, {passive: true});
+
+  // Add mobile-specific keyboard handling
+  document.addEventListener('keydown', function(e) {
+    // Prevent zoom on Ctrl/Cmd + scroll
+    if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
+      e.preventDefault();
+    }
+  });
+
+  // Improve input focus on mobile
+  const inputs = document.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      // Scroll to input on mobile
+      setTimeout(() => {
+        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    });
+  });
+
+  console.log('Mobile optimizations applied');
+}
+
 // Initialize music player when page loads
 document.addEventListener('DOMContentLoaded', () => {
   new MusicPlayer();
+  addMobileOptimizations();
 });
 

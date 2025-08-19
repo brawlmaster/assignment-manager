@@ -250,8 +250,172 @@ input[type="checkbox"]{ width:18px; height:18px }
   transition: all 0.3s ease;
 }
 
-/* Mobile Optimization */
+/* Mobile Optimization - Complete Page */
+
+/* Tablet and Mobile Layout */
 @media (max-width: 768px) {
+  /* Main Layout */
+  .app-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px 16px 24px;
+  }
+  
+  .app-main {
+    padding: 8px 16px 24px;
+    max-width: 100%;
+  }
+  
+  /* Header */
+  .app-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .header-left {
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .header-brand {
+    justify-content: center;
+  }
+  
+  .header-brand h1 {
+    font-size: 20px;
+  }
+  
+  .header-right {
+    justify-content: center;
+    gap: 16px;
+  }
+  
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    padding: 12px;
+  }
+  
+  /* Sidebar Widgets */
+  .insights-grid {
+    order: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0;
+    margin-bottom: 16px;
+  }
+  
+  .insight-card {
+    flex: 1;
+    min-width: 140px;
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+  
+  .insight-card h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
+  .insight-metric {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  
+  .insight-sub {
+    font-size: 12px;
+  }
+  
+  /* Task List */
+  .center-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .center-card h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  /* Task Input */
+  .task-input-group {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .task-input {
+    font-size: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+  
+  .btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    border-radius: 12px;
+    min-height: 48px;
+  }
+  
+  .btn-primary {
+    width: 100%;
+  }
+  
+  /* Task Items */
+  .task-item {
+    padding: 16px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .task-content {
+    gap: 12px;
+  }
+  
+  .task-text {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  
+  .task-meta {
+    font-size: 12px;
+    gap: 8px;
+  }
+  
+  /* Task Actions */
+  .task-actions {
+    gap: 8px;
+  }
+  
+  .task-actions .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-height: 36px;
+  }
+  
+  /* Filters and Search */
+  .filters-row {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .input {
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+  
+  /* Music Player */
   .music-player {
     bottom: 10px;
     right: 10px;
@@ -334,7 +498,142 @@ input[type="checkbox"]{ width:18px; height:18px }
   }
 }
 
+/* Small Mobile Devices */
 @media (max-width: 480px) {
+  /* Main Layout */
+  .app-layout {
+    padding: 8px 12px 20px;
+    gap: 12px;
+  }
+  
+  .app-main {
+    padding: 6px 12px 20px;
+  }
+  
+  /* Header */
+  .app-header {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  
+  .header-brand h1 {
+    font-size: 18px;
+  }
+  
+  .header-right {
+    gap: 12px;
+  }
+  
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+  }
+  
+  /* Sidebar Widgets */
+  .insights-grid {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .insight-card {
+    min-width: 120px;
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+  
+  .insight-card h3 {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  
+  .insight-metric {
+    font-size: 16px;
+  }
+  
+  .insight-sub {
+    font-size: 11px;
+  }
+  
+  /* Task List */
+  .center-card {
+    padding: 16px 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .center-card h2 {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  
+  /* Task Input */
+  .task-input-group {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .task-input {
+    font-size: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+  
+  .btn {
+    padding: 12px 16px;
+    font-size: 16px;
+    border-radius: 10px;
+    min-height: 44px;
+  }
+  
+  /* Task Items */
+  .task-item {
+    padding: 12px 10px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  
+  .task-content {
+    gap: 10px;
+  }
+  
+  .task-text {
+    font-size: 15px;
+  }
+  
+  .task-meta {
+    font-size: 11px;
+    gap: 6px;
+  }
+  
+  /* Task Actions */
+  .task-actions {
+    gap: 6px;
+  }
+  
+  .task-actions .btn {
+    padding: 6px 10px;
+    font-size: 13px;
+    min-height: 32px;
+  }
+  
+  /* Filters and Search */
+  .filters-row {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  
+  .filter-group {
+    gap: 6px;
+  }
+  
+  .input {
+    padding: 10px 14px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+  
+  /* Music Player */
   .music-player {
     bottom: 8px;
     right: 8px;
@@ -395,6 +694,80 @@ input[type="checkbox"]{ width:18px; height:18px }
   
   .track-info span:first-child {
     font-size: 11px;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .app-layout {
+    padding: 6px 8px 16px;
+  }
+  
+  .app-main {
+    padding: 4px 8px 16px;
+  }
+  
+  .app-header {
+    padding: 8px 10px;
+  }
+  
+  .header-brand h1 {
+    font-size: 16px;
+  }
+  
+  .insights-grid {
+    gap: 6px;
+  }
+  
+  .insight-card {
+    min-width: 100px;
+    padding: 10px 8px;
+  }
+  
+  .insight-card h3 {
+    font-size: 12px;
+  }
+  
+  .insight-metric {
+    font-size: 14px;
+  }
+  
+  .center-card {
+    padding: 12px 10px;
+  }
+  
+  .center-card h2 {
+    font-size: 16px;
+  }
+  
+  .task-input {
+    padding: 10px 12px;
+  }
+  
+  .btn {
+    padding: 10px 14px;
+    min-height: 40px;
+  }
+  
+  .task-item {
+    padding: 10px 8px;
+  }
+  
+  .task-text {
+    font-size: 14px;
+  }
+  
+  .music-player {
+    bottom: 6px;
+    right: 6px;
+    left: 6px;
+    padding: 8px;
+  }
+  
+  .music-player.minimized {
+    max-width: 160px;
+    height: 40px;
+    padding: 4px 8px;
   }
 }
 
@@ -622,9 +995,17 @@ input[type="checkbox"]{ width:18px; height:18px }
     0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Disable hover effects on mobile for better touch experience */
+/* Touch-friendly improvements and disable hover effects on mobile */
 @media (hover: none) and (pointer: coarse) {
-  .control-btn:hover {
+  /* Disable hover effects for better touch experience */
+  .control-btn:hover,
+  .play-pause-btn:hover,
+  .skip-btn:hover,
+  .music-player:hover,
+  .insight-card:hover,
+  .task-item:hover,
+  .btn:hover,
+  .icon-btn:hover {
     transform: none;
     box-shadow: none;
   }
@@ -633,17 +1014,36 @@ input[type="checkbox"]{ width:18px; height:18px }
     left: -100%;
   }
   
-  .play-pause-btn:hover {
-    transform: none;
-    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.1);
+  /* Increase touch targets */
+  .btn {
+    min-height: 44px;
   }
   
-  .skip-btn:hover {
-    transform: none;
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
   }
   
-  .music-player:hover {
-    transform: none;
+  .task-actions .btn {
+    min-height: 36px;
+    min-width: 36px;
+  }
+  
+  /* Improve touch feedback */
+  .btn:active,
+  .icon-btn:active,
+  .control-btn:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  
+  /* Better focus states for accessibility */
+  .btn:focus,
+  .icon-btn:focus,
+  .control-btn:focus,
+  .task-input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
 }
 
