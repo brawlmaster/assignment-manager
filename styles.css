@@ -248,53 +248,103 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .fish {
   position: absolute;
-  font-size: 20px;
-  opacity: 0.8;
+  font-size: 24px;
+  opacity: 0.9;
   z-index: 1;
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-  animation: fishSwim 15s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+  animation: fishSwim 15s linear infinite, fishWiggle 0.8s ease-in-out infinite;
 }
 
 .fish:nth-child(odd) {
-  animation-duration: 12s;
-  animation-delay: 0s;
+  animation-duration: 12s, 0.8s;
+  animation-delay: 0s, 0s;
 }
 
 .fish:nth-child(even) {
-  animation-duration: 18s;
-  animation-delay: 6s;
+  animation-duration: 18s, 0.8s;
+  animation-delay: 6s, 0.2s;
 }
 
 .fish:nth-child(3n) {
-  animation-duration: 20s;
-  animation-delay: 3s;
+  animation-duration: 20s, 0.8s;
+  animation-delay: 3s, 0.4s;
 }
 
 .fish:nth-child(4n) {
-  animation-duration: 14s;
-  animation-delay: 9s;
+  animation-duration: 14s, 0.8s;
+  animation-delay: 9s, 0.6s;
 }
 
 .fish:nth-child(5n) {
-  animation-duration: 16s;
-  animation-delay: 12s;
+  animation-duration: 16s, 0.8s;
+  animation-delay: 12s, 0.1s;
 }
 
-@keyframes fishSwim {
+/* Fish swimming from left to right */
+.fish-left {
+  animation: fishSwimLeft 15s linear infinite, fishWiggle 0.8s ease-in-out infinite;
+}
+
+/* Fish swimming from right to left */
+.fish-right {
+  animation: fishSwimRight 15s linear infinite, fishWiggle 0.8s ease-in-out infinite;
+  transform: scaleX(-1); /* Flip fish to face left */
+}
+
+@keyframes fishSwimLeft {
   0% {
-    transform: translateX(-50px) translateY(0vh) rotateY(0deg);
+    transform: translateX(-100px) translateY(10vh);
   }
-  25% {
-    transform: translateX(25vw) translateY(20vh) rotateY(0deg);
+  20% {
+    transform: translateX(20vw) translateY(25vh);
   }
-  50% {
-    transform: translateX(50vw) translateY(10vh) rotateY(0deg);
+  40% {
+    transform: translateX(40vw) translateY(15vh);
   }
-  75% {
-    transform: translateX(75vw) translateY(30vh) rotateY(0deg);
+  60% {
+    transform: translateX(60vw) translateY(35vh);
+  }
+  80% {
+    transform: translateX(80vw) translateY(20vh);
   }
   100% {
-    transform: translateX(100vw) translateY(15vh) rotateY(0deg);
+    transform: translateX(110vw) translateY(30vh);
+  }
+}
+
+@keyframes fishSwimRight {
+  0% {
+    transform: translateX(110vw) translateY(20vh);
+  }
+  20% {
+    transform: translateX(80vw) translateY(35vh);
+  }
+  40% {
+    transform: translateX(60vw) translateY(25vh);
+  }
+  60% {
+    transform: translateX(40vw) translateY(15vh);
+  }
+  80% {
+    transform: translateX(20vw) translateY(30vh);
+  }
+  100% {
+    transform: translateX(-100px) translateY(25vh);
+  }
+}
+
+@keyframes fishWiggle {
+  0%, 100% {
+    transform: translateY(0px) rotate(-5deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(1px) rotate(5deg);
+  }
+  75% {
+    transform: translateY(-1px) rotate(-2deg);
   }
 }
 

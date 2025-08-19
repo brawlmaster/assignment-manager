@@ -657,15 +657,29 @@ render = function() {
   updateStats();
 };
 
-// Simple fish positioning - CSS handles the animation
+// Position fish from sides of screen
 function positionFish() {
-  const fish = document.querySelectorAll('.fish');
-  fish.forEach((fishElement, index) => {
-    // Set random initial positions
-    const randomX = Math.random() * window.innerWidth;
+  const leftFish = document.querySelectorAll('.fish-left');
+  const rightFish = document.querySelectorAll('.fish-right');
+  
+  // Position left fish (swimming right)
+  leftFish.forEach((fishElement, index) => {
     const randomY = Math.random() * window.innerHeight;
-    fishElement.style.left = randomX + 'px';
+    fishElement.style.left = '-50px';
     fishElement.style.top = randomY + 'px';
+    fishElement.style.position = 'absolute';
+    fishElement.style.opacity = '1';
+    console.log(`Left fish ${index + 1} positioned at Y: ${randomY}`);
+  });
+  
+  // Position right fish (swimming left)
+  rightFish.forEach((fishElement, index) => {
+    const randomY = Math.random() * window.innerHeight;
+    fishElement.style.left = (window.innerWidth + 50) + 'px';
+    fishElement.style.top = randomY + 'px';
+    fishElement.style.position = 'absolute';
+    fishElement.style.opacity = '1';
+    console.log(`Right fish ${index + 1} positioned at Y: ${randomY}`);
   });
 }
 
