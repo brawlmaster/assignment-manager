@@ -4,12 +4,12 @@
  - Periodic background sync fallback
 */
 
-const CACHE_NAME = 'focus-tasks-cache-v4';
+const CACHE_NAME = 'focus-tasks-cache-v5';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
-  './app.js',
+  './app.js?v=3',
   './manifest.webmanifest',
   './icons/icon-192.png',
   './icons/icon-512.png',
