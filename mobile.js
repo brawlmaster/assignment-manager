@@ -260,10 +260,16 @@ class MobileTaskManager {
         const taskDiv = document.createElement('div');
         taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
         
+        const hue = Math.round(120 - ((Math.min(10, Math.max(1, task.importance)) - 1) / 9) * 120);
         taskDiv.innerHTML = `
             <div class="task-content">
                 <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-                <div class="task-text">${this.escapeHtml(task.text)}</div>
+                <div class="task-text">
+                    <div class="title-row">
+                        <span class="dot" style="background-color:hsl(${hue} 85% 50%)"></span>
+                        <span>${this.escapeHtml(task.text)}</span>
+                    </div>
+                </div>
             </div>
             <div class="task-actions">
                 <button class="btn btn-secondary delete-btn">Delete</button>

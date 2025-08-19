@@ -325,6 +325,19 @@ html, body {
     gap: 12px;
 }
 
+/* Importance dot row like desktop */
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(0,0,0,.25) inset;
+}
+
 .task-checkbox {
     width: 24px;
     height: 24px;
