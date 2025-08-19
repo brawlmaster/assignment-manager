@@ -57,6 +57,13 @@ class MobileTaskManager {
             this.showModal('helpModal');
         });
 
+        // View toggle: switch to desktop and remember preference
+        const viewToggle = document.getElementById('viewToggleBtn');
+        viewToggle?.addEventListener('click', () => {
+            try { localStorage.setItem('preferDesktop', 'true'); } catch {}
+            window.location.href = 'index.html';
+        });
+
         // Touch optimizations
         this.setupTouchOptimizations();
     }

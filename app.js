@@ -107,6 +107,7 @@ const toggleTimer = document.getElementById('toggleTimer');
 const toggleWeather = document.getElementById('toggleWeather');
 const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
+const viewToggleButton = document.getElementById('viewToggleButton');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -240,6 +241,12 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     shortcutsButton?.click();
   }
+});
+
+// View toggle: switch to mobile and remember preference
+viewToggleButton?.addEventListener('click', () => {
+  try { localStorage.setItem('preferDesktop', 'false'); } catch {}
+  window.location.href = 'mobile.html';
 });
 
 // Filter and sort event listeners

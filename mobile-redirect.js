@@ -17,6 +17,10 @@
         return localStorage.getItem('preferDesktop') === 'true';
     }
 
+    function hasMobilePreference() {
+        return localStorage.getItem('preferDesktop') === 'false';
+    }
+
     // Set desktop preference
     function setDesktopPreference() {
         localStorage.setItem('preferDesktop', 'true');
@@ -24,7 +28,7 @@
 
     // Redirect to mobile version
     function redirectToMobile() {
-        if (!isOnMobilePage() && !hasDesktopPreference()) {
+        if (!isOnMobilePage() && !hasDesktopPreference() && !hasMobilePreference()) {
             window.location.href = 'mobile.html';
         }
     }
