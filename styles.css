@@ -249,10 +249,10 @@ input[type="checkbox"]{ width:18px; height:18px }
 .fish {
   position: absolute;
   font-size: 32px;
-  opacity: 1;
+  opacity: 0;
   z-index: 5;
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
-  animation: fishWiggle 1s ease-in-out infinite;
+  transition: opacity 0.5s ease-in-out;
 }
 
 

@@ -671,25 +671,28 @@ class FishAnimation {
         element: element,
         x: 0,
         y: 0,
-        speed: 0.5 + Math.random() * 1.5, // Random speed between 0.5 and 2
+        prevY: 0,
+        speed: 0.3 + Math.random() * 0.7, // Slower speed between 0.3 and 1
         direction: Math.random() > 0.5 ? 1 : -1, // Random direction
-        wiggleOffset: Math.random() * Math.PI * 2, // Random wiggle phase
-        wiggleSpeed: 0.02 + Math.random() * 0.03, // Random wiggle speed
-        wiggleAmplitude: 2 + Math.random() * 3, // Random wiggle amplitude
-        startDelay: Math.random() * 2000 // Random start delay
+        startDelay: Math.random() * 3000 // Random start delay up to 3 seconds
       };
       
-      // Set initial position
+      // Set initial position and opacity
       if (fish.direction > 0) {
         // Swimming right
-        fish.x = -50;
-        fish.y = Math.random() * window.innerHeight;
+        fish.x = -100;
+        fish.y = 20 + Math.random() * (window.innerHeight - 100);
+        fish.prevY = fish.y;
       } else {
         // Swimming left
-        fish.x = window.innerWidth + 50;
-        fish.y = Math.random() * window.innerHeight;
+        fish.x = window.innerWidth + 100;
+        fish.y = 20 + Math.random() * (window.innerHeight - 100);
+        fish.prevY = fish.y;
         fish.element.style.transform = 'scaleX(-1)'; // Flip fish
       }
+      
+      // Start with 0 opacity for fade-in effect
+      fish.element.style.opacity = '0';
       
       this.fish.push(fish);
       
@@ -703,30 +706,58 @@ class FishAnimation {
   }
 
   animateFish(fish) {
+    // Fade in effect
+    let opacity = 0;
+    const fadeIn = setInterval(() => {
+      opacity += 0.02;
+      fish.element.style.opacity = opacity;
+      if (opacity >= 1) {
+        clearInterval(fadeIn);
+        fish.element.style.opacity = '1';
+      }
+    }, 20);
+    
     const animate = () => {
       // Update position
       fish.x += fish.speed * fish.direction;
+      fish.prevY = fish.y;
       
-      // Add wiggling motion
-      const wiggle = Math.sin(Date.now() * fish.wiggleSpeed + fish.wiggleOffset) * fish.wiggleAmplitude;
-      fish.y += wiggle * 0.1;
+      // Add natural wavy motion like whales
+      fish.y += Math.sin(fish.x * 0.01) * 0.3;
       
       // Keep fish within vertical bounds
       if (fish.y < 50) fish.y = 50;
       if (fish.y > window.innerHeight - 50) fish.y = window.innerHeight - 50;
       
+      // Calculate rotation based on movement direction (like whales)
+      const deltaY = fish.y - fish.prevY;
+      const rotation = Math.atan2(deltaY, fish.speed) * (180 / Math.PI) * 2;
+      
       // Reset fish when it goes off screen
-      if (fish.direction > 0 && fish.x > window.innerWidth + 100) {
-        fish.x = -50;
-        fish.y = Math.random() * window.innerHeight;
-      } else if (fish.direction < 0 && fish.x < -100) {
-        fish.x = window.innerWidth + 50;
-        fish.y = Math.random() * window.innerHeight;
+      if (fish.direction > 0 && fish.x > window.innerWidth + 200) {
+        fish.x = -100;
+        fish.y = 20 + Math.random() * (window.innerHeight - 100);
+        fish.prevY = fish.y;
+        // Fade out and back in
+        fish.element.style.opacity = '0';
+        setTimeout(() => {
+          fish.element.style.opacity = '1';
+        }, 500);
+      } else if (fish.direction < 0 && fish.x < -200) {
+        fish.x = window.innerWidth + 100;
+        fish.y = 20 + Math.random() * (window.innerHeight - 100);
+        fish.prevY = fish.y;
+        // Fade out and back in
+        fish.element.style.opacity = '0';
+        setTimeout(() => {
+          fish.element.style.opacity = '1';
+        }, 500);
       }
       
-      // Apply position
+      // Apply position and rotation
       fish.element.style.left = fish.x + 'px';
       fish.element.style.top = fish.y + 'px';
+      fish.element.style.transform = `${fish.direction < 0 ? 'scaleX(-1)' : 'scaleX(1)'} rotate(${rotation}deg)`;
       
       // Continue animation
       requestAnimationFrame(animate);
