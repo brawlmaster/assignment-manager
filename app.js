@@ -87,6 +87,7 @@ const toastUndoEl = document.getElementById('toastUndo');
 // Settings elements
 const settingsButton = document.getElementById('settingsButton');
 const shortcutsButton = document.getElementById('shortcutsButton');
+const mobileSwitchButton = document.getElementById('mobileSwitchButton');
 const shortcutsDialog = document.getElementById('shortcutsDialog');
 const shortcutsClose = document.getElementById('shortcutsClose');
 const settingsDialog = document.getElementById('settingsDialog');
@@ -222,6 +223,12 @@ if (quickAddButton) {
 // Keyboard shortcuts dialog
 shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
 shortcutsClose?.addEventListener('click', () => shortcutsDialog?.close());
+
+// Mobile switch (desktop -> mobile)
+mobileSwitchButton?.addEventListener('click', () => {
+  try { localStorage.setItem('preferDesktop', 'false'); } catch {}
+  window.location.href = 'mobile.html';
+});
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
