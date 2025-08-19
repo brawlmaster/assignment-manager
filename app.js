@@ -850,3 +850,4 @@ document.addEventListener('DOMContentLoaded', () => {
   addMobileOptimizations();
 });
 
+// Music player build version: v4
