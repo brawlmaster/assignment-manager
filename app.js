@@ -657,32 +657,87 @@ render = function() {
   updateStats();
 };
 
-// Position fish from sides of screen
-function positionFish() {
-  const leftFish = document.querySelectorAll('.fish-left');
-  const rightFish = document.querySelectorAll('.fish-right');
-  
-  // Position left fish (swimming right)
-  leftFish.forEach((fishElement, index) => {
-    const randomY = Math.random() * window.innerHeight;
-    fishElement.style.left = '-50px';
-    fishElement.style.top = randomY + 'px';
-    fishElement.style.position = 'absolute';
-    fishElement.style.opacity = '1';
-    console.log(`Left fish ${index + 1} positioned at Y: ${randomY}`);
-  });
-  
-  // Position right fish (swimming left)
-  rightFish.forEach((fishElement, index) => {
-    const randomY = Math.random() * window.innerHeight;
-    fishElement.style.left = (window.innerWidth + 50) + 'px';
-    fishElement.style.top = randomY + 'px';
-    fishElement.style.position = 'absolute';
-    fishElement.style.opacity = '1';
-    console.log(`Right fish ${index + 1} positioned at Y: ${randomY}`);
-  });
+// Fish animation system
+class FishAnimation {
+  constructor() {
+    this.fish = [];
+    this.init();
+  }
+
+  init() {
+    const fishElements = document.querySelectorAll('.fish');
+    fishElements.forEach((element, index) => {
+      const fish = {
+        element: element,
+        x: 0,
+        y: 0,
+        speed: 0.5 + Math.random() * 1.5, // Random speed between 0.5 and 2
+        direction: Math.random() > 0.5 ? 1 : -1, // Random direction
+        wiggleOffset: Math.random() * Math.PI * 2, // Random wiggle phase
+        wiggleSpeed: 0.02 + Math.random() * 0.03, // Random wiggle speed
+        wiggleAmplitude: 2 + Math.random() * 3, // Random wiggle amplitude
+        startDelay: Math.random() * 2000 // Random start delay
+      };
+      
+      // Set initial position
+      if (fish.direction > 0) {
+        // Swimming right
+        fish.x = -50;
+        fish.y = Math.random() * window.innerHeight;
+      } else {
+        // Swimming left
+        fish.x = window.innerWidth + 50;
+        fish.y = Math.random() * window.innerHeight;
+        fish.element.style.transform = 'scaleX(-1)'; // Flip fish
+      }
+      
+      this.fish.push(fish);
+      
+      // Start animation after delay
+      setTimeout(() => {
+        this.animateFish(fish);
+      }, fish.startDelay);
+    });
+    
+    console.log(`Initialized ${this.fish.length} fish`);
+  }
+
+  animateFish(fish) {
+    const animate = () => {
+      // Update position
+      fish.x += fish.speed * fish.direction;
+      
+      // Add wiggling motion
+      const wiggle = Math.sin(Date.now() * fish.wiggleSpeed + fish.wiggleOffset) * fish.wiggleAmplitude;
+      fish.y += wiggle * 0.1;
+      
+      // Keep fish within vertical bounds
+      if (fish.y < 50) fish.y = 50;
+      if (fish.y > window.innerHeight - 50) fish.y = window.innerHeight - 50;
+      
+      // Reset fish when it goes off screen
+      if (fish.direction > 0 && fish.x > window.innerWidth + 100) {
+        fish.x = -50;
+        fish.y = Math.random() * window.innerHeight;
+      } else if (fish.direction < 0 && fish.x < -100) {
+        fish.x = window.innerWidth + 50;
+        fish.y = Math.random() * window.innerHeight;
+      }
+      
+      // Apply position
+      fish.element.style.left = fish.x + 'px';
+      fish.element.style.top = fish.y + 'px';
+      
+      // Continue animation
+      requestAnimationFrame(animate);
+    };
+    
+    animate();
+  }
 }
 
-// Position fish when page loads
-document.addEventListener('DOMContentLoaded', positionFish);
+// Initialize fish animation when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new FishAnimation();
+});
 
