@@ -684,7 +684,7 @@ function animateWhales() {
     
     // Calculate rotation based on movement direction
     const deltaY = whale1Y - whale1PrevY;
-    const rotation = Math.atan2(deltaY, 2) * (180 / Math.PI) * 5; // Much more dramatic rotation
+    const rotation = Math.atan2(deltaY, 2) * (180 / Math.PI) * 3; // Moderate rotation
     
     whale1.style.left = whale1X + 'px';
     whale1.style.top = whale1Y + 'vh';
@@ -709,7 +709,7 @@ function animateWhales() {
       
       // Calculate rotation based on movement direction
       const deltaY = whale2Y - whale2PrevY;
-      const rotation = Math.atan2(deltaY, 1.5) * (180 / Math.PI) * 5;
+      const rotation = Math.atan2(deltaY, 1.5) * (180 / Math.PI) * 3;
       
       whale2.style.left = whale2X + 'px';
       whale2.style.top = whale2Y + 'vh';
@@ -735,7 +735,7 @@ function animateWhales() {
       
       // Calculate rotation based on movement direction
       const deltaY = whale3Y - whale3PrevY;
-      const rotation = Math.atan2(deltaY, 1.2) * (180 / Math.PI) * 5;
+      const rotation = Math.atan2(deltaY, 1.2) * (180 / Math.PI) * 3;
       
       whale3.style.left = whale3X + 'px';
       whale3.style.top = whale3Y + 'vh';
