@@ -108,6 +108,9 @@ const toggleWeather = document.getElementById('toggleWeather');
 const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
 const viewToggleButton = document.getElementById('viewToggleButton');
+const manualButton = document.getElementById('manualButton');
+const manualDialog = document.getElementById('manualDialog');
+const manualClose = document.getElementById('manualClose');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -248,6 +251,11 @@ viewToggleButton?.addEventListener('click', () => {
   try { localStorage.setItem('preferDesktop', 'false'); } catch {}
   window.location.href = 'mobile.html';
 });
+
+// Manual dialog
+manualButton?.addEventListener('click', () => manualDialog?.showModal());
+manualClose?.addEventListener('click', () => manualDialog?.close());
+manualDialog?.addEventListener('cancel', (e) => { e.preventDefault(); manualDialog?.close(); });
 
 // Filter and sort event listeners
 filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });

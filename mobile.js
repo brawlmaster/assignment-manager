@@ -52,6 +52,9 @@ class MobileTaskManager {
         document.getElementById('helpBtn').addEventListener('click', () => {
             this.showModal('helpModal');
         });
+        document.getElementById('manualBtn').addEventListener('click', () => {
+            this.showModal('manualModal');
+        });
 
         // View toggle: switch to desktop and remember preference
         const viewToggle = document.getElementById('viewToggleBtn');
@@ -348,6 +351,8 @@ class MobileTaskManager {
         document.getElementById('closeHelp').addEventListener('click', () => {
             this.hideModal('helpModal');
         });
+        const closeManual = document.getElementById('closeManual');
+        closeManual?.addEventListener('click', () => this.hideModal('manualModal'));
 
         // Close on backdrop click
         document.querySelectorAll('.modal').forEach(modal => {

@@ -24,6 +24,7 @@
             <div class="header-actions">
                 <button class="icon-btn" id="viewToggleBtn" title="Switch to Desktop">🖥️</button>
                 <button class="icon-btn" id="helpBtn" title="Keyboard Shortcuts">⌨️</button>
+                <button class="icon-btn" id="manualBtn" title="Manual">📘</button>
             </div>
         </div>
     </header>
@@ -119,6 +120,29 @@
                         <kbd>Ctrl + K</kbd>
                         <span>Focus search</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Modal -->
+    <div class="modal" id="manualModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Manual</h3>
+                <button class="close-btn" id="closeManual">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcut-list">
+                    <div class="shortcut-item"><span><strong>Adding tasks</strong></span><span>Tap “Add Task” to open the full form. “Quick Add” uses the text field.</span></div>
+                    <div class="shortcut-item"><span><strong>Completing & deleting</strong></span><span>Check to complete, or use Delete to remove.</span></div>
+                    <div class="shortcut-item"><span><strong>Search & filter</strong></span><span>Use the search box and filter dropdown to refine tasks.</span></div>
+                    <div class="shortcut-item"><span><strong>Progress</strong></span><span>Progress bar reflects your completion percentage.</span></div>
+                    <div class="shortcut-item"><span><strong>Task importance</strong></span><span>Colored dot (green→red) shows importance; adjust in the form.</span></div>
+                    <div class="shortcut-item"><span><strong>Due dates</strong></span><span>Set due date/time; today and soon tasks help you prioritize.</span></div>
+                    <div class="shortcut-item"><span><strong>Streak</strong></span><span>Keep creating tasks daily to grow your streak.</span></div>
+                    <div class="shortcut-item"><span><strong>Offline</strong></span><span>Works offline; data is stored on your device.</span></div>
+                    <div class="shortcut-item"><span><strong>Switch view</strong></span><span>Use the 🖥️ button to switch between Mobile and Desktop.</span></div>
                 </div>
             </div>
         </div>
