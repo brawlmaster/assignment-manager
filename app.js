@@ -676,15 +676,24 @@ function animateWhales() {
   // Animate whale 1
   let whale1X = -200;
   let whale1Y = 20;
+  let whale1PrevY = 20;
   const whale1Interval = setInterval(() => {
     whale1X += 2;
+    whale1PrevY = whale1Y;
     whale1Y += Math.sin(whale1X * 0.01) * 0.5;
+    
+    // Calculate rotation based on movement direction
+    const deltaY = whale1Y - whale1PrevY;
+    const rotation = Math.atan2(deltaY, 2) * (180 / Math.PI) * 0.5; // Scale down rotation
+    
     whale1.style.left = whale1X + 'px';
     whale1.style.top = whale1Y + 'vh';
+    whale1.style.transform = `rotate(${rotation}deg)`;
     
     if (whale1X > window.innerWidth + 200) {
       whale1X = -200;
       whale1Y = 20;
+      whale1PrevY = 20;
     }
   }, 50);
   
@@ -692,15 +701,24 @@ function animateWhales() {
   setTimeout(() => {
     let whale2X = -200;
     let whale2Y = 50;
+    let whale2PrevY = 50;
     const whale2Interval = setInterval(() => {
       whale2X += 1.5;
+      whale2PrevY = whale2Y;
       whale2Y += Math.sin(whale2X * 0.008) * 0.3;
+      
+      // Calculate rotation based on movement direction
+      const deltaY = whale2Y - whale2PrevY;
+      const rotation = Math.atan2(deltaY, 1.5) * (180 / Math.PI) * 0.5;
+      
       whale2.style.left = whale2X + 'px';
       whale2.style.top = whale2Y + 'vh';
+      whale2.style.transform = `rotate(${rotation}deg)`;
       
       if (whale2X > window.innerWidth + 200) {
         whale2X = -200;
         whale2Y = 50;
+        whale2PrevY = 50;
       }
     }, 50);
   }, 5000);
@@ -709,15 +727,24 @@ function animateWhales() {
   setTimeout(() => {
     let whale3X = -200;
     let whale3Y = 80;
+    let whale3PrevY = 80;
     const whale3Interval = setInterval(() => {
       whale3X += 1.2;
+      whale3PrevY = whale3Y;
       whale3Y += Math.sin(whale3X * 0.012) * 0.4;
+      
+      // Calculate rotation based on movement direction
+      const deltaY = whale3Y - whale3PrevY;
+      const rotation = Math.atan2(deltaY, 1.2) * (180 / Math.PI) * 0.5;
+      
       whale3.style.left = whale3X + 'px';
       whale3.style.top = whale3Y + 'vh';
+      whale3.style.transform = `rotate(${rotation}deg)`;
       
       if (whale3X > window.innerWidth + 200) {
         whale3X = -200;
         whale3Y = 80;
+        whale3PrevY = 80;
       }
     }, 50);
   }, 10000);
