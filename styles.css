@@ -255,18 +255,24 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 .whale-1 {
+  left: -200px;
+  top: 20vh;
   animation: swim1 20s linear infinite;
   animation-delay: 0s;
   opacity: 1;
 }
 
 .whale-2 {
+  left: -200px;
+  top: 60vh;
   animation: swim2 25s linear infinite;
   animation-delay: 8s;
   opacity: 0.9;
 }
 
 .whale-3 {
+  left: -200px;
+  top: 40vh;
   animation: swim3 30s linear infinite;
   animation-delay: 4s;
   opacity: 0.8;
@@ -373,80 +379,52 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 @keyframes swim1 {
   0% {
-    left: -200px;
-    top: 20vh;
-    transform: scale(1.2);
+    transform: translateX(0px) translateY(0vh) scale(1.2);
   }
   25% {
-    left: 25vw;
-    top: 35vh;
-    transform: scale(1.2);
+    transform: translateX(25vw) translateY(15vh) scale(1.2);
   }
   50% {
-    left: 50vw;
-    top: 25vh;
-    transform: scale(1.2);
+    transform: translateX(50vw) translateY(5vh) scale(1.2);
   }
   75% {
-    left: 75vw;
-    top: 40vh;
-    transform: scale(1.2);
+    transform: translateX(75vw) translateY(20vh) scale(1.2);
   }
   100% {
-    left: 120vw;
-    top: 30vh;
-    transform: scale(1.2);
+    transform: translateX(120vw) translateY(10vh) scale(1.2);
   }
 }
 
 @keyframes swim2 {
   0% {
-    left: -200px;
-    top: 60vh;
-    transform: scale(1);
+    transform: translateX(0px) translateY(0vh) scale(1);
   }
   25% {
-    left: 30vw;
-    top: 45vh;
-    transform: scale(1);
+    transform: translateX(30vw) translateY(-15vh) scale(1);
   }
   50% {
-    left: 60vw;
-    top: 65vh;
-    transform: scale(1);
+    transform: translateX(60vw) translateY(5vh) scale(1);
   }
   75% {
-    left: 90vw;
-    top: 55vh;
-    transform: scale(1);
+    transform: translateX(90vw) translateY(-5vh) scale(1);
   }
   100% {
-    left: 130vw;
-    top: 65vh;
-    transform: scale(1);
+    transform: translateX(130vw) translateY(5vh) scale(1);
   }
 }
 
 @keyframes swim3 {
   0% {
-    left: -200px;
-    top: 40vh;
-    transform: scale(0.8);
+    transform: translateX(0px) translateY(0vh) scale(0.8);
   }
   33% {
-    left: 40vw;
-    top: 25vh;
-    transform: scale(0.8);
+    transform: translateX(40vw) translateY(-15vh) scale(0.8);
   }
   66% {
-    left: 80vw;
-    top: 55vh;
-    transform: scale(0.8);
+    transform: translateX(80vw) translateY(15vh) scale(0.8);
   }
   100% {
-    left: 110vw;
-    top: 35vh;
-    transform: scale(0.8);
+    transform: translateX(110vw) translateY(-5vh) scale(0.8);
   }
 }
 
