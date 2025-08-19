@@ -657,155 +657,6 @@ render = function() {
   updateStats();
 };
 
-// Music Player System
-class MusicPlayer {
-  constructor() {
-    this.audio = document.getElementById('backgroundMusic');
-    this.isPlaying = false;
-    this.isMinimized = false;
-    this.musicPlayer = document.querySelector('.music-player');
-    this.vinylRecord = document.getElementById('vinylRecord');
-    this.vinylArm = document.querySelector('.vinyl-arm');
-    this.playPauseBtn = document.getElementById('playPauseBtn');
-    this.skipForward = document.getElementById('skipForward');
-    this.skipBackward = document.getElementById('skipBackward');
-    this.volumeSlider = document.getElementById('volumeSlider');
-    this.minimizeBtn = document.getElementById('minimizeBtn');
-    this.controlPlayIcon = document.querySelector('.control-play-icon');
-    this.controlPauseIcon = document.querySelector('.control-pause-icon');
-    
-    this.init();
-  }
-
-  init() {
-    // Set initial volume
-    this.audio.volume = this.volumeSlider.value / 100;
-    
-    // Event listeners with error handling
-    if (this.playPauseBtn) {
-      this.playPauseBtn.addEventListener('click', () => this.togglePlay());
-    }
-    
-    if (this.skipForward) {
-      this.skipForward.addEventListener('click', () => this.skipForwardTime());
-    }
-    
-    if (this.skipBackward) {
-      this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
-    }
-    
-    if (this.volumeSlider) {
-      this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
-    }
-    
-    if (this.minimizeBtn) {
-      this.minimizeBtn.addEventListener('click', () => this.toggleMinimize());
-    }
-    
-    // Audio event listeners
-    this.audio.addEventListener('play', () => this.onPlay());
-    this.audio.addEventListener('pause', () => this.onPause());
-    this.audio.addEventListener('ended', () => this.onEnded());
-    
-    console.log('Music player initialized');
-    console.log('Play button found:', !!this.playPauseBtn);
-    console.log('Skip buttons found:', !!this.skipForward, !!this.skipBackward);
-    console.log('Minimize button found:', !!this.minimizeBtn);
-  }
-
-  togglePlay() {
-    if (this.isPlaying) {
-      this.pause();
-    } else {
-      this.play();
-    }
-  }
-
-  play() {
-    this.audio.play().catch(error => {
-      console.log('Audio play failed:', error);
-      // Show user-friendly message
-      this.showToast('Click to enable audio playback');
-    });
-  }
-
-  pause() {
-    this.audio.pause();
-  }
-
-  skipForwardTime() {
-    this.audio.currentTime = Math.min(this.audio.currentTime + 10, this.audio.duration);
-    this.showToast('Skipped forward 10s');
-  }
-
-  skipBackwardTime() {
-    this.audio.currentTime = Math.max(this.audio.currentTime - 10, 0);
-    this.showToast('Skipped backward 10s');
-  }
-
-  setVolume(value) {
-    this.audio.volume = value / 100;
-  }
-
-  onPlay() {
-    this.isPlaying = true;
-    this.vinylRecord.classList.add('playing');
-    this.vinylArm.classList.add('playing');
-    this.controlPlayIcon.style.display = 'none';
-    this.controlPauseIcon.style.display = 'block';
-  }
-
-  onPause() {
-    this.isPlaying = false;
-    this.vinylRecord.classList.remove('playing');
-    this.vinylArm.classList.remove('playing');
-    this.controlPlayIcon.style.display = 'block';
-    this.controlPauseIcon.style.display = 'none';
-  }
-
-  onEnded() {
-    // Audio will loop automatically due to loop attribute
-    console.log('Track ended, looping...');
-  }
-
-  toggleMinimize() {
-    this.isMinimized = !this.isMinimized;
-    
-    if (this.isMinimized) {
-      this.musicPlayer.classList.add('minimized');
-      this.minimizeBtn.title = 'Maximize';
-      this.showToast('Player minimized');
-    } else {
-      this.musicPlayer.classList.remove('minimized');
-      this.minimizeBtn.title = 'Minimize';
-      this.showToast('Player expanded');
-    }
-  }
-
-  showToast(message) {
-    // Create a simple toast notification
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 100px;
-      right: 20px;
-      background: rgba(59, 130, 246, 0.9);
-      color: white;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      z-index: 1000;
-      animation: fadeInOut 3s ease-in-out;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      document.body.removeChild(toast);
-    }, 3000);
-  }
-}
-
 // Mobile-specific improvements
 function addMobileOptimizations() {
   // Prevent zoom on double tap
@@ -844,10 +695,90 @@ function addMobileOptimizations() {
   console.log('Mobile optimizations applied');
 }
 
-// Initialize music player when page loads
-document.addEventListener('DOMContentLoaded', () => {
-  new MusicPlayer();
-  addMobileOptimizations();
+// PWA enhancements: install prompt, update banner, notifications, app badge
+let deferredInstallPrompt = null;
+const installButton = document.getElementById('installButton');
+const notifyButton = document.getElementById('notifyButton');
+const updateBanner = document.getElementById('updateBanner');
+const reloadButton = document.getElementById('reloadButton');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if (installButton) installButton.hidden = false;
 });
 
-// Music player build version: v4
+installButton?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installButton.hidden = true;
+});
+
+window.addEventListener('appinstalled', () => {
+  if (installButton) installButton.hidden = true;
+});
+
+// SW update flow
+async function setupUpdateBanner() {
+  if (!('serviceWorker' in navigator)) return;
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return;
+  reg.addEventListener('updatefound', () => {
+    const newWorker = reg.installing;
+    if (!newWorker) return;
+    newWorker.addEventListener('statechange', () => {
+      if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+        if (updateBanner) updateBanner.hidden = false;
+      }
+    });
+  });
+  reloadButton?.addEventListener('click', async () => {
+    const r = await navigator.serviceWorker.getRegistration();
+    const waiting = r?.waiting;
+    if (waiting) waiting.postMessage({ type: 'SKIP_WAITING' });
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
+// Notifications enable
+notifyButton?.addEventListener('click', async () => {
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      notifyButton.hidden = true;
+    }
+  } catch {}
+});
+
+// App badge reflect due/overdue tasks
+async function updateAppBadge() {
+  try {
+    const count = (() => {
+      const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+      const endOfDay = new Date(); endOfDay.setHours(23,59,59,999);
+      const todayCount = tasks.filter(t=> !t.completed && t.due >= startOfDay.getTime() && t.due <= endOfDay.getTime()).length;
+      const overdueCount = tasks.filter(t=> !t.completed && t.due < startOfDay.getTime()).length;
+      return todayCount + overdueCount;
+    })();
+    if ('setAppBadge' in navigator) {
+      if (count > 0) {
+        await navigator.setAppBadge(count);
+      } else {
+        await navigator.clearAppBadge?.();
+      }
+    }
+  } catch {}
+}
+
+// Wrap render to also update badge
+const __origRender = render;
+render = function(){ __origRender(); updateStats(); updateAppBadge(); };
+
+document.addEventListener('DOMContentLoaded', () => {
+  addMobileOptimizations();
+  setupUpdateBanner();
+});

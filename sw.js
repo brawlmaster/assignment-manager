@@ -160,6 +160,10 @@ function scheduleTaskNotifications(task) {
 self.addEventListener('message', (event) => {
   const data = event.data || {};
   if (data.type === 'PING') return;
+  if (data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
   if (data.type === 'SET_REMINDERS') {
     clearAllReminders();
     for (const t of data.tasks || []) scheduleTaskNotifications(t);
