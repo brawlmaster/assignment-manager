@@ -39,6 +39,7 @@ function toInputDateTime(ms){ const d=new Date(ms); const p=n=>String(n).padStar
 let tasks = [];
 let filterMode = 'all';
 let searchQuery = '';
+let sortMode = 'due';
 
 // Elements
 const taskListEl = document.getElementById('taskList');
@@ -66,7 +67,10 @@ const timerStartBtn = document.getElementById('timerStart');
 const timerResetBtn = document.getElementById('timerReset');
 const cancelTaskButton = document.getElementById('cancelTaskButton');
 const filterSelect = document.getElementById('filterSelect');
+const sortSelect = document.getElementById('sortSelect');
 const searchInput = document.getElementById('searchInput');
+const quickAddButton = document.getElementById('quickAddButton');
+console.log('Quick add button found:', !!quickAddButton);
 const exportButton = document.getElementById('exportButton');
 const importButton = document.getElementById('importButton');
 const importFile = document.getElementById('importFile');
@@ -82,11 +86,27 @@ const toastMessageEl = document.getElementById('toastMessage');
 const toastUndoEl = document.getElementById('toastUndo');
 // Settings elements
 const settingsButton = document.getElementById('settingsButton');
+const shortcutsButton = document.getElementById('shortcutsButton');
+const shortcutsDialog = document.getElementById('shortcutsDialog');
+const shortcutsClose = document.getElementById('shortcutsClose');
 const settingsDialog = document.getElementById('settingsDialog');
 const settingsForm = document.getElementById('settingsForm');
 const themeSelect = document.getElementById('themeSelect');
 const accentSelect = document.getElementById('accentSelect');
 const settingsCancel = document.getElementById('settingsCancel');
+// Widget cards and toggles
+const cardToday = document.getElementById('cardToday');
+const cardStreak = document.getElementById('cardStreak');
+const cardTimer = document.getElementById('cardTimer');
+const cardWeather = document.getElementById('cardWeather');
+const cardQuote = document.getElementById('cardQuote');
+const cardStats = document.getElementById('cardStats');
+const toggleToday = document.getElementById('toggleToday');
+const toggleStreak = document.getElementById('toggleStreak');
+const toggleTimer = document.getElementById('toggleTimer');
+const toggleWeather = document.getElementById('toggleWeather');
+const toggleQuote = document.getElementById('toggleQuote');
+const toggleStats = document.getElementById('toggleStats');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -101,13 +121,29 @@ function render(){
     if (filterMode==='dueSoon' && (t.completed || (t.due - nowMs() > THREE_DAYS_MS))) return false;
     return true;
   });
-  const sorted=[...filtered].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance);
+  
+  let sorted = [...filtered];
+  if (sortMode === 'due') {
+    sorted.sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance);
+  } else if (sortMode === 'importance') {
+    sorted.sort((a,b)=> a.completed-b.completed || b.importance-a.importance || a.due-b.due);
+  } else if (sortMode === 'created') {
+    sorted.sort((a,b)=> a.completed-b.completed || b.createdAt-a.createdAt || b.importance-a.importance);
+  }
   taskListEl.innerHTML='';
   let completedCount=0; const dueSoon=[];
   for (const t of sorted){
     if (t.completed) completedCount++; if (!t.completed && t.due-nowMs()<=THREE_DAYS_MS) dueSoon.push(t);
     const li=document.createElement('li'); li.className='task-item animate-in';
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ t.completed=cb.checked; await saveTask(t); render(); });
+    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ 
+      t.completed=cb.checked; 
+      await saveTask(t); 
+      if (t.completed) {
+        li.classList.add('completed');
+        setTimeout(() => li.classList.remove('completed'), 600);
+      }
+      render(); 
+    });
     const content=document.createElement('div');
     const titleRow=document.createElement('div'); titleRow.className='title-row';
     const dot=document.createElement('span'); dot.className='dot';
@@ -152,6 +188,64 @@ async function deleteTasks(ids){ await dbTxn(['tasks'],'readwrite',(s)=> ids.for
 function openDialog(defaults=null){ form.reset(); document.getElementById('dialogTitle').textContent = defaults?'Edit Task':'New Task'; const d=defaults ?? { title:'', due: nowMs()+ONE_DAY_MS, importance:5, notes:'', recurrence:'none', tags:[] }; titleInput.value=d.title; dueInput.value=toInputDateTime(d.due); importanceInput.value=d.importance; if (importanceValueEl) importanceValueEl.textContent=String(d.importance); recurrenceInput.value=d.recurrence; notesInput.value=d.notes||''; if (tagsInput) tagsInput.value=(d.tags||[]).join(', '); dialog.showModal(); }
 
 addTaskButton.addEventListener('click', ()=> openDialog());
+
+// Quick add functionality
+function quickAddTask() {
+  const title = prompt('Quick add task:');
+  if (title && title.trim()) {
+    const task = {
+      id: uid(),
+      title: title.trim(),
+      due: nowMs() + ONE_DAY_MS,
+      importance: 5,
+      notes: '',
+      recurrence: 'none',
+      tags: [],
+      completed: false,
+      createdAt: nowMs()
+    };
+    saveTask(task).then(() => {
+      tasks.push(task);
+      tasks.sort((a,b) => a.due-b.due);
+      render();
+      showToast(`Added "${task.title}"`);
+    });
+  }
+}
+
+if (quickAddButton) {
+  quickAddButton.addEventListener('click', quickAddTask);
+} else {
+  console.error('Quick add button not found!');
+}
+
+// Keyboard shortcuts dialog
+shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
+shortcutsClose?.addEventListener('click', () => shortcutsDialog?.close());
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'n') {
+      e.preventDefault();
+      quickAddTask();
+    } else if (e.key === 's') {
+      e.preventDefault();
+      settingsButton?.click();
+    } else if (e.key === 'f') {
+      e.preventDefault();
+      searchInput?.focus();
+    }
+  } else if (e.key === '?') {
+    e.preventDefault();
+    shortcutsButton?.click();
+  }
+});
+
+// Filter and sort event listeners
+filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
+sortSelect?.addEventListener('change', (e) => { sortMode = e.target.value; render(); });
+searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); render(); });
 form.addEventListener('submit', async (e)=>{ if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; } e.preventDefault(); const title=titleInput.value.trim(); const due=new Date(dueInput.value).getTime(); const importance=Number(importanceInput.value); const recurrence=recurrenceInput.value; const notes=notesInput.value.trim(); const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean); if(!title||!Number.isFinite(due)) return; const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() }; await saveTask(task); tasks.push(task); tasks.sort((a,b)=>a.due-b.due); render(); dialog.close(); });
 cancelTaskButton?.addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
 dialog?.addEventListener('cancel', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
@@ -170,10 +264,48 @@ async function setSetting(key, value){ try{ await dbTxn(['settings'],'readwrite'
 async function updateStreakUI(){ try{ const days = await getSetting('streakDays'); if (streakDaysEl) streakDaysEl.textContent = String(days||0); } catch{} }
 
 // Focus timer (simple Pomodoro: 25 min)
-let timerMs = 25*60*1000; let timerId=null; let running=false;
+let timerMs = 25*60*1000; let timerId=null; let running=false; let paused=false;
 function renderTimer(){ if (timerDisplayEl){ const m=Math.floor(timerMs/60000); const s=Math.floor((timerMs%60000)/1000); timerDisplayEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; } }
-timerStartBtn?.addEventListener('click', ()=>{ if (running) return; const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); timerMs = mins*60*1000; renderTimer(); running=true; timerId=setInterval(()=>{ timerMs-=1000; if (timerMs<=0){ timerMs=0; clearInterval(timerId); running=false; } renderTimer(); }, 1000); });
-timerResetBtn?.addEventListener('click', ()=>{ if (timerId) clearInterval(timerId); running=false; const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); timerMs=mins*60*1000; renderTimer(); });
+function updateTimerButtons(){
+  const timerPauseBtn = document.getElementById('timerPause');
+  if (timerStartBtn) timerStartBtn.style.display = running ? 'none' : 'inline-block';
+  if (timerPauseBtn) timerPauseBtn.style.display = running ? 'inline-block' : 'none';
+}
+timerStartBtn?.addEventListener('click', ()=>{ 
+  if (running) return; 
+  const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
+  if (!paused) timerMs = mins*60*1000; 
+  renderTimer(); 
+  running=true; 
+  paused=false;
+  updateTimerButtons();
+  timerId=setInterval(()=>{ 
+    timerMs-=1000; 
+    if (timerMs<=0){ 
+      timerMs=0; 
+      clearInterval(timerId); 
+      running=false; 
+      paused=false;
+      updateTimerButtons();
+    } 
+    renderTimer(); 
+  }, 1000); 
+});
+document.getElementById('timerPause')?.addEventListener('click', ()=>{ 
+  if (timerId) clearInterval(timerId); 
+  running=false; 
+  paused=true;
+  updateTimerButtons();
+});
+timerResetBtn?.addEventListener('click', ()=>{ 
+  if (timerId) clearInterval(timerId); 
+  running=false; 
+  paused=false;
+  updateTimerButtons();
+  const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
+  timerMs=mins*60*1000; 
+  renderTimer(); 
+});
 
 exportButton?.addEventListener('click', async ()=>{ exportList.innerHTML=''; const sorted=[...tasks].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance); for(const t of sorted){ const li=document.createElement('li'); li.className='task-item'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=true; cb.dataset.taskId=t.id; const lab=document.createElement('div'); lab.className='title'; lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()} (imp ${t.importance})`; li.appendChild(cb); li.appendChild(lab); li.appendChild(document.createElement('div')); exportList.appendChild(li);} exportDialog.showModal(); });
 exportSelectAll?.addEventListener('click', (e)=>{ e.preventDefault(); exportList.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=true); });
@@ -190,32 +322,531 @@ function showToast(message, onUndo){ toastMessageEl.textContent=message; toastEl
 // Settings
 function applyTheme(theme){
   document.body.classList.remove('light');
-  if (theme === 'light') document.body.classList.add('light');
+  // Light mode removed; coerce to dark only
 }
 function applyAccent(hex){
   document.documentElement.style.setProperty('--primary', hex);
 }
 function loadSettings(){
   try{
-    const theme = localStorage.getItem('theme') || 'dark';
+    let theme = localStorage.getItem('theme') || 'dark';
+    if (theme === 'light') theme = 'dark';
     const accent = localStorage.getItem('accent') || '#3b82f6';
     if (themeSelect) themeSelect.value = theme;
     if (accentSelect) accentSelect.value = accent;
     applyTheme(theme);
     applyAccent(accent);
+    // Widgets
+    const showToday = localStorage.getItem('showToday');
+    const showStreak = localStorage.getItem('showStreak');
+    const showTimer = localStorage.getItem('showTimer');
+    const showWeather = localStorage.getItem('showWeather');
+    const showQuote = localStorage.getItem('showQuote');
+    const showStats = localStorage.getItem('showStats');
+    const todayOn = showToday === null ? true : showToday !== 'false';
+    const streakOn = showStreak === null ? true : showStreak !== 'false';
+    const timerOn = showTimer === null ? true : showTimer !== 'false';
+    const weatherOn = showWeather === null ? false : showWeather !== 'false';
+    const quoteOn = showQuote === null ? false : showQuote !== 'false';
+    const statsOn = showStats === null ? false : showStats !== 'false';
+    if (toggleToday) toggleToday.checked = todayOn;
+    if (toggleStreak) toggleStreak.checked = streakOn;
+    if (toggleTimer) toggleTimer.checked = timerOn;
+    if (toggleWeather) toggleWeather.checked = weatherOn;
+    if (toggleQuote) toggleQuote.checked = quoteOn;
+    if (toggleStats) toggleStats.checked = statsOn;
+    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+    initializeWidgets();
   }catch{}
+}
+function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn){
+  if (cardToday) cardToday.style.display = todayOn ? 'block' : 'none';
+  if (cardStreak) cardStreak.style.display = streakOn ? 'block' : 'none';
+  if (cardTimer) cardTimer.style.display = timerOn ? 'block' : 'none';
+  if (cardWeather) cardWeather.style.display = weatherOn ? 'block' : 'none';
+  if (cardQuote) cardQuote.style.display = quoteOn ? 'block' : 'none';
+  if (cardStats) cardStats.style.display = statsOn ? 'block' : 'none';
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
 settingsForm?.addEventListener('submit', (e)=>{
   e.preventDefault();
-  const theme = themeSelect?.value || 'dark';
+  let theme = themeSelect?.value || 'dark';
+  if (theme === 'light') theme = 'dark';
   const accent = accentSelect?.value || '#3b82f6';
   localStorage.setItem('theme', theme);
   localStorage.setItem('accent', accent);
   applyTheme(theme);
   applyAccent(accent);
+  // Persist widget visibility
+  const todayOn = toggleToday ? !!toggleToday.checked : true;
+  const streakOn = toggleStreak ? !!toggleStreak.checked : true;
+  const timerOn = toggleTimer ? !!toggleTimer.checked : true;
+  const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
+  const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
+  const statsOn = toggleStats ? !!toggleStats.checked : false;
+  localStorage.setItem('showToday', String(todayOn));
+  localStorage.setItem('showStreak', String(streakOn));
+  localStorage.setItem('showTimer', String(timerOn));
+  localStorage.setItem('showWeather', String(weatherOn));
+  localStorage.setItem('showQuote', String(quoteOn));
+  localStorage.setItem('showStats', String(statsOn));
+  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+  initializeWidgets();
   settingsDialog?.close('ok');
 });
 loadSettings();
+
+// Widget functionality
+const weatherRefresh = document.getElementById('weatherRefresh');
+const quoteRefresh = document.getElementById('quoteRefresh');
+
+// Weather widget
+async function getLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation not supported'));
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lon: position.coords.longitude
+        });
+      },
+      (error) => {
+        reject(error);
+      },
+      { timeout: 10000, enableHighAccuracy: false }
+    );
+  });
+}
+
+async function getCityName(lat, lon) {
+  try {
+    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid='5eb85cb8eefd6422546ea879f46e141c`);
+    const data = await response.json();
+    return data[0]?.name || 'Unknown Location';
+  } catch (error) {
+    return 'Unknown Location';
+  }
+}
+
+async function loadWeather() {
+  const weatherTemp = document.getElementById('weatherTemp');
+  const weatherDesc = document.getElementById('weatherDesc');
+  const weatherIcon = document.getElementById('weatherIcon');
+  const weatherLocation = document.getElementById('weatherLocation');
+  
+  try {
+    weatherLocation.textContent = 'Getting location...';
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Loading...';
+    weatherIcon.textContent = '⏳';
+    
+    // Check if we have stored location
+    let location = localStorage.getItem('weatherLocation');
+    let coords = localStorage.getItem('weatherCoords');
+    
+    if (!location || !coords) {
+      // Get user's location
+      try {
+        const position = await getLocation();
+        coords = JSON.stringify(position);
+        location = await getCityName(position.lat, position.lon);
+        
+        localStorage.setItem('weatherLocation', location);
+        localStorage.setItem('weatherCoords', coords);
+      } catch (error) {
+        // Fallback to manual location input
+        const manualLocation = prompt('Please enter your city name for weather:');
+        if (manualLocation && manualLocation.trim()) {
+          location = manualLocation.trim();
+          localStorage.setItem('weatherLocation', location);
+        } else {
+          location = 'London'; // Default fallback
+          localStorage.setItem('weatherLocation', location);
+        }
+      }
+    }
+    
+    weatherLocation.textContent = location;
+    
+    // Use OpenWeatherMap API (free tier)
+    const apiKey = '5eb85cb8eefd6422546ea879f46e141c'; // Replace with your API key
+    const coordsData = coords ? JSON.parse(coords) : null;
+    
+    let weatherUrl;
+    if (coordsData) {
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coordsData.lat}&lon=${coordsData.lon}&units=metric&appid=${apiKey}`;
+    } else {
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=metric&appid=${apiKey}`;
+    }
+    
+    const response = await fetch(weatherUrl);
+    const data = await response.json();
+    
+    if (data.cod === 200) {
+      const temp = Math.round(data.main.temp);
+      const description = data.weather[0].description;
+      const iconCode = data.weather[0].icon;
+      
+      // Map weather icons
+      const iconMap = {
+        '01d': '☀️', '01n': '🌙',
+        '02d': '⛅', '02n': '☁️',
+        '03d': '☁️', '03n': '☁️',
+        '04d': '☁️', '04n': '☁️',
+        '09d': '🌧️', '09n': '🌧️',
+        '10d': '🌦️', '10n': '🌧️',
+        '11d': '⛈️', '11n': '⛈️',
+        '13d': '❄️', '13n': '❄️',
+        '50d': '🌫️', '50n': '🌫️'
+      };
+      
+      weatherTemp.textContent = `${temp}°C`;
+      weatherDesc.textContent = description.charAt(0).toUpperCase() + description.slice(1);
+      weatherIcon.textContent = iconMap[iconCode] || '🌤️';
+    } else {
+      throw new Error('Weather data not available');
+    }
+  } catch (error) {
+    console.error('Weather error:', error);
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Unable to load';
+    weatherIcon.textContent = '❓';
+    weatherLocation.textContent = 'Location error';
+  }
+}
+
+// Quote widget
+const quotes = [
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+  { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" },
+  { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+  { text: "What you get by achieving your goals is not as important as what you become by achieving your goals.", author: "Zig Ziglar" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "The mind is everything. What you think you become.", author: "Buddha" },
+  { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson" },
+  { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+  { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Unknown" },
+  { text: "Dream big and dare to fail.", author: "Norman Vaughan" },
+  { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "Don't let yesterday take up too much of today.", author: "Will Rogers" },
+  { text: "The expert in anything was once a beginner.", author: "Helen Hayes" },
+  { text: "Make your life a masterpiece; imagine no limitations on what you can be, have or do.", author: "Brian Tracy" },
+  { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela" },
+  { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll" },
+  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+  { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+  { text: "The best revenge is massive success.", author: "Frank Sinatra" },
+  { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson" },
+  { text: "Success is not the key to happiness. Happiness is the key to success.", author: "Albert Schweitzer" },
+  { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { text: "Good, better, best. Never let it rest. 'Til your good is better and your better is best.", author: "St. Jerome" },
+  { text: "With the new day comes new strength and new thoughts.", author: "Eleanor Roosevelt" },
+  { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+  { text: "The only person you should try to be better than is the person you were yesterday.", author: "Unknown" },
+  { text: "Don't count the days, make the days count.", author: "Muhammad Ali" },
+  { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+  { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "What you do today can improve all your tomorrows.", author: "Ralph Marston" },
+  { text: "The only limit to the height of your achievements is the reach of your dreams and your willingness to work for them.", author: "Michelle Obama" },
+  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+  { text: "Don't wait. The time will never be just right.", author: "Napoleon Hill" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "Your work is going to fill a large part of your life, and the only way to be truly satisfied is to do what you believe is great work.", author: "Steve Jobs" },
+  { text: "The difference between try and triumph is just a little umph!", author: "Marvin Phillips" },
+  { text: "The only place where success comes before work is in the dictionary.", author: "Vidal Sassoon" },
+  { text: "The road to success and the road to failure are almost exactly the same.", author: "Colin R. Davis" },
+  { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" },
+  { text: "The only thing standing between you and your goal is the bullshit story you keep telling yourself as to why you can't achieve it.", author: "Jordan Belfort" },
+  { text: "The best revenge is massive success.", author: "Frank Sinatra" },
+  { text: "I did it my way.", author: "Frank Sinatra" },
+  { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt" },
+  { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+  { text: "The only way to achieve the impossible is to believe it is possible.", author: "Charles Kingsleigh" },
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt" },
+  { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+  { text: "The only thing we have to fear is fear itself.", author: "Franklin D. Roosevelt" },
+  { text: "The only way to have a friend is to be one.", author: "Ralph Waldo Emerson" }
+];
+
+function loadQuote() {
+  const quoteContent = document.getElementById('quoteContent');
+  const quoteAuthor = document.getElementById('quoteAuthor');
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  quoteContent.textContent = `"${randomQuote.text}"`;
+  quoteAuthor.textContent = `— ${randomQuote.author}`;
+}
+
+// Stats widget
+function updateStats() {
+  const avgCompletion = document.getElementById('avgCompletion');
+  const bestDay = document.getElementById('bestDay');
+  const totalTasks = document.getElementById('totalTasks');
+  const completionRate = document.getElementById('completionRate');
+  
+  const completedTasks = tasks.filter(t => t.completed).length;
+  const totalTaskCount = tasks.length;
+  const completionRateValue = totalTaskCount > 0 ? Math.round((completedTasks / totalTaskCount) * 100) : 0;
+  
+  // Calculate average tasks per day (last 7 days)
+  const lastWeek = tasks.filter(t => t.createdAt > nowMs() - (7 * ONE_DAY_MS));
+  const avgPerDay = lastWeek.length > 0 ? Math.round(lastWeek.length / 7) : 0;
+  
+  // Find best day (most tasks completed in a day)
+  const completedByDay = {};
+  tasks.filter(t => t.completed).forEach(task => {
+    const day = new Date(task.due).toDateString();
+    completedByDay[day] = (completedByDay[day] || 0) + 1;
+  });
+  const bestDayValue = Object.keys(completedByDay).length > 0 
+    ? Math.max(...Object.values(completedByDay))
+    : 0;
+  
+  avgCompletion.textContent = avgPerDay;
+  bestDay.textContent = bestDayValue;
+  totalTasks.textContent = totalTaskCount;
+  completionRate.textContent = `${completionRateValue}%`;
+}
+
+// Event listeners for widgets
+weatherRefresh?.addEventListener('click', loadWeather);
+document.getElementById('weatherLocationBtn')?.addEventListener('click', async () => {
+  const newLocation = prompt('Enter your city name:');
+  if (newLocation && newLocation.trim()) {
+    localStorage.removeItem('weatherCoords'); // Clear coordinates to force new lookup
+    localStorage.setItem('weatherLocation', newLocation.trim());
+    await loadWeather();
+  }
+});
+quoteRefresh?.addEventListener('click', loadQuote);
+
+// Initialize widgets when they become visible
+function initializeWidgets() {
+  if (cardWeather?.style.display !== 'none') loadWeather();
+  if (cardQuote?.style.display !== 'none') loadQuote();
+  if (cardStats?.style.display !== 'none') updateStats();
+}
+
+// Update stats when tasks change
+const originalRender = render;
+render = function() {
+  originalRender();
+  updateStats();
+};
+
+// Music Player System
+class MusicPlayer {
+  constructor() {
+    this.audio = document.getElementById('backgroundMusic');
+    this.isPlaying = false;
+    this.isMinimized = false;
+    this.musicPlayer = document.querySelector('.music-player');
+    this.vinylRecord = document.getElementById('vinylRecord');
+    this.vinylArm = document.querySelector('.vinyl-arm');
+    this.playPauseBtn = document.getElementById('playPauseBtn');
+    this.skipForward = document.getElementById('skipForward');
+    this.skipBackward = document.getElementById('skipBackward');
+    this.volumeSlider = document.getElementById('volumeSlider');
+    this.minimizeBtn = document.getElementById('minimizeBtn');
+    this.controlPlayIcon = document.querySelector('.control-play-icon');
+    this.controlPauseIcon = document.querySelector('.control-pause-icon');
+    
+    this.init();
+  }
+
+  init() {
+    // Set initial volume
+    this.audio.volume = this.volumeSlider.value / 100;
+    
+    // Event listeners with error handling
+    if (this.playPauseBtn) {
+      this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+    }
+    
+    if (this.skipForward) {
+      this.skipForward.addEventListener('click', () => this.skipForwardTime());
+    }
+    
+    if (this.skipBackward) {
+      this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
+    }
+    
+    if (this.volumeSlider) {
+      this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+    }
+    
+    if (this.minimizeBtn) {
+      this.minimizeBtn.addEventListener('click', () => this.toggleMinimize());
+    }
+    
+    // Audio event listeners
+    this.audio.addEventListener('play', () => this.onPlay());
+    this.audio.addEventListener('pause', () => this.onPause());
+    this.audio.addEventListener('ended', () => this.onEnded());
+    
+    console.log('Music player initialized');
+    console.log('Play button found:', !!this.playPauseBtn);
+    console.log('Skip buttons found:', !!this.skipForward, !!this.skipBackward);
+    console.log('Minimize button found:', !!this.minimizeBtn);
+  }
+
+  togglePlay() {
+    if (this.isPlaying) {
+      this.pause();
+    } else {
+      this.play();
+    }
+  }
+
+  play() {
+    this.audio.play().catch(error => {
+      console.log('Audio play failed:', error);
+      // Show user-friendly message
+      this.showToast('Click to enable audio playback');
+    });
+  }
+
+  pause() {
+    this.audio.pause();
+  }
+
+  skipForwardTime() {
+    this.audio.currentTime = Math.min(this.audio.currentTime + 10, this.audio.duration);
+    this.showToast('Skipped forward 10s');
+  }
+
+  skipBackwardTime() {
+    this.audio.currentTime = Math.max(this.audio.currentTime - 10, 0);
+    this.showToast('Skipped backward 10s');
+  }
+
+  setVolume(value) {
+    this.audio.volume = value / 100;
+  }
+
+  onPlay() {
+    this.isPlaying = true;
+    this.vinylRecord.classList.add('playing');
+    this.vinylArm.classList.add('playing');
+    this.controlPlayIcon.style.display = 'none';
+    this.controlPauseIcon.style.display = 'block';
+  }
+
+  onPause() {
+    this.isPlaying = false;
+    this.vinylRecord.classList.remove('playing');
+    this.vinylArm.classList.remove('playing');
+    this.controlPlayIcon.style.display = 'block';
+    this.controlPauseIcon.style.display = 'none';
+  }
+
+  onEnded() {
+    // Audio will loop automatically due to loop attribute
+    console.log('Track ended, looping...');
+  }
+
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
+    
+    if (this.isMinimized) {
+      this.musicPlayer.classList.add('minimized');
+      this.minimizeBtn.title = 'Maximize';
+      this.showToast('Player minimized');
+    } else {
+      this.musicPlayer.classList.remove('minimized');
+      this.minimizeBtn.title = 'Minimize';
+      this.showToast('Player expanded');
+    }
+  }
+
+  showToast(message) {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background: rgba(59, 130, 246, 0.9);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 1000;
+      animation: fadeInOut 3s ease-in-out;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 3000);
+  }
+}
+
+// Mobile-specific improvements
+function addMobileOptimizations() {
+  // Prevent zoom on double tap
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+
+  // Improve touch scrolling
+  document.addEventListener('touchstart', function() {}, {passive: true});
+  document.addEventListener('touchmove', function() {}, {passive: true});
+
+  // Add mobile-specific keyboard handling
+  document.addEventListener('keydown', function(e) {
+    // Prevent zoom on Ctrl/Cmd + scroll
+    if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
+      e.preventDefault();
+    }
+  });
+
+  // Improve input focus on mobile
+  const inputs = document.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      // Scroll to input on mobile
+      setTimeout(() => {
+        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    });
+  });
+
+  console.log('Mobile optimizations applied');
+}
+
+// Initialize music player when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  new MusicPlayer();
+  addMobileOptimizations();
+});
 

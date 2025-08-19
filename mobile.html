@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - Mobile</title>
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="app-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12,6 12,12 16,14"></polyline>
+                    </svg>
+                </div>
+                <h1>Task Manager</h1>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+                <button class="icon-btn" id="helpBtn" title="Keyboard Shortcuts">⌨️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Main Content -->
+    <main class="mobile-main">
+        <!-- Quick Stats Row -->
+        <section class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTasks">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedTasks">0</div>
+                <div class="stat-label">Done</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </section>
+
+        <!-- Add Task Section -->
+        <section class="add-task-section">
+            <div class="task-input-group">
+                <input type="text" id="taskInput" class="task-input" placeholder="Add a new task..." maxlength="100">
+                <div class="task-buttons">
+                    <button id="addTaskBtn" class="btn btn-primary">Add Task</button>
+                    <button id="quickAddBtn" class="btn btn-secondary">Quick Add</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="filter-row">
+                <select id="filterSelect" class="filter-select">
+                    <option value="all">All Tasks</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search tasks...">
+            </div>
+        </section>
+
+        <!-- Progress Bar (from desktop) -->
+        <div class="progress-row">
+            <div class="progress-label">Completed</div>
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="progressPct" class="progress-pct">0%</div>
+        </div>
+
+        <!-- Task List -->
+        <section class="task-list-section">
+            <div class="section-header">
+                <h2>Tasks</h2>
+                <div class="task-count" id="taskCount">0 tasks</div>
+            </div>
+            <div class="task-list" id="taskList">
+                <!-- Tasks will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Mobile Music Player removed per request -->
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-btn" id="closeSettings">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <h4>Widgets</h4>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showTimer" checked>
+                        <span>Timer</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showDue" checked>
+                        <span>Due Today</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showStreak" checked>
+                        <span>Streak</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showWeather">
+                        <span>Weather</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showQuotes">
+                        <span>Quote of the Day</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="close-btn" id="closeHelp">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <kbd>Enter</kbd>
+                        <span>Add task</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + Enter</kbd>
+                        <span>Quick add task</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + /</kbd>
+                        <span>Toggle settings</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + K</kbd>
+                        <span>Focus search</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal (desktop-like) -->
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Task</h3>
+                <button class="close-btn" id="mCloseAddTask">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="mTaskForm">
+                    <label style="display:block;margin-bottom:12px">
+                        <span>Title</span>
+                        <input id="mTaskTitle" type="text" required maxlength="120" placeholder="What do you need to do?" class="search-input" style="margin-top:6px">
+                    </label>
+                    <label style="display:block;margin-bottom:12px">
+                        <span>Due date & time</span>
+                        <input id="mTaskDue" type="datetime-local" required class="search-input" style="margin-top:6px">
+                    </label>
+                    <label style="display:block;margin-bottom:12px">
+                        <span>Importance (1–10): <strong id="mImportanceValue">5</strong></span>
+                        <input id="mTaskImportance" type="range" min="1" max="10" value="5" style="width:100%;margin-top:6px">
+                    </label>
+                    <label style="display:block;margin-bottom:12px">
+                        <span>Recurrence</span>
+                        <select id="mTaskRecurrence" class="filter-select" style="margin-top:6px">
+                            <option value="none" selected>None</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </label>
+                    <label style="display:block;margin-bottom:12px">
+                        <span>Notes</span>
+                        <textarea id="mTaskNotes" rows="3" placeholder="Optional context" class="search-input" style="margin-top:6px"></textarea>
+                    </label>
+                    <label style="display:block;margin-bottom:16px">
+                        <span>Tags (comma-separated)</span>
+                        <input id="mTaskTags" type="text" placeholder="e.g., school, math" class="search-input" style="margin-top:6px">
+                    </label>
+                    <div style="display:flex; gap:12px; justify-content:flex-end">
+                        <button type="button" id="mCancelTask" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" id="mSaveTask" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="mobile.js"></script>
+</body>
+</html>
