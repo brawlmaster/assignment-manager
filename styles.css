@@ -256,20 +256,20 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 .whale-1 {
-  animation: swim 20s linear infinite, whaleFloat 3s ease-in-out infinite;
+  animation: swim1 20s linear infinite, whaleFloat 3s ease-in-out infinite;
   animation-delay: 0s;
   transform: scale(1.2);
 }
 
 .whale-2 {
-  animation: swim 25s linear infinite, whaleFloat 4s ease-in-out infinite;
+  animation: swim2 25s linear infinite, whaleFloat 4s ease-in-out infinite;
   animation-delay: 8s;
   transform: scale(1);
   opacity: 0.7;
 }
 
 .whale-3 {
-  animation: swim 30s linear infinite, whaleFloat 5s ease-in-out infinite;
+  animation: swim3 30s linear infinite, whaleFloat 5s ease-in-out infinite;
   animation-delay: 4s;
   transform: scale(0.8);
   opacity: 0.6;
@@ -375,39 +375,87 @@ input[type="checkbox"]{ width:18px; height:18px }
 .bubble:nth-child(2) { animation-delay: 1s; }
 .bubble:nth-child(3) { animation-delay: 2s; }
 
-@keyframes swim {
+@keyframes swim1 {
   0% {
-    transform: translateX(-150px) translateY(15vh) rotateY(0deg) scale(1);
+    transform: translateX(-200px) translateY(20vh) rotateY(0deg) scale(1);
   }
   10% {
-    transform: translateX(10vw) translateY(20vh) rotateY(0deg) scale(1.1);
+    transform: translateX(10vw) translateY(15vh) rotateY(0deg) scale(1.1);
   }
   20% {
-    transform: translateX(20vw) translateY(10vh) rotateY(0deg) scale(0.9);
+    transform: translateX(25vw) translateY(35vh) rotateY(0deg) scale(0.9);
   }
   30% {
-    transform: translateX(30vw) translateY(25vh) rotateY(0deg) scale(1.05);
+    transform: translateX(40vw) translateY(25vh) rotateY(0deg) scale(1.05);
   }
   40% {
-    transform: translateX(40vw) translateY(15vh) rotateY(0deg) scale(0.95);
+    transform: translateX(55vw) translateY(45vh) rotateY(0deg) scale(0.95);
   }
   50% {
-    transform: translateX(50vw) translateY(30vh) rotateY(0deg) scale(1.15);
+    transform: translateX(70vw) translateY(30vh) rotateY(0deg) scale(1.15);
   }
   60% {
-    transform: translateX(60vw) translateY(20vh) rotateY(0deg) scale(0.9);
+    transform: translateX(85vw) translateY(20vh) rotateY(0deg) scale(0.9);
   }
   70% {
-    transform: translateX(70vw) translateY(10vh) rotateY(0deg) scale(1.05);
+    transform: translateX(100vw) translateY(40vh) rotateY(0deg) scale(1.05);
   }
   80% {
-    transform: translateX(80vw) translateY(25vh) rotateY(0deg) scale(0.95);
+    transform: translateX(115vw) translateY(25vh) rotateY(0deg) scale(0.95);
   }
   90% {
-    transform: translateX(90vw) translateY(15vh) rotateY(0deg) scale(1.1);
+    transform: translateX(130vw) translateY(35vh) rotateY(0deg) scale(1.1);
   }
   100% {
-    transform: translateX(110vw) translateY(20vh) rotateY(0deg) scale(1);
+    transform: translateX(150vw) translateY(30vh) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes swim2 {
+  0% {
+    transform: translateX(-200px) translateY(60vh) rotateY(0deg) scale(1);
+  }
+  15% {
+    transform: translateX(20vw) translateY(45vh) rotateY(0deg) scale(1.1);
+  }
+  30% {
+    transform: translateX(45vw) translateY(65vh) rotateY(0deg) scale(0.9);
+  }
+  45% {
+    transform: translateX(70vw) translateY(55vh) rotateY(0deg) scale(1.05);
+  }
+  60% {
+    transform: translateX(95vw) translateY(75vh) rotateY(0deg) scale(0.95);
+  }
+  75% {
+    transform: translateX(120vw) translateY(65vh) rotateY(0deg) scale(1.15);
+  }
+  90% {
+    transform: translateX(145vw) translateY(55vh) rotateY(0deg) scale(0.9);
+  }
+  100% {
+    transform: translateX(170vw) translateY(65vh) rotateY(0deg) scale(1);
+  }
+}
+
+@keyframes swim3 {
+  0% {
+    transform: translateX(-200px) translateY(40vh) rotateY(0deg) scale(1);
+  }
+  20% {
+    transform: translateX(15vw) translateY(25vh) rotateY(0deg) scale(1.1);
+  }
+  40% {
+    transform: translateX(35vw) translateY(55vh) rotateY(0deg) scale(0.9);
+  }
+  60% {
+    transform: translateX(60vw) translateY(35vh) rotateY(0deg) scale(1.05);
+  }
+  80% {
+    transform: translateX(85vw) translateY(65vh) rotateY(0deg) scale(0.95);
+  }
+  100% {
+    transform: translateX(110vw) translateY(45vh) rotateY(0deg) scale(1);
   }
 }
 
@@ -517,63 +565,7 @@ input[type="checkbox"]{ width:18px; height:18px }
   }
 }
 
-/* Seaweed */
-.seaweed {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 100px;
-  pointer-events: none;
-  z-index: 0;
-}
 
-.seaweed-plant {
-  position: absolute;
-  bottom: 0;
-  width: 8px;
-  height: 80px;
-  background: linear-gradient(to top, #2d5a2d 0%, #4a7c59 50%, #6b8e6b 100%);
-  border-radius: 4px;
-  animation: seaweedSway 4s ease-in-out infinite;
-}
-
-.seaweed-plant:nth-child(1) { left: 10%; animation-delay: 0s; height: 60px; }
-.seaweed-plant:nth-child(2) { left: 25%; animation-delay: 1s; height: 80px; }
-.seaweed-plant:nth-child(3) { left: 40%; animation-delay: 2s; height: 70px; }
-.seaweed-plant:nth-child(4) { left: 65%; animation-delay: 0.5s; height: 90px; }
-.seaweed-plant:nth-child(5) { left: 85%; animation-delay: 1.5s; height: 65px; }
-
-.seaweed-plant::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -2px;
-  width: 12px;
-  height: 20px;
-  background: linear-gradient(to top, #2d5a2d 0%, #4a7c59 100%);
-  border-radius: 6px;
-  transform-origin: bottom center;
-  animation: seaweedTop 3s ease-in-out infinite;
-}
-
-@keyframes seaweedSway {
-  0%, 100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
-}
-
-@keyframes seaweedTop {
-  0%, 100% {
-    transform: rotate(-10deg);
-  }
-  50% {
-    transform: rotate(10deg);
-  }
-}
 
 /* Light theme removed */
 
