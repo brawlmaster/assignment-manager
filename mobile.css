@@ -435,39 +435,7 @@ html, body {
     padding: 20px;
 }
 
-.setting-group h4 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 16px;
-}
-
-.setting-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.setting-item:active {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 12px;
-    margin: 0 -12px;
-}
-
-.setting-item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: #3b82f6;
-}
-
-.setting-item span {
-    font-size: 16px;
-    color: #fff;
-}
+/* Settings removed on mobile */
 
 .shortcut-list {
     display: flex;

@@ -49,10 +49,6 @@ class MobileTaskManager {
         });
 
         // Header buttons
-        document.getElementById('settingsBtn').addEventListener('click', () => {
-            this.showModal('settingsModal');
-        });
-
         document.getElementById('helpBtn').addEventListener('click', () => {
             this.showModal('helpModal');
         });
@@ -343,11 +339,6 @@ class MobileTaskManager {
     }
 
     setupModals() {
-        // Close buttons for existing modals
-        document.getElementById('closeSettings').addEventListener('click', () => {
-            this.hideModal('settingsModal');
-        });
-
         document.getElementById('closeHelp').addEventListener('click', () => {
             this.hideModal('helpModal');
         });
@@ -360,18 +351,6 @@ class MobileTaskManager {
                 }
             });
         });
-
-        // Settings checkboxes
-        const settingCheckboxes = document.querySelectorAll('.setting-item input[type="checkbox"]');
-        settingCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', () => {
-                this.saveSettings();
-                this.applySettings();
-            });
-        });
-
-        this.loadSettings();
-        this.applySettings();
 
         // Bind add task modal controls
         this.bindAddTaskModalEvents();
@@ -387,40 +366,7 @@ class MobileTaskManager {
         modal.classList.remove('active');
     }
 
-    saveSettings() {
-        const settings = {};
-        document.querySelectorAll('.setting-item input[type="checkbox"]').forEach(checkbox => {
-            settings[checkbox.id] = checkbox.checked;
-        });
-        localStorage.setItem('mobileSettings', JSON.stringify(settings));
-    }
-
-    loadSettings() {
-        const settings = JSON.parse(localStorage.getItem('mobileSettings') || '{}');
-        Object.keys(settings).forEach(key => {
-            const checkbox = document.getElementById(key);
-            if (checkbox) {
-                checkbox.checked = settings[key];
-            }
-        });
-    }
-
-    applySettings() {
-        // Apply visibility based on settings for available widgets/cards
-        const settings = JSON.parse(localStorage.getItem('mobileSettings') || '{}');
-        const get = (key, def=true) => settings.hasOwnProperty(key) ? !!settings[key] : def;
-
-        const cardMap = [
-            ['showTotal', 'cardTotal'],
-            ['showDone', 'cardDone'],
-            ['showPending', 'cardPending'],
-            ['showStreak', 'cardStreak']
-        ];
-        cardMap.forEach(([prefKey, cardId]) => {
-            const el = document.getElementById(cardId);
-            if (el) el.style.display = get(prefKey, true) ? '' : 'none';
-        });
-    }
+    // Settings removed on mobile
 
     saveTasks() {
         localStorage.setItem('mobileTasks', JSON.stringify(this.tasks));
