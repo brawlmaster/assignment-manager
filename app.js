@@ -657,118 +657,108 @@ render = function() {
   updateStats();
 };
 
-// Fish animation system
-class FishAnimation {
+// Music Player System
+class MusicPlayer {
   constructor() {
-    this.fish = [];
+    this.audio = document.getElementById('backgroundMusic');
+    this.isPlaying = false;
+    this.vinylRecord = document.getElementById('vinylRecord');
+    this.vinylArm = document.querySelector('.vinyl-arm');
+    this.playerToggle = document.getElementById('playerToggle');
+    this.volumeSlider = document.getElementById('volumeSlider');
+    this.playIcon = document.querySelector('.play-icon');
+    this.pauseIcon = document.querySelector('.pause-icon');
+    
     this.init();
   }
 
   init() {
-    const fishElements = document.querySelectorAll('.fish');
-    fishElements.forEach((element, index) => {
-      const fish = {
-        element: element,
-        x: 0,
-        y: 0,
-        prevY: 0,
-        speed: 0.3 + Math.random() * 0.7, // Slower speed between 0.3 and 1
-        direction: Math.random() > 0.5 ? 1 : -1, // Random direction
-        startDelay: Math.random() * 3000 // Random start delay up to 3 seconds
-      };
-      
-      // Set initial position and opacity
-      if (fish.direction > 0) {
-        // Swimming right
-        fish.x = -100;
-        fish.y = 20 + Math.random() * (window.innerHeight - 100);
-        fish.prevY = fish.y;
-      } else {
-        // Swimming left
-        fish.x = window.innerWidth + 100;
-        fish.y = 20 + Math.random() * (window.innerHeight - 100);
-        fish.prevY = fish.y;
-        fish.element.style.transform = 'scaleX(-1)'; // Flip fish
-      }
-      
-      // Start with 0 opacity for fade-in effect
-      fish.element.style.opacity = '0';
-      
-      this.fish.push(fish);
-      
-      // Start animation after delay
-      setTimeout(() => {
-        this.animateFish(fish);
-      }, fish.startDelay);
-    });
+    // Set initial volume
+    this.audio.volume = this.volumeSlider.value / 100;
     
-    console.log(`Initialized ${this.fish.length} fish`);
+    // Event listeners
+    this.playerToggle.addEventListener('click', () => this.togglePlay());
+    this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+    
+    // Audio event listeners
+    this.audio.addEventListener('play', () => this.onPlay());
+    this.audio.addEventListener('pause', () => this.onPause());
+    this.audio.addEventListener('ended', () => this.onEnded());
+    
+    console.log('Music player initialized');
   }
 
-  animateFish(fish) {
-    // Fade in effect
-    let opacity = 0;
-    const fadeIn = setInterval(() => {
-      opacity += 0.02;
-      fish.element.style.opacity = opacity;
-      if (opacity >= 1) {
-        clearInterval(fadeIn);
-        fish.element.style.opacity = '1';
-      }
-    }, 20);
+  togglePlay() {
+    if (this.isPlaying) {
+      this.pause();
+    } else {
+      this.play();
+    }
+  }
+
+  play() {
+    this.audio.play().catch(error => {
+      console.log('Audio play failed:', error);
+      // Show user-friendly message
+      this.showToast('Click to enable audio playback');
+    });
+  }
+
+  pause() {
+    this.audio.pause();
+  }
+
+  setVolume(value) {
+    this.audio.volume = value / 100;
+  }
+
+  onPlay() {
+    this.isPlaying = true;
+    this.vinylRecord.classList.add('playing');
+    this.vinylArm.classList.add('playing');
+    this.playIcon.style.display = 'none';
+    this.pauseIcon.style.display = 'block';
+  }
+
+  onPause() {
+    this.isPlaying = false;
+    this.vinylRecord.classList.remove('playing');
+    this.vinylArm.classList.remove('playing');
+    this.playIcon.style.display = 'block';
+    this.pauseIcon.style.display = 'none';
+  }
+
+  onEnded() {
+    // Audio will loop automatically due to loop attribute
+    console.log('Track ended, looping...');
+  }
+
+  showToast(message) {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background: rgba(59, 130, 246, 0.9);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 1000;
+      animation: fadeInOut 3s ease-in-out;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
     
-    const animate = () => {
-      // Update position
-      fish.x += fish.speed * fish.direction;
-      fish.prevY = fish.y;
-      
-      // Add natural wavy motion like whales
-      fish.y += Math.sin(fish.x * 0.01) * 0.3;
-      
-      // Keep fish within vertical bounds
-      if (fish.y < 50) fish.y = 50;
-      if (fish.y > window.innerHeight - 50) fish.y = window.innerHeight - 50;
-      
-      // Calculate rotation based on movement direction (like whales)
-      const deltaY = fish.y - fish.prevY;
-      const rotation = Math.atan2(deltaY, fish.speed) * (180 / Math.PI) * 2;
-      
-      // Reset fish when it goes off screen
-      if (fish.direction > 0 && fish.x > window.innerWidth + 200) {
-        fish.x = -100;
-        fish.y = 20 + Math.random() * (window.innerHeight - 100);
-        fish.prevY = fish.y;
-        // Fade out and back in
-        fish.element.style.opacity = '0';
-        setTimeout(() => {
-          fish.element.style.opacity = '1';
-        }, 500);
-      } else if (fish.direction < 0 && fish.x < -200) {
-        fish.x = window.innerWidth + 100;
-        fish.y = 20 + Math.random() * (window.innerHeight - 100);
-        fish.prevY = fish.y;
-        // Fade out and back in
-        fish.element.style.opacity = '0';
-        setTimeout(() => {
-          fish.element.style.opacity = '1';
-        }, 500);
-      }
-      
-      // Apply position and rotation
-      fish.element.style.left = fish.x + 'px';
-      fish.element.style.top = fish.y + 'px';
-      fish.element.style.transform = `${fish.direction < 0 ? 'scaleX(-1)' : 'scaleX(1)'} rotate(${rotation}deg)`;
-      
-      // Continue animation
-      requestAnimationFrame(animate);
-    };
-    
-    animate();
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 3000);
   }
 }
 
-// Initialize fish animation when page loads
+// Initialize music player when page loads
 document.addEventListener('DOMContentLoaded', () => {
-  new FishAnimation();
+  new MusicPlayer();
 });
 

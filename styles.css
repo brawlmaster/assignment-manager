@@ -234,43 +234,222 @@ input[type="checkbox"]{ width:18px; height:18px }
   } 
 }
 
-/* Aquarium fish animation */
-.aquarium-container {
+/* Music Player */
+.music-player {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 5;
-  overflow: hidden;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: rgba(26, 35, 50, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px;
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
 }
 
-.fish {
+.music-player:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.player-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.player-toggle {
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #3b82f6;
+}
+
+.player-toggle:hover {
+  background: rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.vinyl-player {
+  position: relative;
+  height: 120px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vinyl-record {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  position: relative;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.vinyl-record.playing {
+  animation: recordSpin 2s linear infinite;
+}
+
+.record-center {
   position: absolute;
-  font-size: 32px;
-  opacity: 0;
-  z-index: 5;
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.7));
-  transition: opacity 0.5s ease-in-out;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(45deg, #gold, #ffd700);
+  border-radius: 50%;
+  border: 2px solid #333;
 }
 
+.record-grooves {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    transparent 0px,
+    transparent 1px,
+    rgba(255, 255, 255, 0.1) 1px,
+    rgba(255, 255, 255, 0.1) 2px
+  );
+}
 
+.vinyl-arm {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.5s ease;
+}
 
+.vinyl-arm.playing {
+  transform: translateY(-50%) rotate(-15deg);
+}
 
+.arm-base {
+  width: 4px;
+  height: 40px;
+  background: linear-gradient(to bottom, #666, #333);
+  border-radius: 2px;
+  position: relative;
+}
 
-@keyframes fishWiggle {
-  0%, 100% {
-    transform: translateY(0px) rotate(-3deg);
+.arm-needle {
+  width: 2px;
+  height: 20px;
+  background: #999;
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-info span {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.track-info span:first-child {
+  font-weight: 600;
+  color: #fff;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  background: #3b82f6;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+@keyframes recordSpin {
+  from {
+    transform: rotate(0deg);
   }
-  25% {
-    transform: translateY(-3px) rotate(2deg);
+  to {
+    transform: rotate(360deg);
   }
-  50% {
-    transform: translateY(2px) rotate(3deg);
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  75% {
-    transform: translateY(-2px) rotate(-2deg);
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }
 

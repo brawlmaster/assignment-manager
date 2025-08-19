@@ -15,27 +15,45 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="aquarium-container">
-      <div class="fish" data-fish="1">🐟</div>
-      <div class="fish" data-fish="2">🐠</div>
-      <div class="fish" data-fish="3">🐡</div>
-      <div class="fish" data-fish="4">🐟</div>
-      <div class="fish" data-fish="5">🐠</div>
-      <div class="fish" data-fish="6">🐡</div>
-      <div class="fish" data-fish="7">🐟</div>
-      <div class="fish" data-fish="8">🐠</div>
-      <div class="fish" data-fish="9">🐡</div>
-      <div class="fish" data-fish="10">🐟</div>
-      <div class="fish" data-fish="11">🐠</div>
-      <div class="fish" data-fish="12">🐡</div>
-      <div class="fish" data-fish="13">🐟</div>
-      <div class="fish" data-fish="14">🐠</div>
-      <div class="fish" data-fish="15">🐡</div>
-      <div class="fish" data-fish="16">🐟</div>
-      <div class="fish" data-fish="17">🐠</div>
-      <div class="fish" data-fish="18">🐡</div>
-      <div class="fish" data-fish="19">🐟</div>
-      <div class="fish" data-fish="20">🐠</div>
+    <!-- Music Player -->
+    <div class="music-player">
+      <div class="player-header">
+        <h3>Study Music</h3>
+        <button id="playerToggle" class="player-toggle">
+          <svg class="play-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5,3 19,12 5,21"></polygon>
+          </svg>
+          <svg class="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="vinyl-player">
+        <div class="vinyl-record" id="vinylRecord">
+          <div class="record-center"></div>
+          <div class="record-grooves"></div>
+        </div>
+        <div class="vinyl-arm">
+          <div class="arm-base"></div>
+          <div class="arm-needle"></div>
+        </div>
+      </div>
+      
+      <div class="player-controls">
+        <div class="track-info">
+          <span id="trackTitle">Lofi Study Beats</span>
+          <span id="trackArtist">Chill Vibes</span>
+        </div>
+        <div class="volume-control">
+          <input type="range" id="volumeSlider" min="0" max="100" value="50" class="volume-slider">
+        </div>
+      </div>
+      
+      <audio id="backgroundMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+      </audio>
     </div>
     <div class="particles">
       <div class="particle"></div>
