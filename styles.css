@@ -22,11 +22,7 @@
 .timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
 .timer-actions{ display:flex; gap:8px }
 
-/* Compact grid for settings toggles */
-.widget-toggle-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 12px; margin:10px 0 }
-.widget-toggle-grid label{ display:flex; align-items:center; gap:8px; background: rgba(17,24,39,0.45); border:1px solid var(--glass-border); padding:8px 10px; border-radius:10px; cursor:pointer }
-.widget-toggle-grid input{ accent-color:#3b82f6 }
-.widget-toggle-grid span{ color:#cbd5e1; font-size:13px }
+/* (Reverted) */
 
 /* Compact grid for settings toggles */
 .widget-toggle-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 12px; margin:10px 0 }
