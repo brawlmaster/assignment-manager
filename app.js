@@ -662,6 +662,8 @@ class MusicPlayer {
   constructor() {
     this.audio = document.getElementById('backgroundMusic');
     this.isPlaying = false;
+    this.isMinimized = false;
+    this.musicPlayer = document.querySelector('.music-player');
     this.vinylRecord = document.getElementById('vinylRecord');
     this.vinylArm = document.querySelector('.vinyl-arm');
     this.playerToggle = document.getElementById('playerToggle');
@@ -669,6 +671,7 @@ class MusicPlayer {
     this.skipForward = document.getElementById('skipForward');
     this.skipBackward = document.getElementById('skipBackward');
     this.volumeSlider = document.getElementById('volumeSlider');
+    this.minimizeBtn = document.getElementById('minimizeBtn');
     this.playIcon = document.querySelector('.play-icon');
     this.pauseIcon = document.querySelector('.pause-icon');
     
@@ -685,6 +688,7 @@ class MusicPlayer {
     this.skipForward.addEventListener('click', () => this.skipForwardTime());
     this.skipBackward.addEventListener('click', () => this.skipBackwardTime());
     this.volumeSlider.addEventListener('input', (e) => this.setVolume(e.target.value));
+    this.minimizeBtn.addEventListener('click', () => this.toggleMinimize());
     
     // Audio event listeners
     this.audio.addEventListener('play', () => this.onPlay());
@@ -747,6 +751,20 @@ class MusicPlayer {
   onEnded() {
     // Audio will loop automatically due to loop attribute
     console.log('Track ended, looping...');
+  }
+
+  toggleMinimize() {
+    this.isMinimized = !this.isMinimized;
+    
+    if (this.isMinimized) {
+      this.musicPlayer.classList.add('minimized');
+      this.minimizeBtn.title = 'Maximize';
+      this.showToast('Player minimized');
+    } else {
+      this.musicPlayer.classList.remove('minimized');
+      this.minimizeBtn.title = 'Minimize';
+      this.showToast('Player expanded');
+    }
   }
 
   showToast(message) {

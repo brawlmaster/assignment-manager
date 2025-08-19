@@ -255,6 +255,25 @@ input[type="checkbox"]{ width:18px; height:18px }
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
+.music-player.minimized {
+  width: 200px;
+  height: 60px;
+  overflow: hidden;
+}
+
+.music-player.minimized .vinyl-player,
+.music-player.minimized .player-controls {
+  display: none;
+}
+
+.music-player.minimized .player-header {
+  margin-bottom: 0;
+}
+
+.music-player.minimized .minimize-btn svg {
+  transform: rotate(180deg);
+}
+
 .player-header {
   display: flex;
   justify-content: space-between;
@@ -267,6 +286,35 @@ input[type="checkbox"]{ width:18px; height:18px }
   font-size: 14px;
   font-weight: 600;
   color: #fff;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.minimize-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.minimize-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.minimize-btn:active {
+  transform: scale(0.95);
 }
 
 .player-toggle {
