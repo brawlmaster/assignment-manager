@@ -234,8 +234,8 @@ input[type="checkbox"]{ width:18px; height:18px }
   } 
 }
 
-/* Whale animation */
-.whale-container {
+/* Aquarium fish animation */
+.aquarium-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -246,168 +246,55 @@ input[type="checkbox"]{ width:18px; height:18px }
   overflow: hidden;
 }
 
-.whale {
+.fish {
   position: absolute;
-  opacity: 1;
+  font-size: 20px;
+  opacity: 0.8;
   z-index: 1;
-  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+  animation: fishSwim 15s linear infinite;
 }
 
-.whale-1 {
-  /* JavaScript will handle animation */
+.fish:nth-child(odd) {
+  animation-duration: 12s;
+  animation-delay: 0s;
 }
 
-.whale-2 {
-  /* JavaScript will handle animation */
+.fish:nth-child(even) {
+  animation-duration: 18s;
+  animation-delay: 6s;
 }
 
-.whale-3 {
-  /* JavaScript will handle animation */
+.fish:nth-child(3n) {
+  animation-duration: 20s;
+  animation-delay: 3s;
 }
 
-/* Realistic Whale Body */
-.whale-body {
-  position: relative;
-  width: 120px;
-  height: 60px;
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 50%, #2c5aa0 100%);
-  border-radius: 50px 30px 30px 50px;
-  box-shadow: 
-    inset -5px -5px 15px rgba(0,0,0,0.3),
-    inset 5px 5px 15px rgba(255,255,255,0.2),
-    0 0 30px rgba(74, 144, 226, 0.6);
-  animation: whaleSwim 3s ease-in-out infinite;
+.fish:nth-child(4n) {
+  animation-duration: 14s;
+  animation-delay: 9s;
 }
 
-.whale-head {
-  position: absolute;
-  left: -10px;
-  top: 15px;
-  width: 40px;
-  height: 30px;
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-  border-radius: 20px 15px 15px 20px;
-  box-shadow: inset -3px -3px 10px rgba(0,0,0,0.3);
+.fish:nth-child(5n) {
+  animation-duration: 16s;
+  animation-delay: 12s;
 }
 
-.whale-eye {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  width: 8px;
-  height: 8px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow: 0 0 5px rgba(255,255,255,0.8);
-}
-
-.whale-eye::after {
-  content: '';
-  position: absolute;
-  right: 1px;
-  top: 1px;
-  width: 4px;
-  height: 4px;
-  background: #000;
-  border-radius: 50%;
-}
-
-.whale-mouth {
-  position: absolute;
-  right: 2px;
-  bottom: 5px;
-  width: 12px;
-  height: 6px;
-  background: #2c5aa0;
-  border-radius: 0 0 6px 6px;
-}
-
-.whale-tail {
-  position: absolute;
-  right: -15px;
-  top: 20px;
-  width: 30px;
-  height: 20px;
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-  border-radius: 0 10px 10px 0;
-  transform-origin: left center;
-  animation: tailWag 1.5s ease-in-out infinite;
-}
-
-.whale-fin {
-  position: absolute;
-  left: 30px;
-  top: -5px;
-  width: 15px;
-  height: 25px;
-  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-  border-radius: 0 0 15px 15px;
-  transform-origin: bottom center;
-  animation: finWave 2s ease-in-out infinite;
-}
-
-.whale-bubbles {
-  position: absolute;
-  left: -20px;
-  top: 20px;
-}
-
-.bubble {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
-  animation: bubbleRise 3s linear infinite;
-}
-
-.bubble:nth-child(1) { animation-delay: 0s; }
-.bubble:nth-child(2) { animation-delay: 1s; }
-.bubble:nth-child(3) { animation-delay: 2s; }
-
-@keyframes tailWag {
-  0%, 100% {
-    transform: rotate(-15deg);
-  }
-  50% {
-    transform: rotate(15deg);
-  }
-}
-
-@keyframes finWave {
-  0%, 100% {
-    transform: rotate(-5deg);
-  }
-  50% {
-    transform: rotate(5deg);
-  }
-}
-
-@keyframes bubbleRise {
+@keyframes fishSwim {
   0% {
-    transform: translateY(0px) scale(0);
-    opacity: 0;
+    transform: translateX(-50px) translateY(0vh) rotateY(0deg);
   }
-  20% {
-    opacity: 1;
-    transform: translateY(-10px) scale(1);
+  25% {
+    transform: translateX(25vw) translateY(20vh) rotateY(0deg);
   }
-  80% {
-    opacity: 1;
-    transform: translateY(-40px) scale(1.2);
+  50% {
+    transform: translateX(50vw) translateY(10vh) rotateY(0deg);
+  }
+  75% {
+    transform: translateX(75vw) translateY(30vh) rotateY(0deg);
   }
   100% {
-    transform: translateY(-60px) scale(0);
-    opacity: 0;
-  }
-}
-
-@keyframes whaleSwim {
-  0%, 100% {
-    transform: translateY(0px) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-3px) rotate(2deg);
+    transform: translateX(100vw) translateY(15vh) rotateY(0deg);
   }
 }
 

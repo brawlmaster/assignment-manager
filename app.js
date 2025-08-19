@@ -657,119 +657,18 @@ render = function() {
   updateStats();
 };
 
-// Whale Animation with JavaScript
-function animateWhales() {
-  const whale1 = document.querySelector('.whale-1');
-  const whale2 = document.querySelector('.whale-2');
-  const whale3 = document.querySelector('.whale-3');
-  
-  console.log('Whales found:', !!whale1, !!whale2, !!whale3);
-  
-  if (!whale1 || !whale2 || !whale3) {
-    console.log('Some whales not found, retrying...');
-    setTimeout(animateWhales, 1000);
-    return;
-  }
-  
-  // Set initial positions in middle of screen
-  whale1.style.left = '50vw';
-  whale1.style.top = '20vh';
-  whale1.style.position = 'absolute';
-  whale1.style.opacity = '1';
-  whale1.style.transform = 'translateX(-50%)';
-  
-  whale2.style.left = '50vw';
-  whale2.style.top = '50vh';
-  whale2.style.position = 'absolute';
-  whale2.style.opacity = '1';
-  whale2.style.transform = 'translateX(-50%)';
-  
-  whale3.style.left = '50vw';
-  whale3.style.top = '80vh';
-  whale3.style.position = 'absolute';
-  whale3.style.opacity = '1';
-  whale3.style.transform = 'translateX(-50%)';
-  
-  // Animate whale 1
-  let whale1X = window.innerWidth / 2;
-  let whale1Y = 20;
-  let whale1PrevY = 20;
-  const whale1Interval = setInterval(() => {
-    whale1X += 2;
-    whale1PrevY = whale1Y;
-    whale1Y += Math.sin(whale1X * 0.01) * 0.5;
-    
-    // Calculate rotation based on movement direction
-    const deltaY = whale1Y - whale1PrevY;
-    const rotation = Math.atan2(deltaY, 2) * (180 / Math.PI) * 3; // Moderate rotation
-    
-    whale1.style.left = whale1X + 'px';
-    whale1.style.top = whale1Y + 'vh';
-    whale1.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
-    whale1.style.opacity = '1';
-    
-    if (whale1X > window.innerWidth + 200) {
-      whale1X = window.innerWidth / 2;
-      whale1Y = 20;
-      whale1PrevY = 20;
-    }
-  }, 50);
-  
-  // Animate whale 2 (delayed)
-  setTimeout(() => {
-    let whale2X = window.innerWidth / 2;
-    let whale2Y = 50;
-    let whale2PrevY = 50;
-    const whale2Interval = setInterval(() => {
-      whale2X += 1.5;
-      whale2PrevY = whale2Y;
-      whale2Y += Math.sin(whale2X * 0.008) * 0.3;
-      
-      // Calculate rotation based on movement direction
-      const deltaY = whale2Y - whale2PrevY;
-      const rotation = Math.atan2(deltaY, 1.5) * (180 / Math.PI) * 3;
-      
-      whale2.style.left = whale2X + 'px';
-      whale2.style.top = whale2Y + 'vh';
-      whale2.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
-      whale2.style.opacity = '1';
-      
-      if (whale2X > window.innerWidth + 200) {
-        whale2X = window.innerWidth / 2;
-        whale2Y = 50;
-        whale2PrevY = 50;
-      }
-    }, 50);
-  }, 2000);
-  
-  // Animate whale 3 (more delayed)
-  setTimeout(() => {
-    let whale3X = window.innerWidth / 2;
-    let whale3Y = 80;
-    let whale3PrevY = 80;
-    const whale3Interval = setInterval(() => {
-      whale3X += 1.2;
-      whale3PrevY = whale3Y;
-      whale3Y += Math.sin(whale3X * 0.012) * 0.4;
-      
-      // Calculate rotation based on movement direction
-      const deltaY = whale3Y - whale3PrevY;
-      const rotation = Math.atan2(deltaY, 1.2) * (180 / Math.PI) * 3;
-      
-      whale3.style.left = whale3X + 'px';
-      whale3.style.top = whale3Y + 'vh';
-      whale3.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
-      whale3.style.opacity = '1';
-      
-      if (whale3X > window.innerWidth + 200) {
-        whale3X = window.innerWidth / 2;
-        whale3Y = 80;
-        whale3PrevY = 80;
-      }
-    }, 50);
-  }, 4000);
+// Simple fish positioning - CSS handles the animation
+function positionFish() {
+  const fish = document.querySelectorAll('.fish');
+  fish.forEach((fishElement, index) => {
+    // Set random initial positions
+    const randomX = Math.random() * window.innerWidth;
+    const randomY = Math.random() * window.innerHeight;
+    fishElement.style.left = randomX + 'px';
+    fishElement.style.top = randomY + 'px';
+  });
 }
 
-// Start whale animation when page loads
-document.addEventListener('DOMContentLoaded', animateWhales);
+// Position fish when page loads
+document.addEventListener('DOMContentLoaded', positionFish);
 
