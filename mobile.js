@@ -5,9 +5,7 @@ class MobileTaskManager {
         this.tasks = [];
         this.filterMode = 'all';
         this.searchQuery = '';
-        this.isPlaying = false;
-        this.isMinimized = false;
-        
+
         this.init();
     }
 
@@ -16,8 +14,8 @@ class MobileTaskManager {
         this.setupEventListeners();
         this.updateStats();
         this.renderTasks();
-        this.setupMusicPlayer();
         this.setupModals();
+        this.updateProgress();
     }
 
     setupEventListeners() {
@@ -28,11 +26,11 @@ class MobileTaskManager {
 
         taskInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                this.addTask();
+                this.openAddTaskModal();
             }
         });
 
-        addTaskBtn.addEventListener('click', () => this.addTask());
+        addTaskBtn.addEventListener('click', () => this.openAddTaskModal());
         quickAddBtn.addEventListener('click', () => this.quickAddTask());
 
         // Filters
@@ -42,6 +40,7 @@ class MobileTaskManager {
         filterSelect.addEventListener('change', (e) => {
             this.filterMode = e.target.value;
             this.renderTasks();
+            this.updateProgress();
         });
 
         searchInput.addEventListener('input', (e) => {
@@ -56,25 +55,6 @@ class MobileTaskManager {
 
         document.getElementById('helpBtn').addEventListener('click', () => {
             this.showModal('helpModal');
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case '/':
-                        e.preventDefault();
-                        this.showModal('settingsModal');
-                        break;
-                    case 'k':
-                        e.preventDefault();
-                        searchInput.focus();
-                        break;
-                }
-            } else if (e.key === ' ') {
-                e.preventDefault();
-                this.toggleMusic();
-            }
         });
 
         // Touch optimizations
@@ -107,28 +87,83 @@ class MobileTaskManager {
         });
     }
 
-    addTask() {
-        const taskInput = document.getElementById('taskInput');
-        const text = taskInput.value.trim();
-        
-        if (text) {
+    // Open modal to add a full task (desktop-like)
+    openAddTaskModal() {
+        const modal = document.getElementById('addTaskModal');
+        const title = document.getElementById('mTaskTitle');
+        const due = document.getElementById('mTaskDue');
+        const importance = document.getElementById('mTaskImportance');
+        const importanceValue = document.getElementById('mImportanceValue');
+        const notes = document.getElementById('mTaskNotes');
+        const tags = document.getElementById('mTaskTags');
+
+        // Reset defaults
+        title.value = '';
+        const now = new Date();
+        now.setMinutes(now.getMinutes() + 60);
+        const p = (n) => String(n).padStart(2, '0');
+        due.value = `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}T${p(now.getHours())}:${p(now.getMinutes())}`;
+        importance.value = 5;
+        importanceValue.textContent = '5';
+        notes.value = '';
+        tags.value = '';
+
+        modal.classList.add('active');
+        setTimeout(() => title.focus(), 50);
+    }
+
+    // Save task from modal
+    bindAddTaskModalEvents() {
+        const modal = document.getElementById('addTaskModal');
+        const closeBtn = document.getElementById('mCloseAddTask');
+        const cancelBtn = document.getElementById('mCancelTask');
+        const form = document.getElementById('mTaskForm');
+        const importance = document.getElementById('mTaskImportance');
+        const importanceValue = document.getElementById('mImportanceValue');
+
+        importance.addEventListener('input', () => {
+            importanceValue.textContent = String(importance.value);
+        });
+
+        const closeModal = () => modal.classList.remove('active');
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('mTaskTitle').value.trim();
+            const dueStr = document.getElementById('mTaskDue').value;
+            const importanceVal = Number(document.getElementById('mTaskImportance').value);
+            const notes = document.getElementById('mTaskNotes').value.trim();
+            const tagsStr = document.getElementById('mTaskTags').value.trim();
+
+            if (!title || !dueStr) return;
+            const due = new Date(dueStr).getTime();
+            const tags = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
+
             const task = {
                 id: Date.now(),
-                text: text,
+                title,
+                due,
+                importance: Math.min(10, Math.max(1, importanceVal || 5)),
+                notes,
+                tags,
                 completed: false,
-                createdAt: new Date().toISOString()
+                createdAt: Date.now()
             };
-            
-            this.tasks.unshift(task);
+
+            // Save to local storage (mobile storage)
+            this.tasks.push(task);
+            // Sort by due date (active first, earliest due first)
+            this.tasks.sort((a, b) => (a.completed - b.completed) || (a.due - b.due));
             this.saveTasks();
-            this.updateStats();
             this.renderTasks();
-            
-            taskInput.value = '';
-            taskInput.focus();
-            
-            this.showToast('Task added successfully!');
-        }
+            this.updateStats();
+            this.updateProgress();
+            this.showToast(`Added "${task.title}"`);
+            closeModal();
+        });
     }
 
     quickAddTask() {
@@ -138,16 +173,21 @@ class MobileTaskManager {
         if (text) {
             const task = {
                 id: Date.now(),
+                title: text,
                 text: text,
                 completed: false,
-                createdAt: new Date().toISOString(),
-                quickAdd: true
+                createdAt: Date.now(),
+                due: Date.now() + 24*60*60*1000,
+                importance: 5,
+                notes: '',
+                tags: []
             };
             
             this.tasks.unshift(task);
             this.saveTasks();
             this.updateStats();
             this.renderTasks();
+            this.updateProgress();
             
             taskInput.value = '';
             taskInput.focus();
@@ -163,6 +203,7 @@ class MobileTaskManager {
             this.saveTasks();
             this.updateStats();
             this.renderTasks();
+            this.updateProgress();
         }
     }
 
@@ -171,6 +212,7 @@ class MobileTaskManager {
         this.saveTasks();
         this.updateStats();
         this.renderTasks();
+        this.updateProgress();
         this.showToast('Task deleted');
     }
 
@@ -178,7 +220,15 @@ class MobileTaskManager {
         const taskList = document.getElementById('taskList');
         const taskCount = document.getElementById('taskCount');
         
-        let filteredTasks = this.tasks;
+        let filteredTasks = this.tasks.map(t => ({
+            // Normalize for older saved entries
+            id: t.id,
+            title: t.title || t.text,
+            text: t.title || t.text,
+            completed: !!t.completed,
+            due: t.due || (Date.now() + 24*60*60*1000),
+            importance: typeof t.importance === 'number' ? t.importance : 5,
+        }));
         
         // Apply filter
         if (this.filterMode === 'pending') {
@@ -190,7 +240,7 @@ class MobileTaskManager {
         // Apply search
         if (this.searchQuery) {
             filteredTasks = filteredTasks.filter(t => 
-                t.text.toLowerCase().includes(this.searchQuery)
+                (t.text || '').toLowerCase().includes(this.searchQuery)
             );
         }
         
@@ -246,6 +296,17 @@ class MobileTaskManager {
         document.getElementById('streakDays').textContent = streakDays;
     }
 
+    updateProgress() {
+        const progressFillEl = document.getElementById('progressFill');
+        const progressPctEl = document.getElementById('progressPct');
+        if (!progressFillEl || !progressPctEl) return;
+        const total = this.tasks.length;
+        const completed = this.tasks.filter(t => t.completed).length;
+        const pct = total === 0 ? 0 : Math.round((completed / total) * 100);
+        progressFillEl.style.transform = `scaleX(${pct/100})`;
+        progressPctEl.textContent = pct + '%';
+    }
+
     calculateStreak() {
         // Simple streak calculation - count days with tasks in the last 7 days
         const today = new Date();
@@ -274,73 +335,8 @@ class MobileTaskManager {
         return streak;
     }
 
-    setupMusicPlayer() {
-        const audio = document.getElementById('backgroundMusic');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const minimizeBtn = document.getElementById('minimizeBtn');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const musicPlayer = document.getElementById('musicPlayer');
-
-        // Set initial volume
-        audio.volume = 0.5;
-
-        playPauseBtn.addEventListener('click', () => {
-            this.toggleMusic();
-        });
-
-        minimizeBtn.addEventListener('click', () => {
-            this.toggleMinimize();
-        });
-
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value / 100;
-        });
-
-        audio.addEventListener('play', () => {
-            this.isPlaying = true;
-            playPauseBtn.textContent = '⏸️';
-        });
-
-        audio.addEventListener('pause', () => {
-            this.isPlaying = false;
-            playPauseBtn.textContent = '▶️';
-        });
-
-        audio.addEventListener('ended', () => {
-            this.isPlaying = false;
-            playPauseBtn.textContent = '▶️';
-        });
-    }
-
-    toggleMusic() {
-        const audio = document.getElementById('backgroundMusic');
-        if (this.isPlaying) {
-            audio.pause();
-        } else {
-            audio.play().catch(e => {
-                console.log('Audio play failed:', e);
-                this.showToast('Click play to start music');
-            });
-        }
-    }
-
-    toggleMinimize() {
-        const musicPlayer = document.getElementById('musicPlayer');
-        const minimizeBtn = document.getElementById('minimizeBtn');
-        
-        this.isMinimized = !this.isMinimized;
-        
-        if (this.isMinimized) {
-            musicPlayer.classList.add('minimized');
-            minimizeBtn.textContent = '➕';
-        } else {
-            musicPlayer.classList.remove('minimized');
-            minimizeBtn.textContent = '➖';
-        }
-    }
-
     setupModals() {
-        // Close buttons
+        // Close buttons for existing modals
         document.getElementById('closeSettings').addEventListener('click', () => {
             this.hideModal('settingsModal');
         });
@@ -367,6 +363,9 @@ class MobileTaskManager {
         });
 
         this.loadSettings();
+
+        // Bind add task modal controls
+        this.bindAddTaskModalEvents();
     }
 
     showModal(modalId) {
