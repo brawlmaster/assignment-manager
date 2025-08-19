@@ -40,6 +40,8 @@ let tasks = [];
 let filterMode = 'all';
 let searchQuery = '';
 let sortMode = 'due';
+let groupByMode = 'none';
+let groups = [];
 
 // Elements
 const taskListEl = document.getElementById('taskList');
@@ -95,6 +97,16 @@ const settingsForm = document.getElementById('settingsForm');
 const themeSelect = document.getElementById('themeSelect');
 const accentSelect = document.getElementById('accentSelect');
 const settingsCancel = document.getElementById('settingsCancel');
+// Grouping controls
+const groupBySelect = document.getElementById('groupBySelect');
+const groupsButton = document.getElementById('groupsButton');
+const groupsDialog = document.getElementById('groupsDialog');
+const groupsForm = document.getElementById('groupsForm');
+const groupsList = document.getElementById('groupsList');
+const groupsClose = document.getElementById('groupsClose');
+const addGroupButton = document.getElementById('addGroupButton');
+const newGroupInput = document.getElementById('newGroupInput');
+const taskGroupSelect = document.getElementById('taskGroup');
 // Widget cards and toggles
 const cardToday = document.getElementById('cardToday');
 const cardStreak = document.getElementById('cardStreak');
@@ -124,51 +136,55 @@ function render(){
   });
   
   let sorted = [...filtered];
-  if (sortMode === 'due') {
+  if (sortMode === 'group') {
+    sorted.sort((a,b)=> (String(a.group||'').localeCompare(String(b.group||''))) || (a.completed-b.completed) || (a.due-b.due) || (b.importance-a.importance));
+  } else if (sortMode === 'due') {
     sorted.sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance);
   } else if (sortMode === 'importance') {
     sorted.sort((a,b)=> a.completed-b.completed || b.importance-a.importance || a.due-b.due);
   } else if (sortMode === 'created') {
-    sorted.sort((a,b)=> a.completed-b.completed || b.createdAt-a.createdAt || b.importance-a.importance);
+    sorted.sort((a,b)=> a.completed-b.completed || b.createdAt-a.createdAt || b.importance-a-importancel);
   }
   taskListEl.innerHTML='';
-  let completedCount=0; const dueSoon=[];
-  for (const t of sorted){
-    if (t.completed) completedCount++; if (!t.completed && t.due-nowMs()<=THREE_DAYS_MS) dueSoon.push(t);
-    const li=document.createElement('li'); li.className='task-item animate-in';
-    const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ 
-      t.completed=cb.checked; 
-      await saveTask(t); 
-      if (t.completed) {
-        li.classList.add('completed');
-        setTimeout(() => li.classList.remove('completed'), 600);
-      }
-      render(); 
-    });
-    const content=document.createElement('div');
-    const titleRow=document.createElement('div'); titleRow.className='title-row';
-    const dot=document.createElement('span'); dot.className='dot';
-    const hue = Math.round(120 - ((t.importance-1)/9)*120);
-    dot.style.backgroundColor = `hsl(${hue} 85% 50%)`;
-    const title=document.createElement('div'); title.className='title'; title.textContent=t.title;
-    titleRow.appendChild(dot); titleRow.appendChild(title);
-    const meta=document.createElement('div'); meta.className='meta'; meta.textContent=`Due ${new Date(t.due).toLocaleString()} • Importance ${t.importance}`;
-    content.appendChild(titleRow); content.appendChild(meta);
-    if (Array.isArray(t.tags) && t.tags.length){
-      const chips=document.createElement('div'); chips.className='chips';
-      t.tags.forEach(tag=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=tag; chips.appendChild(c); });
-      content.appendChild(chips);
+
+  if (groupByMode === 'group'){
+    const buckets = new Map();
+    for (const t of sorted){ const g=(t.group||'').trim()||'Ungrouped'; if(!buckets.has(g)) buckets.set(g, []); buckets.get(g).push(t); }
+    const gnames = Array.from(buckets.keys()).sort((a,b)=> a.localeCompare(b));
+    for (const gname of gnames){
+      const header = document.createElement('li'); header.className='group-header'; header.textContent = gname; taskListEl.appendChild(header);
+      renderTasks(buckets.get(gname));
     }
-    if (t.notes){ const n=document.createElement('div'); n.className='hint'; n.textContent=t.notes; content.appendChild(n); }
-    const right=document.createElement('div'); right.className='badges';
-    const soon=t.due-nowMs()<=THREE_DAYS_MS && !t.completed; const badge=document.createElement('span'); badge.className='badge ' + (soon?'alert':'ok'); badge.textContent= soon ? 'Due ≤ 3 days' : 'Scheduled'; right.appendChild(badge);
-    const del=document.createElement('button'); del.className='icon-btn icon-danger'; del.title='Delete task'; del.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>';
-    del.addEventListener('click', ()=> softDeleteTask(t)); right.appendChild(del);
-    li.appendChild(cb); li.appendChild(content); li.appendChild(right); taskListEl.appendChild(li);
+  } else {
+    renderTasks(sorted);
   }
-  const pct = tasks.length===0 ? 0 : Math.round((completedCount/tasks.length)*100);
+
+  function renderTasks(list){
+    const dueSoon=[];
+    for (const t of list){
+      if (!t.completed && t.due-nowMs()<=THREE_DAYS_MS) dueSoon.push(t);
+      const li=document.createElement('li'); li.className='task-item animate-in';
+      const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=!!t.completed; cb.addEventListener('change', async ()=>{ t.completed=cb.checked; await saveTask(t); if (t.completed) { li.classList.add('completed'); setTimeout(()=> li.classList.remove('completed'), 600); } render(); });
+      const content=document.createElement('div');
+      const titleRow=document.createElement('div'); titleRow.className='title-row';
+      const dot=document.createElement('span'); dot.className='dot'; const hue=Math.round(120-((t.importance-1)/9)*120); dot.style.backgroundColor=`hsl(${hue} 85% 50%)`;
+      const title=document.createElement('div'); title.className='title'; title.textContent=t.title;
+      titleRow.appendChild(dot); titleRow.appendChild(title);
+      const meta=document.createElement('div'); meta.className='meta'; const groupLabel=(t.group||'').trim()?` • ${t.group}`:''; meta.textContent=`Due ${new Date(t.due).toLocaleString()} • Importance ${t.importance}${groupLabel}`;
+      content.appendChild(titleRow); content.appendChild(meta);
+      if (Array.isArray(t.tags)&&t.tags.length){ const chips=document.createElement('div'); chips.className='chips'; t.tags.forEach(tag=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=tag; chips.appendChild(c); }); content.appendChild(chips); }
+      if (t.notes){ const n=document.createElement('div'); n.className='hint'; n.textContent=t.notes; content.appendChild(n); }
+      const right=document.createElement('div'); right.className='badges'; const soon=t.due-nowMs()<=THREE_DAYS_MS && !t.completed; const badge=document.createElement('span'); badge.className='badge '+(soon?'alert':'ok'); badge.textContent= soon ? 'Due ≤ 3 days' : 'Scheduled'; right.appendChild(badge);
+      const del=document.createElement('button'); del.className='icon-btn icon-danger'; del.title='Delete task'; del.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>';
+      del.addEventListener('click', ()=> softDeleteTask(t)); right.appendChild(del);
+      li.appendChild(cb); li.appendChild(content); li.appendChild(right); taskListEl.appendChild(li);
+    }
+    upcomingListEl.innerHTML=''; if (dueSoon.length>0){ upcomingSectionEl.hidden=false; for (const t of dueSoon.slice(0,10)){ const li=document.createElement('li'); li.className='task-item'; const lab=document.createElement('div'); lab.className='title'; lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()}`; li.appendChild(document.createElement('span')); li.appendChild(lab); li.appendChild(document.createElement('div')); upcomingListEl.appendChild(li);} } else { upcomingSectionEl.hidden=true; }
+  }
+
+  const completedCountAll = tasks.filter(t=>t.completed).length;
+  const pct = tasks.length===0 ? 0 : Math.round((completedCountAll/tasks.length)*100);
   progressFillEl.style.transform = `scaleX(${pct/100})`; progressPctEl.textContent = pct + '%';
-  upcomingListEl.innerHTML=''; if (dueSoon.length>0){ upcomingSectionEl.hidden=false; for (const t of dueSoon.slice(0,10)){ const li=document.createElement('li'); li.className='task-item'; const lab=document.createElement('div'); lab.className='title'; lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()}`; li.appendChild(document.createElement('span')); li.appendChild(lab); li.appendChild(document.createElement('div')); upcomingListEl.appendChild(li);} } else { upcomingSectionEl.hidden=true; }
 
   // Insights
   try{
