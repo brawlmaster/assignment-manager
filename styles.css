@@ -251,402 +251,531 @@ input[type="checkbox"]{ width:18px; height:18px }
 }
 
 /* Mobile Optimization - Complete Page */
+/* Aggressive Mobile-First Layout */
 
 /* Tablet and Mobile Layout */
 @media (max-width: 768px) {
-  /* Main Layout */
+  /* App Layout - Single Column, No Sidebar */
   .app-layout {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 12px 16px 24px;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    max-width: 100% !important;
   }
-  
-  .app-main {
-    padding: 8px 16px 24px;
-    max-width: 100%;
-  }
-  
-  /* Header */
+
+  /* Header - Stacked Vertically */
   .app-header {
-    padding: 12px 16px;
-    flex-direction: column;
-    gap: 12px;
-    align-items: stretch;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    text-align: center !important;
   }
-  
-  .header-left {
-    justify-content: center;
-    text-align: center;
-  }
-  
+
   .header-brand {
-    justify-content: center;
+    justify-content: center !important;
   }
-  
-  .header-brand h1 {
-    font-size: 20px;
+
+  .app-header h1 {
+    font-size: 16px !important;
   }
-  
-  .header-right {
-    justify-content: center;
-    gap: 16px;
-  }
-  
+
   .icon-btn {
-    width: 44px;
-    height: 44px;
-    padding: 12px;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 12px !important;
   }
-  
-  /* Sidebar Widgets */
+
+  /* Widgets - Single Column Stack */
   .insights-grid {
-    order: 2;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 0;
-    margin-bottom: 16px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+    order: 2 !important;
   }
-  
+
   .insight-card {
-    flex: 1;
-    min-width: 140px;
-    padding: 16px 12px;
-    border-radius: 12px;
+    width: 100% !important;
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+    flex: none !important;
   }
-  
+
   .insight-card h3 {
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 14px !important;
+    margin-bottom: 6px !important;
   }
-  
+
   .insight-metric {
-    font-size: 18px;
-    margin-bottom: 4px;
+    font-size: 18px !important;
   }
-  
+
   .insight-sub {
-    font-size: 12px;
+    font-size: 11px !important;
   }
-  
-  /* Task List */
+
+  /* Center Card - Full Width */
   .center-card {
-    padding: 20px 16px;
-    border-radius: 16px;
-    margin-bottom: 16px;
+    width: 100% !important;
+    padding: 12px 8px !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
   }
-  
+
   .center-card h2 {
-    font-size: 20px;
-    margin-bottom: 16px;
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
   }
-  
-  /* Task Input */
+
+  /* Task Input - Stacked */
   .task-input-group {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
   }
-  
+
   .task-input {
-    font-size: 16px;
-    padding: 14px 16px;
-    border-radius: 12px;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
   }
-  
+
   .btn {
-    padding: 14px 20px;
-    font-size: 16px;
-    border-radius: 12px;
-    min-height: 48px;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    min-height: 40px !important;
+    width: 100% !important;
   }
-  
+
   .btn-primary {
-    width: 100%;
+    width: 100% !important;
   }
-  
-  /* Task Items */
+
+  /* Task Items - Compact */
   .task-item {
-    padding: 16px 12px;
-    border-radius: 12px;
-    margin-bottom: 8px;
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+    margin-bottom: 6px !important;
+    grid-template-columns: 24px 1fr auto !important;
+    gap: 8px !important;
   }
-  
+
   .task-content {
-    gap: 12px;
+    gap: 6px !important;
   }
-  
+
   .task-text {
-    font-size: 16px;
-    line-height: 1.4;
+    font-size: 13px !important;
+    line-height: 1.3 !important;
   }
-  
+
   .task-meta {
-    font-size: 12px;
-    gap: 8px;
+    font-size: 10px !important;
+    gap: 4px !important;
   }
-  
-  /* Task Actions */
+
+  /* Task Actions - Smaller */
   .task-actions {
-    gap: 8px;
+    gap: 4px !important;
   }
-  
+
   .task-actions .btn {
-    padding: 8px 12px;
-    font-size: 14px;
-    min-height: 36px;
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+    min-height: 28px !important;
+    min-width: 28px !important;
   }
-  
-  /* Filters and Search */
+
+  /* Filters and Search - Stacked */
   .filters-row {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
   }
-  
+
   .filter-group {
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: column !important;
+    gap: 4px !important;
   }
-  
+
   .input {
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 12px;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+    width: 100% !important;
   }
-  
-  /* Music Player */
+
+  /* Music Player - Bottom Fixed */
   .music-player {
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
-    width: auto;
-    max-width: 320px;
-    margin: 0 auto;
-    padding: 12px;
-    border-radius: 12px;
+    position: fixed !important;
+    bottom: 4px !important;
+    right: 4px !important;
+    left: 4px !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    border-radius: 8px !important;
+    z-index: 1000 !important;
   }
-  
+
   .music-player.minimized {
-    width: auto;
-    max-width: 200px;
-    height: 50px;
-    padding: 8px 12px;
+    width: auto !important;
+    max-width: 150px !important;
+    height: 40px !important;
+    padding: 4px 8px !important;
   }
-  
+
   .player-header h3 {
-    font-size: 13px;
+    font-size: 11px !important;
   }
-  
+
   .vinyl-player {
-    height: 100px;
-    margin-bottom: 10px;
+    height: 60px !important;
+    margin-bottom: 6px !important;
   }
-  
+
   .vinyl-record {
-    width: 70px;
-    height: 70px;
+    width: 50px !important;
+    height: 50px !important;
   }
-  
-  .record-center {
-    width: 18px;
-    height: 18px;
-  }
-  
-  .record-grooves {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .control-buttons {
-    gap: 6px;
-    margin: 6px 0;
-  }
-  
-  .control-btn {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px;
-    border-radius: 10px;
-  }
-  
-  .play-pause-btn {
-    min-width: 52px;
-    min-height: 52px;
-  }
-  
+
   .track-info span {
-    font-size: 11px;
+    font-size: 10px !important;
   }
-  
+
   .track-info span:first-child {
-    font-size: 12px;
+    font-size: 11px !important;
   }
-  
+
+  .control-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+
   .volume-slider {
-    height: 6px;
-  }
-  
-  .volume-slider::-webkit-slider-thumb {
-    width: 16px;
-    height: 16px;
-  }
-  
-  .volume-slider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
+    height: 3px !important;
   }
 }
 
 /* Small Mobile Devices */
 @media (max-width: 480px) {
-  /* Main Layout */
   .app-layout {
-    padding: 8px 12px 20px;
-    gap: 12px;
+    padding: 6px !important;
   }
-  
-  .app-main {
-    padding: 6px 12px 20px;
-  }
-  
-  /* Header */
+
   .app-header {
-    padding: 10px 12px;
-    gap: 10px;
+    padding: 6px !important;
   }
-  
-  .header-brand h1 {
-    font-size: 18px;
+
+  .app-header h1 {
+    font-size: 14px !important;
   }
-  
-  .header-right {
-    gap: 12px;
-  }
-  
+
   .icon-btn {
-    width: 40px;
-    height: 40px;
-    padding: 10px;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 10px !important;
   }
-  
-  /* Sidebar Widgets */
+
   .insights-grid {
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
   }
-  
+
   .insight-card {
-    min-width: 120px;
-    padding: 12px 10px;
-    border-radius: 10px;
+    padding: 8px 6px !important;
+    font-size: 11px !important;
   }
-  
+
   .insight-card h3 {
-    font-size: 13px;
-    margin-bottom: 6px;
+    font-size: 12px !important;
   }
-  
+
   .insight-metric {
-    font-size: 16px;
+    font-size: 16px !important;
   }
-  
+
   .insight-sub {
-    font-size: 11px;
+    font-size: 10px !important;
   }
-  
-  /* Task List */
+
   .center-card {
-    padding: 16px 12px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+    padding: 8px 6px !important;
   }
-  
+
   .center-card h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
+    font-size: 14px !important;
   }
-  
-  /* Task Input */
-  .task-input-group {
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  
+
   .task-input {
-    font-size: 16px;
-    padding: 12px 14px;
-    border-radius: 10px;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
   }
-  
+
   .btn {
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 10px;
-    min-height: 44px;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    min-height: 36px !important;
   }
-  
-  /* Task Items */
+
   .task-item {
-    padding: 12px 10px;
-    border-radius: 10px;
-    margin-bottom: 6px;
+    padding: 6px 4px !important;
   }
-  
-  .task-content {
-    gap: 10px;
-  }
-  
+
   .task-text {
-    font-size: 15px;
+    font-size: 12px !important;
   }
-  
-  .task-meta {
-    font-size: 11px;
-    gap: 6px;
-  }
-  
-  /* Task Actions */
-  .task-actions {
-    gap: 6px;
-  }
-  
+
   .task-actions .btn {
-    padding: 6px 10px;
-    font-size: 13px;
-    min-height: 32px;
+    padding: 3px 5px !important;
+    font-size: 9px !important;
+    min-height: 24px !important;
+    min-width: 24px !important;
   }
-  
-  /* Filters and Search */
-  .filters-row {
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  
-  .filter-group {
-    gap: 6px;
-  }
-  
-  .input {
-    padding: 10px 14px;
-    font-size: 16px;
-    border-radius: 10px;
-  }
-  
-  /* Music Player */
+
   .music-player {
-    bottom: 8px;
-    right: 8px;
-    left: 8px;
-    padding: 10px;
-    border-radius: 10px;
+    bottom: 2px !important;
+    right: 2px !important;
+    left: 2px !important;
+    padding: 6px !important;
   }
-  
+
   .music-player.minimized {
-    max-width: 180px;
-    height: 45px;
-    padding: 6px 10px;
+    max-width: 120px !important;
+    height: 35px !important;
+    padding: 3px 6px !important;
   }
+
+  .player-header h3 {
+    font-size: 10px !important;
+  }
+
+  .vinyl-player {
+    height: 50px !important;
+  }
+
+  .vinyl-record {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .track-info span {
+    font-size: 9px !important;
+  }
+
+  .track-info span:first-child {
+    font-size: 10px !important;
+  }
+
+  .control-btn {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 28px !important;
+    min-height: 28px !important;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 360px) {
+  .app-layout {
+    padding: 4px !important;
+  }
+
+  .app-header {
+    padding: 4px !important;
+  }
+
+  .app-header h1 {
+    font-size: 13px !important;
+  }
+
+  .icon-btn {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 9px !important;
+  }
+
+  .insights-grid {
+    gap: 4px !important;
+  }
+
+  .insight-card {
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+  }
+
+  .insight-card h3 {
+    font-size: 11px !important;
+  }
+
+  .insight-metric {
+    font-size: 14px !important;
+  }
+
+  .insight-sub {
+    font-size: 9px !important;
+  }
+
+  .center-card {
+    padding: 6px 4px !important;
+  }
+
+  .center-card h2 {
+    font-size: 12px !important;
+  }
+
+  .task-input {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+
+  .btn {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+    min-height: 32px !important;
+  }
+
+  .task-item {
+    padding: 4px 3px !important;
+  }
+
+  .task-text {
+    font-size: 11px !important;
+  }
+
+  .task-actions .btn {
+    padding: 2px 4px !important;
+    font-size: 8px !important;
+    min-height: 22px !important;
+    min-width: 22px !important;
+  }
+
+  .music-player {
+    bottom: 1px !important;
+    right: 1px !important;
+    left: 1px !important;
+    padding: 4px !important;
+  }
+
+  .music-player.minimized {
+    max-width: 100px !important;
+    height: 30px !important;
+    padding: 2px 4px !important;
+  }
+
+  .player-header h3 {
+    font-size: 9px !important;
+  }
+
+  .vinyl-player {
+    height: 40px !important;
+  }
+
+  .vinyl-record {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  .track-info span {
+    font-size: 8px !important;
+  }
+
+  .track-info span:first-child {
+    font-size: 9px !important;
+  }
+
+  .control-btn {
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    min-height: 22px !important;
+  }
+
+  .play-pause-btn {
+    min-width: 26px !important;
+    min-height: 26px !important;
+  }
+}
+
+/* Touch-friendly improvements and disable hover effects on mobile */
+@media (hover: none) and (pointer: coarse) {
+  /* Disable hover effects for better touch experience */
+  .control-btn:hover,
+  .play-pause-btn:hover,
+  .skip-btn:hover,
+  .music-player:hover,
+  .insight-card:hover,
+  .task-item:hover,
+  .btn:hover,
+  .icon-btn:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Increase touch targets */
+  .control-btn,
+  .play-pause-btn,
+  .skip-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .btn {
+    min-height: 44px !important;
+  }
+
+  .icon-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .task-actions .btn {
+    min-height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Improve active states */
+  .control-btn:active,
+  .play-pause-btn:active,
+  .skip-btn:active,
+  .btn:active,
+  .icon-btn:active {
+    transform: scale(0.95) !important;
+  }
+
+  /* Better focus states */
+  .task-input:focus,
+  .input:focus {
+    outline: 2px solid var(--primary) !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Prevent text selection on buttons */
+  .btn,
+  .icon-btn,
+  .control-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
   
   .player-header h3 {
     font-size: 12px;
