@@ -408,12 +408,18 @@ class MobileTaskManager {
     applySettings() {
         // Apply visibility based on settings for available widgets/cards
         const settings = JSON.parse(localStorage.getItem('mobileSettings') || '{}');
-        const showStreak = settings.hasOwnProperty('showStreak') ? !!settings.showStreak : true;
+        const get = (key, def=true) => settings.hasOwnProperty(key) ? !!settings[key] : def;
 
-        const streakCard = document.getElementById('cardStreak');
-        if (streakCard) {
-            streakCard.style.display = showStreak ? '' : 'none';
-        }
+        const cardMap = [
+            ['showTotal', 'cardTotal'],
+            ['showDone', 'cardDone'],
+            ['showPending', 'cardPending'],
+            ['showStreak', 'cardStreak']
+        ];
+        cardMap.forEach(([prefKey, cardId]) => {
+            const el = document.getElementById(cardId);
+            if (el) el.style.display = get(prefKey, true) ? '' : 'none';
+        });
     }
 
     saveTasks() {
