@@ -107,10 +107,6 @@ const toggleTimer = document.getElementById('toggleTimer');
 const toggleWeather = document.getElementById('toggleWeather');
 const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
-const viewToggleButton = document.getElementById('viewToggleButton');
-const manualButton = document.getElementById('manualButton');
-const manualDialog = document.getElementById('manualDialog');
-const manualClose = document.getElementById('manualClose');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -245,36 +241,6 @@ document.addEventListener('keydown', (e) => {
     shortcutsButton?.click();
   }
 });
-
-// View toggle: switch to mobile and remember preference
-viewToggleButton?.addEventListener('click', () => {
-  try { localStorage.setItem('preferDesktop', 'false'); } catch {}
-  window.location.href = 'mobile.html';
-});
-
-// Manual dialog
-manualButton?.addEventListener('click', () => {
-  if (!manualDialog) return;
-  try {
-    if (typeof manualDialog.showModal === 'function') {
-      manualDialog.showModal();
-    } else {
-      manualDialog.setAttribute('open', '');
-    }
-  } catch (_) {
-    manualDialog.setAttribute('open', '');
-  }
-});
-manualClose?.addEventListener('click', () => {
-  if (!manualDialog) return;
-  try {
-    if (typeof manualDialog.close === 'function') manualDialog.close();
-    manualDialog.removeAttribute('open');
-  } catch (_) {
-    manualDialog.removeAttribute('open');
-  }
-});
-manualDialog?.addEventListener('cancel', (e) => { e.preventDefault(); try { manualDialog?.close(); } catch {} manualDialog?.removeAttribute?.('open'); });
 
 // Filter and sort event listeners
 filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
@@ -713,9 +679,7 @@ class MusicPlayer {
 
   init() {
     // Set initial volume
-    try {
-      this.audio.volume = Math.min(1, Math.max(0, (this.volumeSlider?.value || 50) / 100));
-    } catch {}
+    this.audio.volume = this.volumeSlider.value / 100;
     
     // Event listeners with error handling
     if (this.playPauseBtn) {
@@ -761,7 +725,7 @@ class MusicPlayer {
     this.audio.play().catch(error => {
       console.log('Audio play failed:', error);
       // Show user-friendly message
-      this.showToast('Click the Play button to enable audio');
+      this.showToast('Click to enable audio playback');
     });
   }
 
