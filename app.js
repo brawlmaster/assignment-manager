@@ -671,24 +671,27 @@ function animateWhales() {
     return;
   }
   
-  // Set initial positions
-  whale1.style.left = '100px';
+  // Set initial positions in middle of screen
+  whale1.style.left = '50vw';
   whale1.style.top = '20vh';
   whale1.style.position = 'absolute';
   whale1.style.opacity = '1';
+  whale1.style.transform = 'translateX(-50%)';
   
-  whale2.style.left = '100px';
+  whale2.style.left = '50vw';
   whale2.style.top = '50vh';
   whale2.style.position = 'absolute';
   whale2.style.opacity = '1';
+  whale2.style.transform = 'translateX(-50%)';
   
-  whale3.style.left = '100px';
+  whale3.style.left = '50vw';
   whale3.style.top = '80vh';
   whale3.style.position = 'absolute';
   whale3.style.opacity = '1';
+  whale3.style.transform = 'translateX(-50%)';
   
   // Animate whale 1
-  let whale1X = 100;
+  let whale1X = window.innerWidth / 2;
   let whale1Y = 20;
   let whale1PrevY = 20;
   const whale1Interval = setInterval(() => {
@@ -702,11 +705,11 @@ function animateWhales() {
     
     whale1.style.left = whale1X + 'px';
     whale1.style.top = whale1Y + 'vh';
-    whale1.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
+    whale1.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
     whale1.style.opacity = '1';
     
     if (whale1X > window.innerWidth + 200) {
-      whale1X = 100;
+      whale1X = window.innerWidth / 2;
       whale1Y = 20;
       whale1PrevY = 20;
     }
@@ -714,7 +717,7 @@ function animateWhales() {
   
   // Animate whale 2 (delayed)
   setTimeout(() => {
-    let whale2X = 100;
+    let whale2X = window.innerWidth / 2;
     let whale2Y = 50;
     let whale2PrevY = 50;
     const whale2Interval = setInterval(() => {
@@ -728,11 +731,11 @@ function animateWhales() {
       
       whale2.style.left = whale2X + 'px';
       whale2.style.top = whale2Y + 'vh';
-      whale2.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
+      whale2.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
       whale2.style.opacity = '1';
       
       if (whale2X > window.innerWidth + 200) {
-        whale2X = 100;
+        whale2X = window.innerWidth / 2;
         whale2Y = 50;
         whale2PrevY = 50;
       }
@@ -741,7 +744,7 @@ function animateWhales() {
   
   // Animate whale 3 (more delayed)
   setTimeout(() => {
-    let whale3X = 100;
+    let whale3X = window.innerWidth / 2;
     let whale3Y = 80;
     let whale3PrevY = 80;
     const whale3Interval = setInterval(() => {
@@ -755,11 +758,11 @@ function animateWhales() {
       
       whale3.style.left = whale3X + 'px';
       whale3.style.top = whale3Y + 'vh';
-      whale3.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
+      whale3.style.transform = `translateX(-50%) rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
       whale3.style.opacity = '1';
       
       if (whale3X > window.innerWidth + 200) {
-        whale3X = 100;
+        whale3X = window.innerWidth / 2;
         whale3Y = 80;
         whale3PrevY = 80;
       }
