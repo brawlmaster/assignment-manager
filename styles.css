@@ -441,6 +441,19 @@ input[type="checkbox"]{ width:18px; height:18px }
     padding: 8px 16px !important;
   }
 
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
   .player-header h3 {
     font-size: 14px !important;
   }
@@ -576,6 +589,19 @@ input[type="checkbox"]{ width:18px; height:18px }
     padding: 6px 12px !important;
   }
 
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
+  }
+
   .player-header h3 {
     font-size: 12px !important;
   }
@@ -704,6 +730,19 @@ input[type="checkbox"]{ width:18px; height:18px }
     max-width: 140px !important;
     height: 45px !important;
     padding: 5px 10px !important;
+  }
+
+  .music-player.minimized .player-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    text-align: center !important;
+  }
+
+  .music-player.minimized .player-header h3 {
+    margin: 0 !important;
+    text-align: center !important;
   }
 
   .player-header h3 {
@@ -946,6 +985,16 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .music-player.minimized .player-header {
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
+.music-player.minimized .player-header h3 {
+  margin: 0;
+  text-align: center;
 }
 
 .music-player.minimized .minimize-btn svg {
