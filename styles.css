@@ -1,22 +1,43 @@
-/* Widgets grid and cards */
-.insights-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; align-content:start }
-@media (min-width: 1000px){ .insights-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
-.insight-card{ background: rgba(10,18,34,0.55); border:1px solid var(--glass-border); border-radius:12px; padding:14px; backdrop-filter: blur(8px); }
-.insight-card h3{ margin:0 0 8px 0; font-size:14px }
-.insight-metric{ font-weight:700; font-size:18px; color:#93c5fd }
+/* Keyboard shortcuts dialog */
+.shortcuts-list{ display:flex; flex-direction:column; gap:12px; margin:12px 0 }
+.shortcut-item{ display:flex; align-items:center; gap:12px; padding:8px 0 }
+.shortcut-item kbd{ 
+  background: rgba(11,17,32,0.6); 
+  border:1px solid var(--glass-border); 
+  border-radius:6px; 
+  padding:4px 8px; 
+  font-size:12px; 
+  font-family:monospace; 
+  min-width:80px; 
+  text-align:center;
+  color:var(--primary);
+}
+
+/* Insights (now vertical sidebar) */
+.insights-grid{ display:flex; flex-direction:column; gap:16px; padding: 0; width: 100%; max-width: 300px; margin: 0 }
+.insight-card{ background: var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(10px) saturate(140%); border-radius:16px; padding:16px; box-shadow: var(--shadow) }
+.insight-card h3{ margin:0 0 6px 0 }
+.insight-metric{ font-size:24px; font-weight:700 }
 .insight-sub{ color:var(--muted); font-size:12px }
+.timer-display{ font-size:28px; font-weight:700; margin:6px 0 }
+.timer-actions{ display:flex; gap:8px }
 
 /* Compact grid for settings toggles */
 .widget-toggle-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 12px; margin:10px 0 }
 .widget-toggle-grid label{ display:flex; align-items:center; gap:8px; background: rgba(17,24,39,0.45); border:1px solid var(--glass-border); padding:8px 10px; border-radius:10px; cursor:pointer }
 .widget-toggle-grid input{ accent-color:#3b82f6 }
 .widget-toggle-grid span{ color:#cbd5e1; font-size:13px }
-.volume-slider {
-  flex: 1;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
-  outline: none;
-  cursor: pointer;
-  touch-action: none;
-}
+
+/* Compact grid for settings toggles */
+.widget-toggle-grid{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px 12px; margin:10px 0 }
+.widget-toggle-grid label{ display:flex; align-items:center; gap:8px; background: rgba(17,24,39,0.45); border:1px solid var(--glass-border); padding:8px 10px; border-radius:10px; cursor:pointer }
+.widget-toggle-grid input{ accent-color:#3b82f6 }
+.widget-toggle-grid span{ color:#cbd5e1; font-size:13px }
+
+/* Weather widget */
+.weather-display{ display:flex; align-items:center; gap:12px; margin:8px 0 }
+.weather-icon{ font-size:32px; line-height:1 }
+.weather-info{ flex:1 }
+.weather-temp{ font-size:24px; font-weight:700 }
+.weather-desc{ color:var(--muted); font-size:12px; margin-top:2px }
+.weather-location{ color:var(--muted); font-size:11px; margin-top:4px }
