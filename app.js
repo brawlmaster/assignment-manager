@@ -101,12 +101,24 @@ const cardTimer = document.getElementById('cardTimer');
 const cardWeather = document.getElementById('cardWeather');
 const cardQuote = document.getElementById('cardQuote');
 const cardStats = document.getElementById('cardStats');
+// New widgets
+const cardNextDue = document.getElementById('cardNextDue');
+const cardOverdueTile = document.getElementById('cardOverdueTile');
+const cardCreated7d = document.getElementById('cardCreated7d');
+const cardAvgImportance = document.getElementById('cardAvgImportance');
+const cardTopTag = document.getElementById('cardTopTag');
 const toggleToday = document.getElementById('toggleToday');
 const toggleStreak = document.getElementById('toggleStreak');
 const toggleTimer = document.getElementById('toggleTimer');
 const toggleWeather = document.getElementById('toggleWeather');
 const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
+// New toggles
+const toggleNextDue = document.getElementById('toggleNextDue');
+const toggleOverdueTile = document.getElementById('toggleOverdueTile');
+const toggleCreated7d = document.getElementById('toggleCreated7d');
+const toggleAvgImportance = document.getElementById('toggleAvgImportance');
+const toggleTopTag = document.getElementById('toggleTopTag');
 const viewToggleButton = document.getElementById('viewToggleButton');
 const manualButton = document.getElementById('manualButton');
 const manualDialog = document.getElementById('manualDialog');
@@ -377,29 +389,50 @@ function loadSettings(){
     const showWeather = localStorage.getItem('showWeather');
     const showQuote = localStorage.getItem('showQuote');
     const showStats = localStorage.getItem('showStats');
+    const showNextDue = localStorage.getItem('showNextDue');
+    const showOverdueTile = localStorage.getItem('showOverdueTile');
+    const showCreated7d = localStorage.getItem('showCreated7d');
+    const showAvgImportance = localStorage.getItem('showAvgImportance');
+    const showTopTag = localStorage.getItem('showTopTag');
     const todayOn = showToday === null ? true : showToday !== 'false';
     const streakOn = showStreak === null ? true : showStreak !== 'false';
     const timerOn = showTimer === null ? true : showTimer !== 'false';
     const weatherOn = showWeather === null ? false : showWeather !== 'false';
     const quoteOn = showQuote === null ? false : showQuote !== 'false';
     const statsOn = showStats === null ? false : showStats !== 'false';
+    const nextDueOn = showNextDue === null ? false : showNextDue !== 'false';
+    const overdueOn = showOverdueTile === null ? false : showOverdueTile !== 'false';
+    const created7On = showCreated7d === null ? false : showCreated7d !== 'false';
+    const avgImpOn = showAvgImportance === null ? false : showAvgImportance !== 'false';
+    const topTagOn = showTopTag === null ? false : showTopTag !== 'false';
     if (toggleToday) toggleToday.checked = todayOn;
     if (toggleStreak) toggleStreak.checked = streakOn;
     if (toggleTimer) toggleTimer.checked = timerOn;
     if (toggleWeather) toggleWeather.checked = weatherOn;
     if (toggleQuote) toggleQuote.checked = quoteOn;
     if (toggleStats) toggleStats.checked = statsOn;
-    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+    if (toggleNextDue) toggleNextDue.checked = nextDueOn;
+    if (toggleOverdueTile) toggleOverdueTile.checked = overdueOn;
+    if (toggleCreated7d) toggleCreated7d.checked = created7On;
+    if (toggleAvgImportance) toggleAvgImportance.checked = avgImpOn;
+    if (toggleTopTag) toggleTopTag.checked = topTagOn;
+    applyWidgetVisibility({ todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, nextDueOn, overdueOn, created7On, avgImpOn, topTagOn });
     initializeWidgets();
   }catch{}
 }
-function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn){
+function applyWidgetVisibility(flags){
+  const { todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, nextDueOn, overdueOn, created7On, avgImpOn, topTagOn } = flags;
   if (cardToday) cardToday.style.display = todayOn ? 'block' : 'none';
   if (cardStreak) cardStreak.style.display = streakOn ? 'block' : 'none';
   if (cardTimer) cardTimer.style.display = timerOn ? 'block' : 'none';
   if (cardWeather) cardWeather.style.display = weatherOn ? 'block' : 'none';
   if (cardQuote) cardQuote.style.display = quoteOn ? 'block' : 'none';
   if (cardStats) cardStats.style.display = statsOn ? 'block' : 'none';
+  if (cardNextDue) cardNextDue.style.display = nextDueOn ? 'block' : 'none';
+  if (cardOverdueTile) cardOverdueTile.style.display = overdueOn ? 'block' : 'none';
+  if (cardCreated7d) cardCreated7d.style.display = created7On ? 'block' : 'none';
+  if (cardAvgImportance) cardAvgImportance.style.display = avgImpOn ? 'block' : 'none';
+  if (cardTopTag) cardTopTag.style.display = topTagOn ? 'block' : 'none';
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
@@ -419,13 +452,23 @@ settingsForm?.addEventListener('submit', (e)=>{
   const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
   const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
   const statsOn = toggleStats ? !!toggleStats.checked : false;
+  const nextDueOn = toggleNextDue ? !!toggleNextDue.checked : false;
+  const overdueOn = toggleOverdueTile ? !!toggleOverdueTile.checked : false;
+  const created7On = toggleCreated7d ? !!toggleCreated7d.checked : false;
+  const avgImpOn = toggleAvgImportance ? !!toggleAvgImportance.checked : false;
+  const topTagOn = toggleTopTag ? !!toggleTopTag.checked : false;
   localStorage.setItem('showToday', String(todayOn));
   localStorage.setItem('showStreak', String(streakOn));
   localStorage.setItem('showTimer', String(timerOn));
   localStorage.setItem('showWeather', String(weatherOn));
   localStorage.setItem('showQuote', String(quoteOn));
   localStorage.setItem('showStats', String(statsOn));
-  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
+  localStorage.setItem('showNextDue', String(nextDueOn));
+  localStorage.setItem('showOverdueTile', String(overdueOn));
+  localStorage.setItem('showCreated7d', String(created7On));
+  localStorage.setItem('showAvgImportance', String(avgImpOn));
+  localStorage.setItem('showTopTag', String(topTagOn));
+  applyWidgetVisibility({ todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, nextDueOn, overdueOn, created7On, avgImpOn, topTagOn });
   initializeWidgets();
   settingsDialog?.close('ok');
 });
@@ -682,6 +725,29 @@ function initializeWidgets() {
   if (cardWeather?.style.display !== 'none') loadWeather();
   if (cardQuote?.style.display !== 'none') loadQuote();
   if (cardStats?.style.display !== 'none') updateStats();
+  // New widgets refresh
+  try {
+    const nextDue = tasks.filter(t=>!t.completed).sort((a,b)=>a.due-b.due)[0];
+    if (cardNextDue && nextDue) {
+      const titleEl = document.getElementById('nextDueTitle');
+      const whenEl = document.getElementById('nextDueWhen');
+      if (titleEl) titleEl.textContent = nextDue.title;
+      if (whenEl) whenEl.textContent = new Date(nextDue.due).toLocaleString();
+    }
+    const overdueCount = tasks.filter(t=>!t.completed && t.due < nowMs()).length;
+    const created7 = tasks.filter(t=> t.createdAt > nowMs() - (7*ONE_DAY_MS)).length;
+    const active = tasks.filter(t=>!t.completed);
+    const avgImp = active.length ? (active.reduce((s,t)=>s+(t.importance||5),0)/active.length) : 0;
+    const tagCount = new Map();
+    for (const t of tasks){ if(Array.isArray(t.tags)) for(const tg of t.tags) tagCount.set(tg, (tagCount.get(tg)||0)+1); }
+    const topTag = [...tagCount.entries()].sort((a,b)=>b[1]-a[1])[0];
+    const setText = (id, text)=>{ const el=document.getElementById(id); if(el) el.textContent=String(text); };
+    setText('overdueTotal', overdueCount);
+    setText('created7Count', created7);
+    setText('avgImportanceValue', avgImp.toFixed(1));
+    setText('avgImportanceSub', active.length? 'Across '+active.length+' active' : 'Across active');
+    setText('topTagName', topTag? topTag[0] : 'None');
+  } catch {}
 }
 
 // Update stats when tasks change

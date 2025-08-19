@@ -209,6 +209,33 @@
             </div>
           </div>
         </div>
+
+        <!-- New widgets -->
+        <div class="insight-card" id="cardNextDue">
+          <h3>Next Due</h3>
+          <div class="insight-metric"><span id="nextDueTitle">--</span></div>
+          <div class="insight-sub" id="nextDueWhen">No upcoming tasks</div>
+        </div>
+        <div class="insight-card" id="cardOverdueTile">
+          <h3>Overdue</h3>
+          <div class="insight-metric"><span id="overdueTotal">0</span> tasks</div>
+          <div class="insight-sub">Needs attention</div>
+        </div>
+        <div class="insight-card" id="cardCreated7d">
+          <h3>Created (7d)</h3>
+          <div class="insight-metric"><span id="created7Count">0</span> tasks</div>
+          <div class="insight-sub">Last 7 days</div>
+        </div>
+        <div class="insight-card" id="cardAvgImportance">
+          <h3>Avg Importance</h3>
+          <div class="insight-metric"><span id="avgImportanceValue">0.0</span></div>
+          <div class="insight-sub" id="avgImportanceSub">Across active</div>
+        </div>
+        <div class="insight-card" id="cardTopTag">
+          <h3>Top Tag</h3>
+          <div class="insight-metric"><span id="topTagName">None</span></div>
+          <div class="insight-sub">Most used</div>
+        </div>
       </aside>
 
       <main class="app-main">
@@ -386,30 +413,19 @@
             <option value="#f59e0b">Amber</option>
           </select>
         </label>
-        <label>
-          <span>Show Today tile</span>
-          <input id="toggleToday" type="checkbox" checked />
-        </label>
-        <label>
-          <span>Show Streak tile</span>
-          <input id="toggleStreak" type="checkbox" checked />
-        </label>
-        <label>
-          <span>Show Focus Timer tile</span>
-          <input id="toggleTimer" type="checkbox" checked />
-        </label>
-        <label>
-          <span>Show Weather tile</span>
-          <input id="toggleWeather" type="checkbox" />
-        </label>
-        <label>
-          <span>Show Quote of the Day tile</span>
-          <input id="toggleQuote" type="checkbox" />
-        </label>
-        <label>
-          <span>Show Productivity Stats tile</span>
-          <input id="toggleStats" type="checkbox" />
-        </label>
+        <div class="widget-toggle-grid">
+          <label><input id="toggleToday" type="checkbox" checked /><span>Today</span></label>
+          <label><input id="toggleStreak" type="checkbox" checked /><span>Streak</span></label>
+          <label><input id="toggleTimer" type="checkbox" checked /><span>Focus Timer</span></label>
+          <label><input id="toggleWeather" type="checkbox" /><span>Weather</span></label>
+          <label><input id="toggleQuote" type="checkbox" /><span>Quote</span></label>
+          <label><input id="toggleStats" type="checkbox" /><span>Stats</span></label>
+          <label><input id="toggleNextDue" type="checkbox" /><span>Next Due</span></label>
+          <label><input id="toggleOverdueTile" type="checkbox" /><span>Overdue</span></label>
+          <label><input id="toggleCreated7d" type="checkbox" /><span>Created (7d)</span></label>
+          <label><input id="toggleAvgImportance" type="checkbox" /><span>Avg Importance</span></label>
+          <label><input id="toggleTopTag" type="checkbox" /><span>Top Tag</span></label>
+        </div>
         <menu class="dialog-actions">
           <button type="button" id="settingsCancel" class="btn btn-ghost">Cancel</button>
           <button type="submit" class="btn btn-primary">Save</button>
