@@ -148,11 +148,8 @@ const timeResetBtn = document.getElementById('timeReset');
 const timeTodayEl = document.getElementById('timeToday');
 const timeWeekEl = document.getElementById('timeWeek');
 
-// Manual and mobile navigation elements
-const manualButton = document.getElementById('manualButton');
-const mobileButton = document.getElementById('mobileButton');
-const manualDialog = document.getElementById('manualDialog');
-const manualClose = document.getElementById('manualClose');
+// Manual and mobile navigation elements - will be initialized when needed
+let manualButton, mobileButton, manualDialog, manualClose;
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -369,165 +366,13 @@ function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, s
   if (cardGoals) cardGoals.style.display = goalsOn ? 'block' : 'none';
   if (cardTimeTracker) cardTimeTracker.style.display = timeTrackerOn ? 'block' : 'none';
 }
-settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
-settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
-settingsForm?.addEventListener('submit', (e)=>{
-  e.preventDefault();
-  let theme = themeSelect?.value || 'dark';
-  if (theme === 'light') theme = 'dark';
-  const accent = accentSelect?.value || '#3b82f6';
-  localStorage.setItem('theme', theme);
-  localStorage.setItem('accent', accent);
-  applyTheme(theme);
-  applyAccent(accent);
-  // Persist widget visibility
-  const todayOn = toggleToday ? !!toggleToday.checked : true;
-  const streakOn = toggleStreak ? !!toggleStreak.checked : true;
-  const timerOn = toggleTimer ? !!toggleTimer.checked : true;
-  const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
-  const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
-  const statsOn = toggleStats ? !!toggleStats.checked : false;
-  const pomodoroOn = togglePomodoro ? !!togglePomodoro.checked : true;
-  const goalsOn = toggleGoals ? !!toggleGoals.checked : true;
-  const timeTrackerOn = toggleTimeTracker ? !!toggleTimeTracker.checked : true;
-  localStorage.setItem('showToday', String(todayOn));
-  localStorage.setItem('showStreak', String(streakOn));
-  localStorage.setItem('showTimer', String(timerOn));
-  localStorage.setItem('showWeather', String(weatherOn));
-  localStorage.setItem('showQuote', String(quoteOn));
-  localStorage.setItem('showStats', String(statsOn));
-  localStorage.setItem('showPomodoro', String(pomodoroOn));
-  localStorage.setItem('showGoals', String(goalsOn));
-  localStorage.setItem('showTimeTracker', String(timeTrackerOn));
-  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, pomodoroOn, goalsOn, timeTrackerOn);
-  initializeWidgets();
-  settingsDialog?.close('ok');
-});
-loadSettings();
+
 
 // Widget functionality
 const weatherRefresh = document.getElementById('weatherRefresh');
 const quoteRefresh = document.getElementById('quoteRefresh');
 
-// Weather widget
-async function getLocation() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('Geolocation not supported'));
-      return;
-    }
-    
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude
-        });
-      },
-      (error) => {
-        reject(error);
-      },
-      { timeout: 10000, enableHighAccuracy: false }
-    );
-  });
-}
 
-async function getCityName(lat, lon) {
-  try {
-    const response = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid='5eb85cb8eefd6422546ea879f46e141c`);
-    const data = await response.json();
-    return data[0]?.name || 'Unknown Location';
-  } catch (error) {
-    return 'Unknown Location';
-  }
-}
-
-async function loadWeather() {
-  const weatherTemp = document.getElementById('weatherTemp');
-  const weatherDesc = document.getElementById('weatherDesc');
-  const weatherIcon = document.getElementById('weatherIcon');
-  const weatherLocation = document.getElementById('weatherLocation');
-  
-  try {
-    weatherLocation.textContent = 'Getting location...';
-    weatherTemp.textContent = '--°C';
-    weatherDesc.textContent = 'Loading...';
-    weatherIcon.textContent = '⏳';
-    
-    // Check if we have stored location
-    let location = localStorage.getItem('weatherLocation');
-    let coords = localStorage.getItem('weatherCoords');
-    
-    if (!location || !coords) {
-      // Get user's location
-      try {
-        const position = await getLocation();
-        coords = JSON.stringify(position);
-        location = await getCityName(position.lat, position.lon);
-        
-        localStorage.setItem('weatherLocation', location);
-        localStorage.setItem('weatherCoords', coords);
-      } catch (error) {
-        // Fallback to manual location input
-        const manualLocation = prompt('Please enter your city name for weather:');
-        if (manualLocation && manualLocation.trim()) {
-          location = manualLocation.trim();
-          localStorage.setItem('weatherLocation', location);
-        } else {
-          location = 'London'; // Default fallback
-          localStorage.setItem('weatherLocation', location);
-        }
-      }
-    }
-    
-    weatherLocation.textContent = location;
-    
-    // Use OpenWeatherMap API (free tier)
-    const apiKey = '5eb85cb8eefd6422546ea879f46e141c'; // Replace with your API key
-    const coordsData = coords ? JSON.parse(coords) : null;
-    
-    let weatherUrl;
-    if (coordsData) {
-      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${coordsData.lat}&lon=${coordsData.lon}&units=metric&appid=${apiKey}`;
-    } else {
-      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&units=metric&appid=${apiKey}`;
-    }
-    
-    const response = await fetch(weatherUrl);
-    const data = await response.json();
-    
-    if (data.cod === 200) {
-      const temp = Math.round(data.main.temp);
-      const description = data.weather[0].description;
-      const iconCode = data.weather[0].icon;
-      
-      // Map weather icons
-      const iconMap = {
-        '01d': '☀️', '01n': '🌙',
-        '02d': '⛅', '02n': '☁️',
-        '03d': '☁️', '03n': '☁️',
-        '04d': '☁️', '04n': '☁️',
-        '09d': '🌧️', '09n': '🌧️',
-        '10d': '🌦️', '10n': '🌧️',
-        '11d': '⛈️', '11n': '⛈️',
-        '13d': '❄️', '13n': '❄️',
-        '50d': '🌫️', '50n': '🌫️'
-      };
-      
-      weatherTemp.textContent = `${temp}°C`;
-      weatherDesc.textContent = description.charAt(0).toUpperCase() + description.slice(1);
-      weatherIcon.textContent = iconMap[iconCode] || '🌤️';
-    } else {
-      throw new Error('Weather data not available');
-    }
-  } catch (error) {
-    console.error('Weather error:', error);
-    weatherTemp.textContent = '--°C';
-    weatherDesc.textContent = 'Unable to load';
-    weatherIcon.textContent = '❓';
-    weatherLocation.textContent = 'Location error';
-  }
-}
 
 // Quote widget
 const quotes = [
@@ -982,8 +827,27 @@ function initializeNewWidgets() {
   updateTimeTrackerUI();
 }
 
+// Initialize DOM element references
+function initializeElements() {
+  // Manual and mobile navigation elements
+  manualButton = document.getElementById('manualButton');
+  mobileButton = document.getElementById('mobileButton');
+  manualDialog = document.getElementById('manualDialog');
+  manualClose = document.getElementById('manualClose');
+  
+  console.log('Elements initialized:', {
+    manualButton: !!manualButton,
+    mobileButton: !!mobileButton,
+    manualDialog: !!manualDialog,
+    manualClose: !!manualClose
+  });
+}
+
 // Setup all event listeners
 function setupEventListeners() {
+  // Initialize elements first
+  initializeElements();
+  
   // Existing event listeners
   addTaskButton?.addEventListener('click', ()=> openDialog());
   
