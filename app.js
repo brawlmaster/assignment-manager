@@ -688,7 +688,7 @@ function animateWhales() {
     
     whale1.style.left = whale1X + 'px';
     whale1.style.top = whale1Y + 'vh';
-    whale1.style.transform = `rotate(${rotation}deg)`;
+    whale1.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
     
     if (whale1X > window.innerWidth + 200) {
       whale1X = -200;
@@ -713,7 +713,7 @@ function animateWhales() {
       
       whale2.style.left = whale2X + 'px';
       whale2.style.top = whale2Y + 'vh';
-      whale2.style.transform = `rotate(${rotation}deg)`;
+      whale2.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
       
       if (whale2X > window.innerWidth + 200) {
         whale2X = -200;
@@ -739,7 +739,7 @@ function animateWhales() {
       
       whale3.style.left = whale3X + 'px';
       whale3.style.top = whale3Y + 'vh';
-      whale3.style.transform = `rotate(${rotation}deg)`;
+      whale3.style.transform = `rotate(${rotation}deg) scaleX(1)`; // Face right (moving right)
       
       if (whale3X > window.innerWidth + 200) {
         whale3X = -200;
