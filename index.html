@@ -171,7 +171,13 @@
               <option value="due">Sort by Due Date</option>
               <option value="importance">Sort by Importance</option>
               <option value="created">Sort by Created</option>
+              <option value="group">Sort by Group</option>
             </select>
+            <select id="groupBySelect" class="input">
+              <option value="none">Group: None</option>
+              <option value="group">Group: By Group</option>
+            </select>
+            <button id="groupsButton" class="btn btn-ghost" title="Manage groups">Edit Groups</button>
             <div class="spacer"></div>
             <button id="exportButton" class="btn btn-ghost" title="Export tasks">Export</button>
             <button id="importButton" class="btn btn-ghost" title="Import tasks">Import</button>
@@ -237,6 +243,12 @@
           </select>
         </label>
         <label>
+          <span>Group</span>
+          <select id="taskGroup" name="group">
+            <option value="">Ungrouped</option>
+          </select>
+        </label>
+        <label>
           <span>Notes</span>
           <textarea id="taskNotes" name="notes" rows="3" placeholder="Optional context"></textarea>
         </label>
@@ -248,6 +260,21 @@
         <menu class="dialog-actions">
           <button id="cancelTaskButton" type="button" class="btn btn-ghost">Cancel</button>
           <button id="saveTaskButton" type="submit" class="btn btn-primary">Save</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="groupsDialog">
+      <form id="groupsForm">
+        <h2>Manage Groups</h2>
+        <div class="hint">Add, rename, or delete groups. Deleting a group will ungroup its tasks.</div>
+        <ul id="groupsList" class="task-list" style="max-height:40vh; overflow:auto; margin-top:8px"></ul>
+        <div class="actions" style="justify-content:flex-start;margin-top:8px">
+          <input id="newGroupInput" class="input" type="text" placeholder="New group name" style="width:200px" />
+          <button id="addGroupButton" class="btn btn-primary" type="button">Add Group</button>
+        </div>
+        <menu class="dialog-actions">
+          <button type="button" id="groupsClose" class="btn btn-primary">Done</button>
         </menu>
       </form>
     </dialog>
@@ -345,11 +372,6 @@
         <span id="toastMessage">Task deleted</span>
         <button id="toastUndo" class="btn btn-ghost">Undo</button>
       </div>
-    </div>
-
-    <div id="updateBanner" class="update-banner" hidden>
-      <span>A new version is available.</span>
-      <button id="reloadButton" class="btn btn-primary">Reload</button>
     </div>
 
     <noscript>
