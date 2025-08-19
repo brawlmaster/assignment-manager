@@ -95,6 +95,11 @@ const settingsForm = document.getElementById('settingsForm');
 const themeSelect = document.getElementById('themeSelect');
 const accentSelect = document.getElementById('accentSelect');
 const settingsCancel = document.getElementById('settingsCancel');
+// Classroom sharing controls
+const roleSelect = document.getElementById('roleSelect');
+const classIdInput = document.getElementById('classIdInput');
+const shareWithClass = document.getElementById('shareWithClass');
+const shareWithClassRow = document.getElementById('shareWithClassRow');
 // Widget cards and toggles
 const cardToday = document.getElementById('cardToday');
 const cardStreak = document.getElementById('cardStreak');
@@ -253,7 +258,37 @@ document.addEventListener('keydown', (e) => {
 filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
 sortSelect?.addEventListener('change', (e) => { sortMode = e.target.value; render(); });
 searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); render(); });
-form.addEventListener('submit', async (e)=>{ if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; } e.preventDefault(); const title=titleInput.value.trim(); const due=new Date(dueInput.value).getTime(); const importance=Number(importanceInput.value); const recurrence=recurrenceInput.value; const notes=notesInput.value.trim(); const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean); if(!title||!Number.isFinite(due)) return; const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() }; await saveTask(task); tasks.push(task); tasks.sort((a,b)=>a.due-b.due); render(); dialog.close(); });
+form.addEventListener('submit', async (e)=>{
+  if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; }
+  e.preventDefault();
+  const title=titleInput.value.trim();
+  const due=new Date(dueInput.value).getTime();
+  const importance=Number(importanceInput.value);
+  const recurrence=recurrenceInput.value;
+  const notes=notesInput.value.trim();
+  const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean);
+  if(!title||!Number.isFinite(due)) return;
+  const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() };
+  await saveTask(task);
+  tasks.push(task);
+  tasks.sort((a,b)=>a.due-b.due);
+  render();
+
+  // Classroom share if teacher opted in
+  const role = localStorage.getItem('role') || 'student';
+  const classId = (localStorage.getItem('classId')||'').trim();
+  const shouldShare = role==='teacher' && shareWithClass?.checked && classId;
+  if (shouldShare) {
+    try {
+      await fetch('/api/shared-tasks', {
+        method:'POST', headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify({ classId, task: { title, due, importance, notes, recurrence, tags } })
+      });
+    } catch (err) { console.error('Share task failed', err); }
+  }
+
+  dialog.close();
+});
 cancelTaskButton?.addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
 dialog?.addEventListener('cancel', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
 
@@ -343,6 +378,13 @@ function loadSettings(){
     if (accentSelect) accentSelect.value = accent;
     applyTheme(theme);
     applyAccent(accent);
+    // Classroom
+    const role = localStorage.getItem('role') || 'student';
+    const classId = localStorage.getItem('classId') || '';
+    if (roleSelect) roleSelect.value = role;
+    if (classIdInput) classIdInput.value = classId;
+    if (shareWithClassRow) shareWithClassRow.style.display = role === 'teacher' ? 'block' : 'none';
+
     // Widgets
     const showToday = localStorage.getItem('showToday');
     const showStreak = localStorage.getItem('showStreak');
@@ -385,6 +427,12 @@ settingsForm?.addEventListener('submit', (e)=>{
   localStorage.setItem('accent', accent);
   applyTheme(theme);
   applyAccent(accent);
+  // Classroom
+  const role = roleSelect?.value || 'student';
+  const classId = classIdInput?.value.trim() || '';
+  localStorage.setItem('role', role);
+  localStorage.setItem('classId', classId);
+  if (shareWithClassRow) shareWithClassRow.style.display = role === 'teacher' ? 'block' : 'none';
   // Persist widget visibility
   const todayOn = toggleToday ? !!toggleToday.checked : true;
   const streakOn = toggleStreak ? !!toggleStreak.checked : true;
@@ -855,5 +903,21 @@ function addMobileOptimizations() {
 document.addEventListener('DOMContentLoaded', () => {
   new MusicPlayer();
   addMobileOptimizations();
+  // Fetch shared tasks for students
+  const role = localStorage.getItem('role') || 'student';
+  const classId = (localStorage.getItem('classId')||'').trim();
+  if (role === 'student' && classId) {
+    fetch(`/api/shared-tasks?classId=${encodeURIComponent(classId)}`)
+      .then(r=>r.json()).then(async (data)=>{
+        if (Array.isArray(data?.tasks)){
+          const imported = [];
+          for (const t of data.tasks){
+            const task={ id:uid(), title:String(t.title||'Untitled'), due:Number(t.due)|| (nowMs()+ONE_DAY_MS), importance:Number(t.importance)||5, notes:String(t.notes||''), recurrence:String(t.recurrence||'none'), tags:Array.isArray(t.tags)?t.tags:[], completed:false, createdAt: nowMs() };
+            await saveTask(task); imported.push(task);
+          }
+          if (imported.length){ await loadTasks(); render(); showToast(`Imported ${imported.length} class task(s)`); }
+        }
+      }).catch(err=>console.error('Load shared tasks failed', err));
+  }
 });
 

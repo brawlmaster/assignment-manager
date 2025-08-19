@@ -292,6 +292,11 @@
           <input id="taskTags" name="tags" type="text" placeholder="e.g., school, math" />
         </label>
 
+        <label id="shareWithClassRow" style="display:none">
+          <span>Share with class</span>
+          <input id="shareWithClass" type="checkbox" />
+        </label>
+
         <menu class="dialog-actions">
           <button id="cancelTaskButton" type="button" class="btn btn-ghost">Cancel</button>
           <button id="saveTaskButton" type="submit" class="btn btn-primary">Save</button>
@@ -346,6 +351,18 @@
       <form id="settingsForm">
         <h2>Settings</h2>
         
+        <label>
+          <span>Role</span>
+          <select id="roleSelect">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </label>
+        <label>
+          <span>Class ID</span>
+          <input id="classIdInput" type="text" placeholder="e.g., math-101" />
+        </label>
+
         <label>
           <span>Accent color</span>
           <select id="accentSelect">
