@@ -6,7 +6,7 @@
 @media (max-width: 900px){ 
   .app-layout{ 
     grid-template-columns: 1fr; 
-    padding: 16px 20px 24px;
+    padding: 32px 20px 24px;
   } 
 }
 
@@ -230,7 +230,7 @@ input[type="checkbox"]{ width:18px; height:18px }
 @media (max-width: 900px){ 
   .insights-grid{ 
     max-width:100%;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
   } 
 }
 
@@ -248,8 +248,8 @@ input[type="checkbox"]{ width:18px; height:18px }
 
 .whale {
   position: absolute;
-  opacity: 0.8;
-  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3));
+  opacity: 1;
+  filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.5));
   z-index: 1;
   transform-origin: center;
   animation: whaleFloat 3s ease-in-out infinite;
@@ -265,14 +265,14 @@ input[type="checkbox"]{ width:18px; height:18px }
   animation: swim2 25s linear infinite, whaleFloat 4s ease-in-out infinite;
   animation-delay: 8s;
   transform: scale(1);
-  opacity: 0.7;
+  opacity: 0.9;
 }
 
 .whale-3 {
   animation: swim3 30s linear infinite, whaleFloat 5s ease-in-out infinite;
   animation-delay: 4s;
   transform: scale(0.8);
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 /* Realistic Whale Body */
@@ -285,7 +285,7 @@ input[type="checkbox"]{ width:18px; height:18px }
   box-shadow: 
     inset -5px -5px 15px rgba(0,0,0,0.3),
     inset 5px 5px 15px rgba(255,255,255,0.2),
-    0 0 20px rgba(74, 144, 226, 0.4);
+    0 0 30px rgba(74, 144, 226, 0.6);
   animation: whaleSwim 2s ease-in-out infinite;
 }
 
