@@ -85,6 +85,8 @@ body{
 
 .task-list{ list-style:none; margin:12px 0; padding:0; display:flex; flex-direction:column; gap:10px }
 .group-header{ list-style:none; margin:10px 0 2px 0; padding:6px 10px; color:var(--muted); border-left:3px solid var(--primary); background: rgba(11,17,32,0.4); border-radius:8px }
+
+/* deploy: bump v5 */
 .task-list.compact{ gap:6px }
 .task-item{
   display:grid; grid-template-columns: 28px 1fr auto; gap:12px; align-items:center;
