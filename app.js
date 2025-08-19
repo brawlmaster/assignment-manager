@@ -735,9 +735,18 @@ async function setupUpdateBanner() {
     });
   });
   reloadButton?.addEventListener('click', async () => {
-    const r = await navigator.serviceWorker.getRegistration();
-    const waiting = r?.waiting;
-    if (waiting) waiting.postMessage({ type: 'SKIP_WAITING' });
+    try {
+      const r = await navigator.serviceWorker.getRegistration();
+      const waiting = r?.waiting;
+      if (waiting) {
+        waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        // No waiting worker; force a full reload
+        window.location.reload();
+      }
+    } catch {
+      window.location.reload();
+    }
   });
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     window.location.reload();
