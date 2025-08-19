@@ -233,8 +233,6 @@ async function deleteTasks(ids){ await dbTxn(['tasks'],'readwrite',(s)=> ids.for
 
 function openDialog(defaults=null){ form.reset(); document.getElementById('dialogTitle').textContent = defaults?'Edit Task':'New Task'; const d=defaults ?? { title:'', due: nowMs()+ONE_DAY_MS, importance:5, notes:'', recurrence:'none', tags:[] }; titleInput.value=d.title; dueInput.value=toInputDateTime(d.due); importanceInput.value=d.importance; if (importanceValueEl) importanceValueEl.textContent=String(d.importance); recurrenceInput.value=d.recurrence; notesInput.value=d.notes||''; if (tagsInput) tagsInput.value=(d.tags||[]).join(', '); dialog.showModal(); }
 
-addTaskButton.addEventListener('click', ()=> openDialog());
-
 // Quick add functionality
 function quickAddTask() {
   const title = prompt('Quick add task:');
@@ -259,51 +257,6 @@ function quickAddTask() {
   }
 }
 
-if (quickAddButton) {
-  quickAddButton.addEventListener('click', quickAddTask);
-} else {
-  console.error('Quick add button not found!');
-}
-
-// Keyboard shortcuts dialog
-shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
-shortcutsClose?.addEventListener('click', () => shortcutsDialog?.close());
-
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    if (e.key === 'n') {
-      e.preventDefault();
-      quickAddTask();
-    } else if (e.key === 's') {
-      e.preventDefault();
-      settingsButton?.click();
-    } else if (e.key === 'f') {
-      e.preventDefault();
-      searchInput?.focus();
-    }
-  } else if (e.key === '?') {
-    e.preventDefault();
-    shortcutsButton?.click();
-  }
-});
-
-// Filter and sort event listeners
-filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
-sortSelect?.addEventListener('change', (e) => { sortMode = e.target.value; render(); });
-searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); render(); });
-form.addEventListener('submit', async (e)=>{ if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; } e.preventDefault(); const title=titleInput.value.trim(); const due=new Date(dueInput.value).getTime(); const importance=Number(importanceInput.value); const recurrence=recurrenceInput.value; const notes=notesInput.value.trim(); const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean); if(!title||!Number.isFinite(due)) return; const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() }; await saveTask(task); tasks.push(task); tasks.sort((a,b)=>a.due-b.due); render(); dialog.close(); });
-cancelTaskButton?.addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
-dialog?.addEventListener('cancel', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
-
-// Keep importance label in sync as user moves the slider
-const syncImportanceLabel = () => { if (importanceValueEl) importanceValueEl.textContent = String(importanceInput.value); };
-importanceInput?.addEventListener('input', syncImportanceLabel);
-importanceInput?.addEventListener('change', syncImportanceLabel);
-
-importButton?.addEventListener('click', ()=> importFile?.click());
-importFile?.addEventListener('change', async ()=>{ const file=importFile.files?.[0]; if(!file) return; const text=await file.text(); try{ const imported=JSON.parse(text); let list=Array.isArray(imported)?imported:imported?.tasks; if(!list && imported?.type==='focus-tasks-backup') list=imported.tasks; if(!Array.isArray(list)) throw new Error('Invalid file'); const normalized=list.map(t=>({ id: typeof t.id==='string'&&t.id?t.id:uid(), title:String(t.title||'Untitled task'), due: Number.isFinite(+t.due)? +t.due : new Date(t.due).getTime() || (nowMs()+ONE_DAY_MS), importance: Math.min(10, Math.max(1, Number(t.importance??5))), notes:String(t.notes||''), tags: Array.isArray(t.tags)? t.tags.map(String) : [], completed:Boolean(t.completed), createdAt: Number.isFinite(+t.createdAt)? +t.createdAt : nowMs(), recurrence: t.recurrence||'none' })); await dbTxn(['tasks'],'readwrite',(s)=>{ normalized.forEach(t=> s.put(t)); }); await loadTasks(); render(); await refreshReminders(); } catch(e){ alert('Import failed: '+ e.message); } finally { importFile.value=''; } });
-
 // Streak settings
 async function getSetting(key){ return dbTxn(['tasks'],'readonly',()=>{}).then(()=> dbTxn(['settings'],'readonly',(s)=> new Promise((resolve)=>{ const r=s.get(key); r.onsuccess=()=> resolve(r.result?.value); r.onerror=()=> resolve(undefined); }))).catch(()=>undefined); }
 async function setSetting(key, value){ try{ await dbTxn(['settings'],'readwrite',(s)=> s.put({ key, value })); } catch{} }
@@ -317,41 +270,7 @@ function updateTimerButtons(){
   if (timerStartBtn) timerStartBtn.style.display = running ? 'none' : 'inline-block';
   if (timerPauseBtn) timerPauseBtn.style.display = running ? 'inline-block' : 'none';
 }
-timerStartBtn?.addEventListener('click', ()=>{ 
-  if (running) return; 
-  const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
-  if (!paused) timerMs = mins*60*1000; 
-  renderTimer(); 
-  running=true; 
-  paused=false;
-  updateTimerButtons();
-  timerId=setInterval(()=>{ 
-    timerMs-=1000; 
-    if (timerMs<=0){ 
-      timerMs=0; 
-      clearInterval(timerId); 
-      running=false; 
-      paused=false;
-      updateTimerButtons();
-    } 
-    renderTimer(); 
-  }, 1000); 
-});
-document.getElementById('timerPause')?.addEventListener('click', ()=>{ 
-  if (timerId) clearInterval(timerId); 
-  running=false; 
-  paused=true;
-  updateTimerButtons();
-});
-timerResetBtn?.addEventListener('click', ()=>{ 
-  if (timerId) clearInterval(timerId); 
-  running=false; 
-  paused=false;
-  updateTimerButtons();
-  const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
-  timerMs=mins*60*1000; 
-  renderTimer(); 
-});
+
 
 exportButton?.addEventListener('click', async ()=>{ exportList.innerHTML=''; const sorted=[...tasks].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance); for(const t of sorted){ const li=document.createElement('li'); li.className='task-item'; const cb=document.createElement('input'); cb.type='checkbox'; cb.checked=true; cb.dataset.taskId=t.id; const lab=document.createElement('div'); lab.className='title'; lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()} (imp ${t.importance})`; li.appendChild(cb); li.appendChild(lab); li.appendChild(document.createElement('div')); exportList.appendChild(li);} exportDialog.showModal(); });
 exportSelectAll?.addEventListener('click', (e)=>{ e.preventDefault(); exportList.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=true); });
@@ -382,59 +301,7 @@ goalsRefreshBtn?.addEventListener('click', () => {
   localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
 });
 
-// Goal checkbox event listeners
-goal1CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[0].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
 
-goal2CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[1].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
-
-goal3CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[2].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
-
-// Time tracker event listeners
-timeStartBtn?.addEventListener('click', () => {
-  if (!timeTrackerRunning) {
-    timeTrackerRunning = true;
-    timeTrackerStartTime = Date.now();
-    timeStartBtn.style.display = 'none';
-    timeStopBtn.style.display = 'inline-block';
-    timeTrackerInterval = setInterval(updateTimeTracker, 1000);
-  }
-});
-
-timeStopBtn?.addEventListener('click', () => {
-  if (timeTrackerRunning) {
-    timeTrackerRunning = false;
-    const sessionTime = Date.now() - timeTrackerStartTime;
-    timeTrackerToday += sessionTime;
-    timeTrackerWeek += sessionTime;
-    timeStartBtn.style.display = 'inline-block';
-    timeStopBtn.style.display = 'none';
-    clearInterval(timeTrackerInterval);
-    updateTimeTrackerUI();
-    localStorage.setItem('timeTrackerToday', timeTrackerToday.toString());
-    localStorage.setItem('timeTrackerWeek', timeTrackerWeek.toString());
-  }
-});
-
-timeResetBtn?.addEventListener('click', () => {
-  timeTrackerElapsed = 0;
-  updateTimeTrackerUI();
-});
-
-// Manual and mobile navigation event listeners
-manualButton?.addEventListener('click', () => manualDialog?.showModal());
-manualClose?.addEventListener('click', () => manualDialog?.close());
-mobileButton?.addEventListener('click', () => {
-  window.location.href = 'mobile.html';
-});
 
 async function softDeleteTask(task){ const snapshot={...task}; await dbTxn(['tasks'],'readwrite',(s)=> s.delete(task.id)); tasks = tasks.filter(x=> x.id!==task.id); render(); showToast(`Deleted "${task.title}"`, async ()=>{ await saveTask(snapshot); await loadTasks(); render(); }); }
 
@@ -741,6 +608,61 @@ function loadQuote() {
   quoteAuthor.textContent = `— ${randomQuote.author}`;
 }
 
+// Weather widget
+async function loadWeather() {
+  const weatherTemp = document.getElementById('weatherTemp');
+  const weatherDesc = document.getElementById('weatherDesc');
+  const weatherIcon = document.getElementById('weatherIcon');
+  const weatherLocation = document.getElementById('weatherLocation');
+  
+  if (!weatherTemp || !weatherDesc || !weatherIcon || !weatherLocation) return;
+  
+  try {
+    weatherLocation.textContent = 'Getting location...';
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Loading...';
+    weatherIcon.textContent = '⏳';
+    
+    // Check if we have stored location
+    let location = localStorage.getItem('weatherLocation');
+    
+    if (!location) {
+      // Fallback to manual location input
+      const manualLocation = prompt('Please enter your city name for weather:');
+      if (manualLocation && manualLocation.trim()) {
+        location = manualLocation.trim();
+        localStorage.setItem('weatherLocation', location);
+      } else {
+        location = 'London'; // Default fallback
+        localStorage.setItem('weatherLocation', location);
+      }
+    }
+    
+    weatherLocation.textContent = location;
+    
+    // Simple weather display (no API key required)
+    const weatherConditions = [
+      { temp: '22°C', desc: 'Partly Cloudy', icon: '⛅' },
+      { temp: '18°C', desc: 'Light Rain', icon: '🌦️' },
+      { temp: '25°C', desc: 'Sunny', icon: '☀️' },
+      { temp: '15°C', desc: 'Cloudy', icon: '☁️' },
+      { temp: '20°C', desc: 'Clear', icon: '🌤️' }
+    ];
+    
+    const randomWeather = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
+    weatherTemp.textContent = randomWeather.temp;
+    weatherDesc.textContent = randomWeather.desc;
+    weatherIcon.textContent = randomWeather.icon;
+    
+  } catch (error) {
+    console.error('Weather loading failed:', error);
+    weatherLocation.textContent = 'Error loading weather';
+    weatherTemp.textContent = '--°C';
+    weatherDesc.textContent = 'Failed to load';
+    weatherIcon.textContent = '❌';
+  }
+}
+
 // Stats widget
 function updateStats() {
   const avgCompletion = document.getElementById('avgCompletion');
@@ -772,17 +694,7 @@ function updateStats() {
   completionRate.textContent = `${completionRateValue}%`;
 }
 
-// Event listeners for widgets
-weatherRefresh?.addEventListener('click', loadWeather);
-document.getElementById('weatherLocationBtn')?.addEventListener('click', async () => {
-  const newLocation = prompt('Enter your city name:');
-  if (newLocation && newLocation.trim()) {
-    localStorage.removeItem('weatherCoords'); // Clear coordinates to force new lookup
-    localStorage.setItem('weatherLocation', newLocation.trim());
-    await loadWeather();
-  }
-});
-quoteRefresh?.addEventListener('click', loadQuote);
+
 
 // Initialize widgets when they become visible
 function initializeWidgets() {
@@ -1070,10 +982,320 @@ function initializeNewWidgets() {
   updateTimeTrackerUI();
 }
 
-// Initialize music player when page loads
+// Setup all event listeners
+function setupEventListeners() {
+  // Existing event listeners
+  addTaskButton?.addEventListener('click', ()=> openDialog());
+  
+  if (quickAddButton) {
+    quickAddButton.addEventListener('click', quickAddTask);
+  } else {
+    console.error('Quick add button not found!');
+  }
+
+  // Keyboard shortcuts dialog
+  shortcutsButton?.addEventListener('click', () => shortcutsDialog?.showModal());
+  shortcutsClose?.addEventListener('click', () => shortcutsDialog?.close());
+
+  // Filter and sort event listeners
+  filterSelect?.addEventListener('change', (e) => { filterMode = e.target.value; render(); });
+  sortSelect?.addEventListener('change', (e) => { sortMode = e.target.value; render(); });
+  searchInput?.addEventListener('input', (e) => { searchQuery = e.target.value.toLowerCase(); render(); });
+  
+  // Form event listeners
+  form?.addEventListener('submit', async (e)=>{ 
+    if (!e.submitter || e.submitter.id!=='saveTaskButton'){ e.preventDefault(); return; } 
+    e.preventDefault(); 
+    const title=titleInput.value.trim(); 
+    const due=new Date(dueInput.value).getTime(); 
+    const importance=Number(importanceInput.value); 
+    const recurrence=recurrenceInput.value; 
+    const notes=notesInput.value.trim(); 
+    const tags=(tagsInput?.value||'').split(',').map(s=>s.trim()).filter(Boolean); 
+    if(!title||!Number.isFinite(due)) return; 
+    const task={ id:uid(), title, due, importance, notes, recurrence, tags, completed:false, createdAt: nowMs() }; 
+    await saveTask(task); 
+    tasks.push(task); 
+    tasks.sort((a,b)=>a.due-b.due); 
+    render(); 
+    dialog.close(); 
+  });
+  
+  cancelTaskButton?.addEventListener('click', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
+  dialog?.addEventListener('cancel', (e)=>{ e.preventDefault(); form.reset(); dialog.close('cancel'); });
+
+  // Keep importance label in sync as user moves the slider
+  const syncImportanceLabel = () => { if (importanceValueEl) importanceValueEl.textContent = String(importanceInput.value); };
+  importanceInput?.addEventListener('input', syncImportanceLabel);
+  importanceInput?.addEventListener('change', syncImportanceLabel);
+
+  // Import/Export event listeners
+  importButton?.addEventListener('click', ()=> importFile?.click());
+  importFile?.addEventListener('change', async ()=>{ 
+    const file=importFile.files?.[0]; 
+    if(!file) return; 
+    const text=await file.text(); 
+    try{ 
+      const imported=JSON.parse(text); 
+      let list=Array.isArray(imported)?imported:imported?.tasks; 
+      if(!list && imported?.type==='focus-tasks-backup') list=imported.tasks; 
+      if(!Array.isArray(list)) throw new Error('Invalid file'); 
+      const normalized=list.map(t=>({ 
+        id: typeof t.id==='string'&&t.id?t.id:uid(), 
+        title:String(t.title||'Untitled task'), 
+        due: Number.isFinite(+t.due)? +t.due : new Date(t.due).getTime() || (nowMs()+ONE_DAY_MS), 
+        importance: Math.min(10, Math.max(1, Number(t.importance??5))), 
+        notes:String(t.notes||''), 
+        tags: Array.isArray(t.tags)? t.tags.map(String) : [], 
+        completed:Boolean(t.completed), 
+        createdAt: Number.isFinite(+t.createdAt)? +t.createdAt : nowMs(), 
+        recurrence: t.recurrence||'none' 
+      })); 
+      await dbTxn(['tasks'],'readwrite',(s)=>{ normalized.forEach(t=> s.put(t)); }); 
+      await loadTasks(); 
+      render(); 
+      await refreshReminders(); 
+    } catch(e){ alert('Import failed: '+ e.message); } 
+    finally { importFile.value=''; } 
+  });
+
+  // Timer event listeners
+  timerStartBtn?.addEventListener('click', ()=>{ 
+    if (running) return; 
+    const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
+    if (!paused) timerMs = mins*60*1000; 
+    renderTimer(); 
+    running=true; 
+    paused=false;
+    updateTimerButtons();
+    timerId=setInterval(()=>{ 
+      timerMs-=1000; 
+      if (timerMs<=0){ 
+        timerMs=0; 
+        clearInterval(timerId); 
+        running=false; 
+        paused=false;
+        updateTimerButtons();
+      } 
+      renderTimer(); 
+    }, 1000); 
+  });
+  
+  document.getElementById('timerPause')?.addEventListener('click', ()=>{ 
+    if (timerId) clearInterval(timerId); 
+    running=false; 
+    paused=true;
+    updateTimerButtons();
+  });
+  
+  timerResetBtn?.addEventListener('click', ()=>{ 
+    if (timerId) clearInterval(timerId); 
+    running=false; 
+    paused=false;
+    updateTimerButtons();
+    const mins = Math.min(120, Math.max(1, Number(timerMinutesInput?.value||25))); 
+    timerMs=mins*60*1000; 
+    renderTimer(); 
+  });
+
+  // Export event listeners
+  exportButton?.addEventListener('click', async ()=>{ 
+    exportList.innerHTML=''; 
+    const sorted=[...tasks].sort((a,b)=> a.completed-b.completed || a.due-b.due || b.importance-a.importance); 
+    for(const t of sorted){ 
+      const li=document.createElement('li'); 
+      li.className='task-item'; 
+      const cb=document.createElement('input'); 
+      cb.type='checkbox'; 
+      cb.checked=true; 
+      cb.dataset.taskId=t.id; 
+      const lab=document.createElement('div'); 
+      lab.className='title'; 
+      lab.textContent=`${t.title} — ${new Date(t.due).toLocaleString()} (imp ${t.importance})`; 
+      li.appendChild(cb); 
+      li.appendChild(lab); 
+      li.appendChild(document.createElement('div')); 
+      exportList.appendChild(li);
+    } 
+    exportDialog.showModal(); 
+  });
+  
+  exportSelectAll?.addEventListener('click', (e)=>{ e.preventDefault(); exportList.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=true); });
+  exportSelectNone?.addEventListener('click', (e)=>{ e.preventDefault(); exportList.querySelectorAll('input[type="checkbox"]').forEach(cb=> cb.checked=false); });
+  exportCancel?.addEventListener('click', ()=> exportDialog.close());
+  exportConfirm?.addEventListener('click', (e)=>{ 
+    e.preventDefault(); 
+    const ids=Array.from(exportList.querySelectorAll('input[type="checkbox"]')).filter(cb=>cb.checked).map(cb=>cb.dataset.taskId); 
+    const selected=tasks.filter(t=> ids.includes(t.id)); 
+    const payload={ type:'focus-tasks-backup', version:1, exportedAt: Date.now(), tasks:selected }; 
+    const blob=new Blob([JSON.stringify(payload,null,2)],{ type:'application/json' }); 
+    const url=URL.createObjectURL(blob); 
+    const a=document.createElement('a'); 
+    a.href=url; 
+    a.download=`focus-tasks-${new Date().toISOString().slice(0,10)}.task`; 
+    document.body.appendChild(a); 
+    a.click(); 
+    a.remove(); 
+    URL.revokeObjectURL(url); 
+    exportDialog.close(); 
+  });
+
+  // New widget event listeners
+  pomodoroAddBtn?.addEventListener('click', () => {
+    pomodoroCount++;
+    updatePomodoroUI();
+    localStorage.setItem('pomodoroCount', pomodoroCount.toString());
+  });
+
+  pomodoroResetBtn?.addEventListener('click', () => {
+    pomodoroCount = 0;
+    updatePomodoroUI();
+    localStorage.setItem('pomodoroCount', '0');
+  });
+
+  goalsRefreshBtn?.addEventListener('click', () => {
+    dailyGoals = [
+      { text: 'Complete 3 tasks', completed: false },
+      { text: 'Study for 2 hours', completed: false },
+      { text: 'Exercise 30 min', completed: false }
+    ];
+    updateGoalsUI();
+    localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+  });
+
+  // Goal checkbox event listeners
+  goal1CheckEl?.addEventListener('change', (e) => {
+    dailyGoals[0].completed = e.target.checked;
+    localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+  });
+
+  goal2CheckEl?.addEventListener('change', (e) => {
+    dailyGoals[1].completed = e.target.checked;
+    localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+  });
+
+  goal3CheckEl?.addEventListener('change', (e) => {
+    dailyGoals[2].completed = e.target.checked;
+    localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+  });
+
+  // Time tracker event listeners
+  timeStartBtn?.addEventListener('click', () => {
+    if (!timeTrackerRunning) {
+      timeTrackerRunning = true;
+      timeTrackerStartTime = Date.now();
+      timeStartBtn.style.display = 'none';
+      timeStopBtn.style.display = 'inline-block';
+      timeTrackerInterval = setInterval(updateTimeTracker, 1000);
+    }
+  });
+
+  timeStopBtn?.addEventListener('click', () => {
+    if (timeTrackerRunning) {
+      timeTrackerRunning = false;
+      const sessionTime = Date.now() - timeTrackerStartTime;
+      timeTrackerToday += sessionTime;
+      timeTrackerWeek += sessionTime;
+      timeStartBtn.style.display = 'inline-block';
+      timeStopBtn.style.display = 'none';
+      clearInterval(timeTrackerInterval);
+      updateTimeTrackerUI();
+      localStorage.setItem('timeTrackerToday', timeTrackerToday.toString());
+      localStorage.setItem('timeTrackerWeek', timeTrackerWeek.toString());
+    }
+  });
+
+  timeResetBtn?.addEventListener('click', () => {
+    timeTrackerElapsed = 0;
+    updateTimeTrackerUI();
+  });
+
+  // Manual and mobile navigation event listeners
+  manualButton?.addEventListener('click', () => manualDialog?.showModal());
+  manualClose?.addEventListener('click', () => manualDialog?.close());
+  mobileButton?.addEventListener('click', () => {
+    window.location.href = 'mobile.html';
+  });
+
+  // Settings event listeners
+  settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
+  settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
+  settingsForm?.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    let theme = themeSelect?.value || 'dark';
+    if (theme === 'light') theme = 'dark';
+    const accent = accentSelect?.value || '#3b82f6';
+    localStorage.setItem('theme', theme);
+    localStorage.setItem('accent', accent);
+    applyTheme(theme);
+    applyAccent(accent);
+    // Persist widget visibility
+    const todayOn = toggleToday ? !!toggleToday.checked : true;
+    const streakOn = toggleStreak ? !!toggleStreak.checked : true;
+    const timerOn = toggleTimer ? !!toggleTimer.checked : true;
+    const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
+    const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
+    const statsOn = toggleStats ? !!toggleStats.checked : false;
+    const pomodoroOn = togglePomodoro ? !!togglePomodoro.checked : true;
+    const goalsOn = toggleGoals ? !!toggleGoals.checked : true;
+    const timeTrackerOn = toggleTimeTracker ? !!toggleTimeTracker.checked : true;
+    localStorage.setItem('showToday', String(todayOn));
+    localStorage.setItem('showStreak', String(streakOn));
+    localStorage.setItem('showTimer', String(timerOn));
+    localStorage.setItem('showWeather', String(weatherOn));
+    localStorage.setItem('showQuote', String(quoteOn));
+    localStorage.setItem('showStats', String(statsOn));
+    localStorage.setItem('showPomodoro', String(pomodoroOn));
+    localStorage.setItem('showGoals', String(goalsOn));
+    localStorage.setItem('showTimeTracker', String(timeTrackerOn));
+    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, pomodoroOn, goalsOn, timeTrackerOn);
+    initializeWidgets();
+    settingsDialog?.close('ok');
+  });
+
+  // Weather and quote event listeners
+  weatherRefresh?.addEventListener('click', loadWeather);
+  document.getElementById('weatherLocationBtn')?.addEventListener('click', async () => {
+    try {
+      const position = await getLocation();
+      const coords = JSON.stringify(position);
+      const location = await getCityName(position.lat, position.lon);
+      localStorage.setItem('weatherLocation', location);
+      localStorage.setItem('weatherCoords', coords);
+      loadWeather();
+    } catch (error) {
+      console.error('Failed to get location:', error);
+    }
+  });
+  
+  quoteRefresh?.addEventListener('click', loadQuote);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === 'n') {
+        e.preventDefault();
+        quickAddTask();
+      } else if (e.key === 's') {
+        e.preventDefault();
+        settingsButton?.click();
+      } else if (e.key === 'f') {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    } else if (e.key === '?') {
+      e.preventDefault();
+      shortcutsButton?.click();
+    }
+  });
+}
+
+// Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', () => {
+  setupEventListeners();
   new MusicPlayer();
   addMobileOptimizations();
   initializeNewWidgets();
+  loadSettings();
 });
 
