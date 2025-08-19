@@ -109,7 +109,8 @@ const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
 
 // SW
-async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
+const ENABLE_SW = false;
+async function registerSW(){ if (!ENABLE_SW) return; if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
 async function ensureNotificationPermission(){ if (!('Notification' in window)) return false; if (Notification.permission==='granted') return true; if (Notification.permission==='denied') return false; return (await Notification.requestPermission())==='granted'; }
 async function refreshReminders(){ try{ const reg=await navigator.serviceWorker.getRegistration(); if(!reg) return; const upcoming=tasks.filter(t=>!t.completed && t.due-nowMs()<=THREE_DAYS_MS && t.due>nowMs()); reg.active?.postMessage({ type:'SET_REMINDERS', tasks: upcoming.map(t=>({id:t.id,title:t.title,due:t.due})) }); }catch{} }
 
