@@ -1,0 +1,647 @@
+/* Mobile-First CSS for Task Manager */
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0a0f1a 0%, #1e2a3a 50%, #0a0f1a 100%);
+    color: #e6ecff;
+    overflow-x: hidden;
+}
+
+/* Mobile Header */
+.mobile-header {
+    position: sticky;
+    top: 0;
+    background: rgba(13, 19, 34, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    padding: 12px 16px;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-icon {
+    font-size: 24px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.header-left h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+/* Main Content */
+.mobile-main {
+    padding: 16px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Stats Row */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Add Task Section */
+.add-task-section {
+    margin-bottom: 24px;
+}
+
+.task-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.task-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+}
+
+.task-input:focus {
+    border-color: #3b82f6;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.task-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:active {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(0.98);
+}
+
+/* Filters Section */
+.filters-section {
+    margin-bottom: 24px;
+}
+
+.filter-row {
+    display: flex;
+    gap: 12px;
+}
+
+.filter-select, .search-input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.filter-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+    appearance: none;
+}
+
+.filter-select:focus, .search-input:focus {
+    border-color: #3b82f6;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Task List Section */
+.task-list-section {
+    margin-bottom: 100px; /* Space for music player */
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.section-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.task-count {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+}
+
+.task-item:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.task-checkbox:checked {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.task-text {
+    flex: 1;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #fff;
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.task-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.task-actions .btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    min-height: 36px;
+    flex: none;
+}
+
+/* Mobile Music Player */
+.mobile-music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 19, 34, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.mobile-music-player.minimized {
+    height: 60px;
+    overflow: hidden;
+}
+
+.mobile-music-player.minimized .music-content {
+    display: none;
+}
+
+.music-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.music-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.music-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.music-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+.music-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.track-info {
+    text-align: center;
+}
+
+.track-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.track-artist {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.music-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.volume-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 2000;
+    backdrop-filter: blur(10px);
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: rgba(13, 19, 34, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    backdrop-filter: blur(20px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.setting-group h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.setting-item:active {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 0 -12px;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #3b82f6;
+}
+
+.setting-item span {
+    font-size: 16px;
+    color: #fff;
+}
+
+.shortcut-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.shortcut-item kbd {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-family: monospace;
+    color: #fff;
+}
+
+.shortcut-item span {
+    font-size: 16px;
+    color: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .mobile-main {
+        padding: 12px;
+    }
+    
+    .stats-row {
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        padding: 12px 8px;
+    }
+    
+    .stat-value {
+        font-size: 20px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    .task-buttons {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .filter-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-header {
+        padding: 8px 12px;
+    }
+    
+    .header-left h1 {
+        font-size: 18px;
+    }
+    
+    .app-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+    }
+    
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .mobile-main {
+        padding: 8px;
+    }
+    
+    .stats-row {
+        gap: 6px;
+    }
+    
+    .stat-card {
+        padding: 10px 6px;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+    
+    .stat-label {
+        font-size: 10px;
+    }
+}

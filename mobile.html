@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager - Mobile</title>
+    <link rel="stylesheet" href="mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="app-icon">📋</div>
+                <h1>Task Manager</h1>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+                <button class="icon-btn" id="helpBtn" title="Keyboard Shortcuts">⌨️</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Main Content -->
+    <main class="mobile-main">
+        <!-- Quick Stats Row -->
+        <section class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTasks">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedTasks">0</div>
+                <div class="stat-label">Done</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="streakDays">0</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </section>
+
+        <!-- Add Task Section -->
+        <section class="add-task-section">
+            <div class="task-input-group">
+                <input type="text" id="taskInput" class="task-input" placeholder="Add a new task..." maxlength="100">
+                <div class="task-buttons">
+                    <button id="addTaskBtn" class="btn btn-primary">Add Task</button>
+                    <button id="quickAddBtn" class="btn btn-secondary">Quick Add</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="filter-row">
+                <select id="filterSelect" class="filter-select">
+                    <option value="all">All Tasks</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search tasks...">
+            </div>
+        </section>
+
+        <!-- Task List -->
+        <section class="task-list-section">
+            <div class="section-header">
+                <h2>Tasks</h2>
+                <div class="task-count" id="taskCount">0 tasks</div>
+            </div>
+            <div class="task-list" id="taskList">
+                <!-- Tasks will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Mobile Music Player -->
+    <div class="mobile-music-player" id="musicPlayer">
+        <div class="music-header">
+            <h3>Study Music</h3>
+            <div class="music-controls">
+                <button id="playPauseBtn" class="music-btn">▶️</button>
+                <button id="minimizeBtn" class="music-btn">➖</button>
+            </div>
+        </div>
+        <div class="music-content">
+            <div class="track-info">
+                <div class="track-title">Relaxing Mountains</div>
+                <div class="track-artist">Nature Sounds</div>
+            </div>
+            <div class="music-progress">
+                <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+            </div>
+        </div>
+        <audio id="backgroundMusic" loop>
+            <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_d1718ab41c.mp3?filename=relaxing-mountains-141912.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-btn" id="closeSettings">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <h4>Widgets</h4>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showTimer" checked>
+                        <span>Timer</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showDue" checked>
+                        <span>Due Today</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showStreak" checked>
+                        <span>Streak</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showWeather">
+                        <span>Weather</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showQuotes">
+                        <span>Quote of the Day</span>
+                    </label>
+                    <label class="setting-item">
+                        <input type="checkbox" id="showMusic">
+                        <span>Music Player</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="close-btn" id="closeHelp">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <kbd>Enter</kbd>
+                        <span>Add task</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + Enter</kbd>
+                        <span>Quick add task</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + /</kbd>
+                        <span>Toggle settings</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Ctrl + K</kbd>
+                        <span>Focus search</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>Space</kbd>
+                        <span>Toggle music</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="mobile.js"></script>
+</body>
+</html>
