@@ -4,7 +4,7 @@
  - Periodic background sync fallback
 */
 
-const CACHE_NAME = 'focus-tasks-cache-v2';
+const CACHE_NAME = 'focus-tasks-cache-v3';
 const APP_SHELL = [
   './',
   './index.html',
