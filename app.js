@@ -41,20 +41,6 @@ let filterMode = 'all';
 let searchQuery = '';
 let sortMode = 'due';
 
-// New widget state
-let pomodoroCount = 0;
-let timeTrackerRunning = false;
-let timeTrackerStartTime = 0;
-let timeTrackerElapsed = 0;
-let timeTrackerToday = 0;
-let timeTrackerWeek = 0;
-let timeTrackerInterval = null;
-let dailyGoals = [
-  { text: 'Complete 3 tasks', completed: false },
-  { text: 'Study for 2 hours', completed: false },
-  { text: 'Exercise 30 min', completed: false }
-];
-
 // Elements
 const taskListEl = document.getElementById('taskList');
 const upcomingSectionEl = document.getElementById('upcomingSection');
@@ -121,38 +107,6 @@ const toggleTimer = document.getElementById('toggleTimer');
 const toggleWeather = document.getElementById('toggleWeather');
 const toggleQuote = document.getElementById('toggleQuote');
 const toggleStats = document.getElementById('toggleStats');
-
-// New widget elements
-const cardPomodoro = document.getElementById('cardPomodoro');
-const cardGoals = document.getElementById('cardGoals');
-const cardTimeTracker = document.getElementById('cardTimeTracker');
-const togglePomodoro = document.getElementById('togglePomodoro');
-const toggleGoals = document.getElementById('toggleGoals');
-const toggleTimeTracker = document.getElementById('toggleTimeTracker');
-
-// New widget control elements
-const pomodoroCountEl = document.getElementById('pomodoroCount');
-const pomodoroAddBtn = document.getElementById('pomodoroAdd');
-const pomodoroResetBtn = document.getElementById('pomodoroReset');
-const goal1TextEl = document.getElementById('goal1Text');
-const goal1CheckEl = document.getElementById('goal1Check');
-const goal2TextEl = document.getElementById('goal2Text');
-const goal2CheckEl = document.getElementById('goal2Check');
-const goal3TextEl = document.getElementById('goal3Text');
-const goal3CheckEl = document.getElementById('goal3Check');
-const goalsRefreshBtn = document.getElementById('goalsRefresh');
-const timeDisplayEl = document.getElementById('timeDisplay');
-const timeStartBtn = document.getElementById('timeStart');
-const timeStopBtn = document.getElementById('timeStop');
-const timeResetBtn = document.getElementById('timeReset');
-const timeTodayEl = document.getElementById('timeToday');
-const timeWeekEl = document.getElementById('timeWeek');
-
-// Manual and mobile navigation elements
-const manualButton = document.getElementById('manualButton');
-const mobileButton = document.getElementById('mobileButton');
-const manualDialog = document.getElementById('manualDialog');
-const manualClose = document.getElementById('manualClose');
 
 // SW
 async function registerSW(){ if ('serviceWorker' in navigator) { try { await navigator.serviceWorker.register('sw.js'); } catch {} } }
@@ -389,41 +343,29 @@ function loadSettings(){
     const showWeather = localStorage.getItem('showWeather');
     const showQuote = localStorage.getItem('showQuote');
     const showStats = localStorage.getItem('showStats');
-    const showPomodoro = localStorage.getItem('showPomodoro');
-    const showGoals = localStorage.getItem('showGoals');
-    const showTimeTracker = localStorage.getItem('showTimeTracker');
     const todayOn = showToday === null ? true : showToday !== 'false';
     const streakOn = showStreak === null ? true : showStreak !== 'false';
     const timerOn = showTimer === null ? true : showTimer !== 'false';
     const weatherOn = showWeather === null ? false : showWeather !== 'false';
     const quoteOn = showQuote === null ? false : showQuote !== 'false';
     const statsOn = showStats === null ? false : showStats !== 'false';
-    const pomodoroOn = showPomodoro === null ? true : showPomodoro !== 'false';
-    const goalsOn = showGoals === null ? true : showGoals !== 'false';
-    const timeTrackerOn = showTimeTracker === null ? true : showTimeTracker !== 'false';
     if (toggleToday) toggleToday.checked = todayOn;
     if (toggleStreak) toggleStreak.checked = streakOn;
     if (toggleTimer) toggleTimer.checked = timerOn;
     if (toggleWeather) toggleWeather.checked = weatherOn;
     if (toggleQuote) toggleQuote.checked = quoteOn;
     if (toggleStats) toggleStats.checked = statsOn;
-    if (togglePomodoro) togglePomodoro.checked = pomodoroOn;
-    if (toggleGoals) toggleGoals.checked = goalsOn;
-    if (toggleTimeTracker) toggleTimeTracker.checked = timeTrackerOn;
-    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, pomodoroOn, goalsOn, timeTrackerOn);
+    applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
     initializeWidgets();
   }catch{}
 }
-function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, pomodoroOn, goalsOn, timeTrackerOn){
+function applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn){
   if (cardToday) cardToday.style.display = todayOn ? 'block' : 'none';
   if (cardStreak) cardStreak.style.display = streakOn ? 'block' : 'none';
   if (cardTimer) cardTimer.style.display = timerOn ? 'block' : 'none';
   if (cardWeather) cardWeather.style.display = weatherOn ? 'block' : 'none';
   if (cardQuote) cardQuote.style.display = quoteOn ? 'block' : 'none';
   if (cardStats) cardStats.style.display = statsOn ? 'block' : 'none';
-  if (cardPomodoro) cardPomodoro.style.display = pomodoroOn ? 'block' : 'none';
-  if (cardGoals) cardGoals.style.display = goalsOn ? 'block' : 'none';
-  if (cardTimeTracker) cardTimeTracker.style.display = timeTrackerOn ? 'block' : 'none';
 }
 settingsButton?.addEventListener('click', ()=> settingsDialog?.showModal());
 settingsCancel?.addEventListener('click', ()=> settingsDialog?.close('cancel'));
@@ -443,19 +385,13 @@ settingsForm?.addEventListener('submit', (e)=>{
   const weatherOn = toggleWeather ? !!toggleWeather.checked : false;
   const quoteOn = toggleQuote ? !!toggleQuote.checked : false;
   const statsOn = toggleStats ? !!toggleStats.checked : false;
-  const pomodoroOn = togglePomodoro ? !!togglePomodoro.checked : true;
-  const goalsOn = toggleGoals ? !!toggleGoals.checked : true;
-  const timeTrackerOn = toggleTimeTracker ? !!toggleTimeTracker.checked : true;
   localStorage.setItem('showToday', String(todayOn));
   localStorage.setItem('showStreak', String(streakOn));
   localStorage.setItem('showTimer', String(timerOn));
   localStorage.setItem('showWeather', String(weatherOn));
   localStorage.setItem('showQuote', String(quoteOn));
   localStorage.setItem('showStats', String(statsOn));
-  localStorage.setItem('showPomodoro', String(pomodoroOn));
-  localStorage.setItem('showGoals', String(goalsOn));
-  localStorage.setItem('showTimeTracker', String(timeTrackerOn));
-  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn, pomodoroOn, goalsOn, timeTrackerOn);
+  applyWidgetVisibility(todayOn, streakOn, timerOn, weatherOn, quoteOn, statsOn);
   initializeWidgets();
   settingsDialog?.close('ok');
 });
@@ -707,83 +643,6 @@ document.getElementById('weatherLocationBtn')?.addEventListener('click', async (
 });
 quoteRefresh?.addEventListener('click', loadQuote);
 
-// New widget event listeners
-pomodoroAddBtn?.addEventListener('click', () => {
-  pomodoroCount++;
-  localStorage.setItem('pomodoroCount', pomodoroCount.toString());
-  updatePomodoroUI();
-});
-
-pomodoroResetBtn?.addEventListener('click', () => {
-  pomodoroCount = 0;
-  localStorage.setItem('pomodoroCount', pomodoroCount.toString());
-  updatePomodoroUI();
-});
-
-goalsRefreshBtn?.addEventListener('click', () => {
-  const newGoals = [
-    { text: 'Complete 3 tasks', completed: false },
-    { text: 'Study for 2 hours', completed: false },
-    { text: 'Exercise 30 min', completed: false }
-  ];
-  dailyGoals = newGoals;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-  updateGoalsUI();
-});
-
-// Goal checkbox event listeners
-goal1CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[0].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
-
-goal2CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[1].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
-
-goal3CheckEl?.addEventListener('change', (e) => {
-  dailyGoals[2].completed = e.target.checked;
-  localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-});
-
-// Time tracker event listeners
-timeStartBtn?.addEventListener('click', () => {
-  if (!timeTrackerRunning) {
-    timeTrackerRunning = true;
-    timeTrackerStartTime = Date.now() - timeTrackerElapsed;
-    timeTrackerInterval = setInterval(updateTimeTracker, 1000);
-    timeStartBtn.style.display = 'none';
-    timeStopBtn.style.display = 'inline-block';
-  }
-});
-
-timeStopBtn?.addEventListener('click', () => {
-  if (timeTrackerRunning) {
-    timeTrackerRunning = false;
-    clearInterval(timeTrackerInterval);
-    timeTrackerElapsed = Date.now() - timeTrackerStartTime;
-    timeTrackerToday += timeTrackerElapsed;
-    timeTrackerWeek += timeTrackerElapsed;
-    localStorage.setItem('timeTrackerToday', timeTrackerToday.toString());
-    localStorage.setItem('timeTrackerWeek', timeTrackerWeek.toString());
-    timeStartBtn.style.display = 'inline-block';
-    timeStopBtn.style.display = 'none';
-  }
-});
-
-timeResetBtn?.addEventListener('click', () => {
-  timeTrackerElapsed = 0;
-  updateTimeTrackerUI();
-});
-
-// Manual and mobile navigation event listeners
-manualButton?.addEventListener('click', () => manualDialog?.showModal());
-manualClose?.addEventListener('click', () => manualDialog?.close());
-mobileButton?.addEventListener('click', () => {
-  window.location.href = 'mobile.html';
-});
-
 // Initialize widgets when they become visible
 function initializeWidgets() {
   if (cardWeather?.style.display !== 'none') loadWeather();
@@ -985,87 +844,9 @@ function addMobileOptimizations() {
   console.log('Mobile optimizations applied');
 }
 
-// New widget UI update functions
-function updatePomodoroUI() {
-  if (pomodoroCountEl) {
-    pomodoroCountEl.textContent = pomodoroCount;
-  }
-}
-
-function updateGoalsUI() {
-  if (goal1TextEl && goal1CheckEl && goal2TextEl && goal2CheckEl && goal3TextEl && goal3CheckEl) {
-    goal1TextEl.textContent = dailyGoals[0].text;
-    goal1CheckEl.checked = dailyGoals[0].completed;
-    goal2TextEl.textContent = dailyGoals[1].text;
-    goal2CheckEl.checked = dailyGoals[1].completed;
-    goal3TextEl.textContent = dailyGoals[2].text;
-    goal3CheckEl.checked = dailyGoals[2].completed;
-  }
-}
-
-function updateTimeTracker() {
-  if (timeTrackerRunning && timeDisplayEl) {
-    const elapsed = Date.now() - timeTrackerStartTime;
-    const hours = Math.floor(elapsed / 3600000);
-    const minutes = Math.floor((elapsed % 3600000) / 60000);
-    const seconds = Math.floor((elapsed % 60000) / 1000);
-    timeDisplayEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
-}
-
-function updateTimeTrackerUI() {
-  if (timeDisplayEl && timeTodayEl && timeWeekEl) {
-    const hours = Math.floor(timeTrackerElapsed / 3600000);
-    const minutes = Math.floor((timeTrackerElapsed % 3600000) / 60000);
-    timeDisplayEl.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
-    
-    const todayHours = Math.floor(timeTrackerToday / 3600000);
-    const todayMinutes = Math.floor((timeTrackerToday % 3600000) / 60000);
-    timeTodayEl.textContent = `${todayHours}h ${todayMinutes}m`;
-    
-    const weekHours = Math.floor(timeTrackerWeek / 3600000);
-    const weekMinutes = Math.floor((timeTrackerWeek % 3600000) / 60000);
-    timeWeekEl.textContent = `${weekHours}h ${weekMinutes}m`;
-  }
-}
-
-// Initialize new widgets
-function initializeNewWidgets() {
-  // Load saved data
-  const savedPomodoroCount = localStorage.getItem('pomodoroCount');
-  if (savedPomodoroCount) {
-    pomodoroCount = parseInt(savedPomodoroCount) || 0;
-  }
-  
-  const savedGoals = localStorage.getItem('dailyGoals');
-  if (savedGoals) {
-    try {
-      dailyGoals = JSON.parse(savedGoals);
-    } catch (e) {
-      console.error('Failed to parse saved goals:', e);
-    }
-  }
-  
-  const savedTimeToday = localStorage.getItem('timeTrackerToday');
-  if (savedTimeToday) {
-    timeTrackerToday = parseInt(savedTimeToday) || 0;
-  }
-  
-  const savedTimeWeek = localStorage.getItem('timeTrackerWeek');
-  if (savedTimeWeek) {
-    timeTrackerWeek = parseInt(savedTimeWeek) || 0;
-  }
-  
-  // Update UI
-  updatePomodoroUI();
-  updateGoalsUI();
-  updateTimeTrackerUI();
-}
-
 // Initialize music player when page loads
 document.addEventListener('DOMContentLoaded', () => {
   new MusicPlayer();
   addMobileOptimizations();
-  initializeNewWidgets();
 });
 
