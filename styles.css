@@ -2,7 +2,7 @@
 .app-main{ display:grid; align-items:start; justify-items:center; padding:0 }
 
 /* App shell two-column layout */
-.app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 0 20px 24px; align-items:start; max-width:1180px; margin:0 auto; position: relative; z-index: 2 }
+.app-layout{ display:grid; grid-template-columns: 300px 1fr; gap:16px; padding: 0 20px 24px; align-items:start; max-width:1180px; margin:0 auto; position: relative; z-index: 10 }
 @media (max-width: 900px){ 
   .app-layout{ 
     grid-template-columns: 1fr; 
@@ -54,7 +54,7 @@ body{
   backdrop-filter: blur(10px) saturate(120%);
   position:sticky; top:0; z-index:10;
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 .header-brand{ display:flex; align-items:center; gap:8px }
 .header-icon{ color:var(--primary); flex-shrink:0 }
@@ -242,14 +242,14 @@ input[type="checkbox"]{ width:18px; height:18px }
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   overflow: hidden;
 }
 
 .whale {
   position: absolute;
   opacity: 1;
-  z-index: 0;
+  z-index: -1;
   filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
 }
 
