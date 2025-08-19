@@ -242,15 +242,15 @@ input[type="checkbox"]{ width:18px; height:18px }
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  z-index: 999;
   overflow: hidden;
 }
 
 .whale {
   position: absolute;
-  font-size: 60px;
-  opacity: 0.8;
-  z-index: 1;
+  opacity: 1;
+  z-index: 999;
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
 }
 
 .whale-1 {
@@ -266,6 +266,98 @@ input[type="checkbox"]{ width:18px; height:18px }
 .whale-3 {
   animation: swim3 25s linear infinite;
   animation-delay: 10s;
+}
+
+/* Realistic Whale Body */
+.whale-body {
+  position: relative;
+  width: 120px;
+  height: 60px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 50%, #2c5aa0 100%);
+  border-radius: 50px 30px 30px 50px;
+  box-shadow: 
+    inset -5px -5px 15px rgba(0,0,0,0.3),
+    inset 5px 5px 15px rgba(255,255,255,0.2),
+    0 0 30px rgba(74, 144, 226, 0.6);
+}
+
+.whale-head {
+  position: absolute;
+  left: -10px;
+  top: 15px;
+  width: 40px;
+  height: 30px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  border-radius: 20px 15px 15px 20px;
+  box-shadow: inset -3px -3px 10px rgba(0,0,0,0.3);
+}
+
+.whale-eye {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(255,255,255,0.8);
+}
+
+.whale-eye::after {
+  content: '';
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  width: 4px;
+  height: 4px;
+  background: #000;
+  border-radius: 50%;
+}
+
+.whale-mouth {
+  position: absolute;
+  right: 2px;
+  bottom: 5px;
+  width: 12px;
+  height: 6px;
+  background: #2c5aa0;
+  border-radius: 0 0 6px 6px;
+}
+
+.whale-tail {
+  position: absolute;
+  right: -15px;
+  top: 20px;
+  width: 30px;
+  height: 20px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  border-radius: 0 10px 10px 0;
+  transform-origin: left center;
+}
+
+.whale-fin {
+  position: absolute;
+  left: 30px;
+  top: -5px;
+  width: 15px;
+  height: 25px;
+  background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+  border-radius: 0 0 15px 15px;
+  transform-origin: bottom center;
+}
+
+.whale-bubbles {
+  position: absolute;
+  left: -20px;
+  top: 20px;
+}
+
+.bubble {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
 }
 
 @keyframes swim1 {
