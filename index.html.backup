@@ -101,12 +101,6 @@
         <span id="streakLabel" class="hint" style="margin-left:10px"></span>
       </div>
               <div class="header-right">
-          <button id="manualButton" class="icon-btn" title="User Manual" aria-label="Open user manual">
-            📘
-          </button>
-          <button id="mobileButton" class="icon-btn" title="Mobile Version" aria-label="Go to mobile version">
-            📱
-          </button>
           <button id="shortcutsButton" class="icon-btn" title="Keyboard Shortcuts" aria-label="Show keyboard shortcuts">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="4" width="20" height="16" rx="2"></rect>
@@ -199,60 +193,6 @@
             <div class="stat-item">
               <div class="stat-value" id="completionRate">0%</div>
               <div class="stat-label">Completion rate</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- New Widget 1: Pomodoro Tracker -->
-        <div class="insight-card" id="cardPomodoro">
-          <h3>Pomodoro Tracker</h3>
-          <div class="pomodoro-display">
-            <div class="pomodoro-count" id="pomodoroCount">0</div>
-            <div class="pomodoro-label">completed today</div>
-          </div>
-          <div class="pomodoro-actions">
-            <button class="btn btn-ghost" id="pomodoroAdd" style="flex:1">+1 Session</button>
-            <button class="btn btn-ghost" id="pomodoroReset" style="flex:1">Reset</button>
-          </div>
-        </div>
-        
-        <!-- New Widget 2: Daily Goals -->
-        <div class="insight-card" id="cardGoals">
-          <h3>Daily Goals</h3>
-          <div class="goals-display">
-            <div class="goal-item">
-              <span class="goal-text" id="goal1Text">Complete 3 tasks</span>
-              <input type="checkbox" id="goal1Check" class="goal-checkbox">
-            </div>
-            <div class="goal-item">
-              <span class="goal-text" id="goal2Text">Study for 2 hours</span>
-              <input type="checkbox" id="goal2Check" class="goal-checkbox">
-            </div>
-            <div class="goal-item">
-              <span class="goal-text" id="goal3Text">Exercise 30 min</span>
-              <input type="checkbox" id="goal3Check" class="goal-checkbox">
-            </div>
-          </div>
-          <button class="btn btn-ghost" id="goalsRefresh" style="margin-top:8px;width:100%">New Goals</button>
-        </div>
-        
-        <!-- New Widget 3: Time Tracker -->
-        <div class="insight-card" id="cardTimeTracker">
-          <h3>Time Tracker</h3>
-          <div class="time-display" id="timeDisplay">00:00:00</div>
-          <div class="time-actions">
-            <button class="btn btn-primary" id="timeStart">Start</button>
-            <button class="btn btn-ghost" id="timeStop" style="display:none">Stop</button>
-            <button class="btn btn-ghost" id="timeReset">Reset</button>
-          </div>
-          <div class="time-summary">
-            <div class="time-item">
-              <span class="time-label">Today:</span>
-              <span class="time-value" id="timeToday">0h 0m</span>
-            </div>
-            <div class="time-item">
-              <span class="time-label">Week:</span>
-              <span class="time-value" id="timeWeek">0h 0m</span>
             </div>
           </div>
         </div>
@@ -434,77 +374,9 @@
           <span>Show Productivity Stats tile</span>
           <input id="toggleStats" type="checkbox" />
         </label>
-        <label>
-          <span>Show Pomodoro Tracker tile</span>
-          <input id="togglePomodoro" type="checkbox" checked />
-        </label>
-        <label>
-          <span>Show Daily Goals tile</span>
-          <input id="toggleGoals" type="checkbox" checked />
-        </label>
-        <label>
-          <span>Show Time Tracker tile</span>
-          <input id="toggleTimeTracker" type="checkbox" checked />
-        </label>
         <menu class="dialog-actions">
           <button type="button" id="settingsCancel" class="btn btn-ghost">Cancel</button>
           <button type="submit" class="btn btn-primary">Save</button>
-        </menu>
-      </form>
-    </dialog>
-
-    <dialog id="manualDialog">
-      <form method="dialog">
-        <h2>User Manual</h2>
-        <div class="manual-content">
-          <div class="manual-section">
-            <h3>Getting Started</h3>
-            <p>Welcome to Focus Tasks! This app helps you stay organized and productive.</p>
-            <ul>
-              <li><strong>Add Tasks:</strong> Click "Add new task" to create detailed tasks with due dates, importance levels, and notes.</li>
-              <li><strong>Quick Add:</strong> Use "Quick Add" for simple tasks that you can detail later.</li>
-              <li><strong>Filter & Search:</strong> Use the search bar and filters to find specific tasks.</li>
-            </ul>
-          </div>
-          
-          <div class="manual-section">
-            <h3>Widgets & Features</h3>
-            <ul>
-              <li><strong>Today:</strong> Shows tasks due today and overdue items.</li>
-              <li><strong>Streak:</strong> Tracks your daily task completion streak.</li>
-              <li><strong>Focus Timer:</strong> Pomodoro-style timer for focused work sessions.</li>
-              <li><strong>Weather:</strong> Current weather conditions for your location.</li>
-              <li><strong>Quote of the Day:</strong> Motivational quotes to inspire you.</li>
-              <li><strong>Productivity Stats:</strong> Track your task completion patterns.</li>
-              <li><strong>Pomodoro Tracker:</strong> Count completed focus sessions.</li>
-              <li><strong>Daily Goals:</strong> Set and track daily objectives.</li>
-              <li><strong>Time Tracker:</strong> Monitor time spent on tasks.</li>
-            </ul>
-          </div>
-          
-          <div class="manual-section">
-            <h3>Keyboard Shortcuts</h3>
-            <ul>
-              <li><kbd>Ctrl + N</kbd> Quick add task</li>
-              <li><kbd>Ctrl + F</kbd> Focus search</li>
-              <li><kbd>Ctrl + S</kbd> Open settings</li>
-              <li><kbd>?</kbd> Show shortcuts</li>
-            </ul>
-          </div>
-          
-          <div class="manual-section">
-            <h3>Tips for Success</h3>
-            <ul>
-              <li>Set realistic due dates and importance levels</li>
-              <li>Use the focus timer for deep work sessions</li>
-              <li>Review your productivity stats regularly</li>
-              <li>Keep your daily goals achievable</li>
-              <li>Use tags to organize related tasks</li>
-            </ul>
-          </div>
-        </div>
-        <menu class="dialog-actions">
-          <button type="button" id="manualClose" class="btn btn-primary">Got it</button>
         </menu>
       </form>
     </dialog>
